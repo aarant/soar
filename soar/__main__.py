@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 
-from soar.gui import main
+from soar.client.client import main
 
 main()
