@@ -1,5 +1,6 @@
 import time
 from threading import Thread
+import importlib.util
 
 try:
     from Tkinter import *
@@ -10,9 +11,30 @@ except ImportError:
 
 from soar.client import client
 from soar.client.messages import *
+from soar.gui.canvas import *
+
+def demo_setup(c):
+    robot = RobotGraphics(300, (125, 250))
+
+    # Building the 8-sided shape of the sonar faces
+    s = [Point(0, 0) for i in range(14)]
+    s[1].add((1, 0))
+    s[2].add((2, 0))
+    s[2].rotate(s[1], 2 * pi / 14.0)
+    for i in range(3, 9):
+        s[i].add(s[i - 1])
+        s[i].scale(2.0, s[i - 2])
+        s[i].rotate(s[i - 1], 2 * pi / 14.0)
+
+    s = PointCollection(s, fill='red')
+    s.scale(26)
+    s.rotate((0, 0), -pi / 2)
+    s.recenter((125, 250))
+    s.translate((-20, 22))
+    return robot, s
 
 class SoarUI(Tk):
-    def __init__(self, parent=None, brain=None, world=None, title='SoaR v0.1.0'):
+    def __init__(self, parent=None, brain=None, world=None, title='SoaR v0.2.0'):
         Tk.__init__(self, parent)
         self.parent = parent
         self.initialize()
@@ -118,9 +140,26 @@ class SoarUI(Tk):
     def sim_cmd(self):
         assert self.world is not None
         self.real_set = False
-        self.pause_cmd()
-        client.message(SIM_MSG,CLOSE_MSG)
-        client.message(OPEN_MSG,SIM_PROC(self.world))
+        spec = importlib.util.spec_from_file_location('', self.world)
+        world = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(world)
+        c = Canvas(self, **world.tk_options)
+        c.grid(column=0, row=1, sticky='EW')
+        robot, s = demo_setup(c)
+        client.message(ADD_OBJECTS, {'robot': robot, 'sonars': s})
+        client.message(START_SIM, c)
+
+        def tick():
+            c.delete('all')
+            robot.draw(c)
+            s.draw(c)
+            if client.foo is False:
+                c.destroy()
+            else:
+                self.after(10, tick)
+
+        self.after(0, tick)
+
 
     def real_cmd(self):
         self.real_set = True
