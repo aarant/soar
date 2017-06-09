@@ -2,8 +2,10 @@ from argparse import ArgumentParser
 from queue import Queue
 import threading
 from threading import Thread
+import importlib.util
 
-from soar.gui.soar_ui import SoarUI
+from soar.gui.soar_ui import SoarUI, polygon
+from soar.geometry import Point
 from soar.client.messages import *
 from soar.sim.sim import start_sim
 
@@ -11,9 +13,8 @@ headless = False
 brain = None
 world = None
 robot = None
-objects = {}
 queue = Queue(maxsize=1000)
-foo = True
+tk_queue = None
 
 def reset_queue():
     """ Reset the queue """
@@ -25,35 +26,38 @@ def message(topic, *data):
         data = None
     queue.put((topic, data))
 
+def load_module(path):
+    spec = importlib.util.spec_from_file_location('', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
 def mainloop():
-    global headless, brain, world, robot, queue, objects, foo
+    global headless, brain, world, robot, queue, tk_queue
     while True:
         topic, data = queue.get()
         print('Threads: ' + str(threading.active_count()), topic, data)
         if topic == MAKE_GUI:
             app = SoarUI(brain=brain, world=world)
+            tk_queue = app.queue
             app.mainloop()  # Run Tk in main thread
         elif topic == LOAD_BRAIN:  # TODO Make sure brain/world actually exists
-            brain = data  # TODO Might have to reload other things
+            brain = load_module(data[0])  # TODO Might have to reload other things
+            robot = brain.robot
         elif topic == LOAD_WORLD:
-            world = data
-        elif topic == CLOSE:
-            break
-        elif topic == ADD_OBJECTS:
-            objects.update(data[0])
-            print(objects)
-        elif topic == START_SIM:
-            t = Thread(target=start_sim, daemon=True)
-            t.start()
-        elif topic == MOVE_OBJECTS:
-            for object in objects.values():
-                object.rotate((125, 250), 0.001*3.14)
+            world = load_module(data[0])
+        elif topic == MAKE_SIM:
+            robot = brain.robot
+            robot.pos = Point(*world.initial_position)
+            if not headless:
+                tk_queue.put(world.options)
+                tk_queue.put(robot)
         elif topic == CLOSE_SIM:
-            foo = False
-
-
-
-
+            tk_queue.put('DESTROY')
+        elif topic == CLOSE:
+            queue.task_done()
+            break
+        queue.task_done()
 
 
 def main():
@@ -61,7 +65,7 @@ def main():
 
     global headless, brain, world, robot, queue
     parser = ArgumentParser(prog='soar',
-                                     description='SoaR v0.2.0\n'
+                                     description='SoaR v0.3.0\n'
                                                  'Snakes on a Robot: An extensible Python framework '
                                                  'for simulating and interacting with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')

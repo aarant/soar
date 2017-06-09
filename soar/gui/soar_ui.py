@@ -1,23 +1,19 @@
 import time
+from queue import Queue
 from threading import Thread
-import importlib.util
 
-try:
-    from Tkinter import *
-    import tkFileDialog as filedialog
-except ImportError:
-    from tkinter import *
-    from tkinter import filedialog
+from tkinter import *
+from tkinter import filedialog
 
 from soar.client import client
 from soar.client.messages import *
-from soar.gui.canvas import *
+from soar.geometry import *
+from soar.gui.canvas import SoarCanvas
 
-def demo_setup(c):
-    robot = RobotGraphics(300, (125, 250))
+def polygon():
 
     # Building the 8-sided shape of the sonar faces
-    s = [Point(0, 0) for i in range(14)]
+    s = [Point(0, 0) for i in range(9)]
     s[1].add((1, 0))
     s[2].add((2, 0))
     s[2].rotate(s[1], 2 * pi / 14.0)
@@ -25,16 +21,11 @@ def demo_setup(c):
         s[i].add(s[i - 1])
         s[i].scale(2.0, s[i - 2])
         s[i].rotate(s[i - 1], 2 * pi / 14.0)
-
-    s = PointCollection(s, fill='red')
-    s.scale(26)
-    s.rotate((0, 0), -pi / 2)
-    s.recenter((125, 250))
-    s.translate((-20, 22))
-    return robot, s
+    s = PointCollection(s, fill='red', tags='poly')
+    return s
 
 class SoarUI(Tk):
-    def __init__(self, parent=None, brain=None, world=None, title='SoaR v0.2.0'):
+    def __init__(self, parent=None, brain=None, world=None, title='SoaR v0.3.0'):
         Tk.__init__(self, parent)
         self.parent = parent
         self.initialize()
@@ -49,6 +40,7 @@ class SoarUI(Tk):
             'parent': parent,
             'title': "Find your file",
         }
+        self.queue = Queue(maxsize=1000)
 
     def mainloop(self, n=0):
         t = Thread(target=client.mainloop, daemon=True)
@@ -96,20 +88,21 @@ class SoarUI(Tk):
 
     def start_cmd(self):
         assert self.brain is not None and (self.real_set or self.world is not None)
-        client.message(BRAIN_MSG,CONTINUE_MSG)
+        client.message(START_SIM, self.queue)
 
     def pause_cmd(self):
         assert self.brain is not None and (self.real_set or self.world is not None)
-        client.message(BRAIN_MSG,PAUSE_MSG)
+        client.message(PAUSE_SIM, self.queue)
 
     def step_cmd(self):
         assert self.brain is not None and not self.real_set and self.world is not None
-        client.message(BRAIN_MSG,STEP_MSG)
+        client.message(STEP_SIM, self.queue)
 
     def reload_cmd(self):
         # Reload consists of killing the brain, and simulator (or real robot process),
         # followed by opening them up again. We ignore brain death once when doing this.
         #
+        client.message(CLOSE_SIM)
         client.message(LOAD_WORLD, self.world)
         client.message(LOAD_BRAIN, self.brain)
 
@@ -133,30 +126,30 @@ class SoarUI(Tk):
             return
         client.message(LOAD_WORLD, self.world)
 
-        if self.brain is not None:
-            self.reload_cmd()
+        #if self.brain is not None:
+            #self.reload_cmd()
         self.reset()
 
     def sim_cmd(self):
         assert self.world is not None
         self.real_set = False
-        spec = importlib.util.spec_from_file_location('', self.world)
-        world = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(world)
-        c = Canvas(self, **world.tk_options)
-        c.grid(column=0, row=1, sticky='EW')
-        robot, s = demo_setup(c)
-        client.message(ADD_OBJECTS, {'robot': robot, 'sonars': s})
-        client.message(START_SIM, c)
+        client.message(MAKE_SIM)
+        world_options = self.queue.get()
+        self.queue.task_done()
+        self.sim = SoarCanvas(self, **world_options)
+        self.sim.grid(row=1)
 
         def tick():
-            c.delete('all')
-            robot.draw(c)
-            s.draw(c)
-            if client.foo is False:
-                c.destroy()
-            else:
-                self.after(10, tick)
+            while not self.queue.empty():
+                obj = self.queue.get()
+                if obj == 'DESTROY':
+                    self.sim.destroy()
+                    self.queue.task_done()
+                    return
+                obj.delete(self.sim)
+                obj.draw(self.sim)
+                self.queue.task_done()
+            self.after(10, tick)
 
         self.after(0, tick)
 
