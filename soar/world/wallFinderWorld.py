@@ -1,4 +1,3 @@
-from soar.world.baseWorld import *
+from soar.world.base import *
 
-options.update({'pixels_per_meter': 500/1.0})
-initial_position = (0.5, 0.5)
+world = World(dimensions=(3.0, 3.0), initial_position=(1.6, 1.5))

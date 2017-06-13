@@ -1,12 +1,11 @@
-import time
 from queue import Queue
 from threading import Thread
 
 from tkinter import *
 from tkinter import filedialog
 
-from soar.client import client
-from soar.client.messages import *
+from soar.main import client
+from soar.main.messages import *
 from soar.geometry import *
 from soar.gui.canvas import SoarCanvas
 
@@ -25,13 +24,15 @@ def polygon():
     return s
 
 class SoarUI(Tk):
-    def __init__(self, parent=None, brain=None, world=None, title='SoaR v0.3.0'):
+    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.4.0'):
         Tk.__init__(self, parent)
         self.parent = parent
         self.initialize()
         self.real_set = False
-        self.brain = brain
-        self.world = world
+        self.brain_path = brain_path
+        self.world_path = world_path
+        if self.brain_path is not None and self.world_path is not None:
+            self.reset()
         self.title(title)
         self.protocol('WM_DELETE_WINDOW', self.close)
         self.file_opt = {
@@ -56,8 +57,8 @@ class SoarUI(Tk):
     def initialize(self):
         self.grid()
 
-        self.start = Button(self,text=u'START',command=self.start_cmd, padx=50, pady=50, state=DISABLED)
-        self.pause = Button(self,text=u'PAUSE',command=self.pause_cmd, padx=50, pady=50, state=DISABLED)
+        self.play = Button(self,text=u'START',command=self.start_cmd, padx=50, pady=50, state=DISABLED)
+        self.stop = Button(self,text=u'STOP',command=self.stop_cmd, padx=50, pady=50, state=DISABLED)
         self.step = Button(self,text=u'STEP',command=self.step_cmd, padx=50, pady=50, state=DISABLED)
         self.reload = Button(self,text=u'RELOAD',command=self.reload_cmd, padx=50, pady=50, state=DISABLED)
         self.world_but = Button(self,text=u'WORLD',command=self.world_cmd, padx=50, pady=50, state=NORMAL)
@@ -65,8 +66,8 @@ class SoarUI(Tk):
         self.sim = Button(self,text=u'SIMULATOR',command=self.sim_cmd, padx=50, pady=50, state=DISABLED)
         self.real = Button(self,text=u'REAL ROBOT',command=self.real_cmd, padx=50, pady=50, state=DISABLED)
 
-        self.start.grid(column = 0, row = 0, sticky='EW')
-        self.pause.grid(column = 1, row = 0, sticky='EW')
+        self.play.grid(column = 0, row = 0, sticky='EW')
+        self.stop.grid(column = 1, row = 0, sticky='EW')
         self.step.grid(column = 2, row = 0, sticky='EW')
         self.reload.grid(column = 3, row = 0, sticky='EW')
         self.brain_but.grid(column = 4, row = 0, sticky='EW')
@@ -78,24 +79,26 @@ class SoarUI(Tk):
         self.resizable(True,False)
 
     def reset(self):
-        ready_for_action = NORMAL if self.world is not None and self.brain is not None else DISABLED
-        self.start.config(state=ready_for_action)
-        self.pause.config(state=ready_for_action)
+        ready_for_action = NORMAL if self.world_path is not None and self.brain_path is not None else DISABLED
+        self.play.config(state=ready_for_action)
+        self.stop.config(state=ready_for_action)
         self.step.config(state=ready_for_action)
         self.reload.config(state=ready_for_action)
         self.sim.config(state=ready_for_action)
         self.real.config(state=ready_for_action)
 
     def start_cmd(self):
-        assert self.brain is not None and (self.real_set or self.world is not None)
+        assert self.brain_path is not None and (self.real_set or self.world_path is not None)
+        self.play.config(text='PAUSE', command=self.pause_cmd)
         client.message(START_SIM, self.queue)
 
     def pause_cmd(self):
-        assert self.brain is not None and (self.real_set or self.world is not None)
+        assert self.brain_path is not None and (self.real_set or self.world_path is not None)
+        self.play.config(text='START', command=self.start_cmd)
         client.message(PAUSE_SIM, self.queue)
 
     def step_cmd(self):
-        assert self.brain is not None and not self.real_set and self.world is not None
+        assert self.brain_path is not None and not self.real_set and self.world_path is not None
         client.message(STEP_SIM, self.queue)
 
     def reload_cmd(self):
@@ -103,51 +106,64 @@ class SoarUI(Tk):
         # followed by opening them up again. We ignore brain death once when doing this.
         #
         client.message(CLOSE_SIM)
-        client.message(LOAD_WORLD, self.world)
-        client.message(LOAD_BRAIN, self.brain)
+        print('brain:', self.brain_path)
+        client.message(LOAD_BRAIN, self.brain_path)
+        client.message(LOAD_WORLD, self.world_path)
 
     def brain_cmd(self):
         new_brain = filedialog.askopenfilename(**self.file_opt)
-        old_brain = self.brain
+        old_brain = self.brain_path
         if new_brain:
-            self.brain = new_brain
+            self.brain_path = new_brain
             client.message(LOAD_BRAIN, new_brain)
         else:
             return
-        if self.world is not None:
+        if self.world_path is not None:
             self.reload_cmd()
         self.reset()
+
+    def stop_cmd(self):
+        self.pause_cmd()
+        client.message(STOP_SIM)
 
     def world_cmd(self):
         new_world = filedialog.askopenfilename(**self.file_opt)
         if new_world:
-            self.world = new_world
+            self.world_path = new_world
         else:
             return
-        client.message(LOAD_WORLD, self.world)
+        client.message(LOAD_WORLD, self.world_path)
 
         #if self.brain is not None:
             #self.reload_cmd()
         self.reset()
 
+    def canvas_from_world(self, world):
+        dim_x, dim_y = world.dimensions
+        max_dim = max(dim_x, dim_y)
+        options = {'width': int(dim_x/max_dim*500), 'height': int(dim_y/max_dim*500), 'pixels_per_meter': 500/max_dim,
+                   'bg': 'white'}
+        return SoarCanvas(self, **options)
+
     def sim_cmd(self):
-        assert self.world is not None
+        assert self.world_path is not None
         self.real_set = False
         client.message(MAKE_SIM)
-        world_options = self.queue.get()
+        world = self.queue.get()
+        self.world = self.canvas_from_world(world)
+        self.world.grid(row=1)
+        world.draw(self.world)
         self.queue.task_done()
-        self.sim = SoarCanvas(self, **world_options)
-        self.sim.grid(row=1)
 
         def tick():
             while not self.queue.empty():
                 obj = self.queue.get()
                 if obj == 'DESTROY':
-                    self.sim.destroy()
+                    self.world.destroy()
                     self.queue.task_done()
                     return
-                obj.delete(self.sim)
-                obj.draw(self.sim)
+                obj.delete(self.world)
+                obj.draw(self.world)
                 self.queue.task_done()
             self.after(10, tick)
 
