@@ -1,6 +1,5 @@
 from soar.geometry import Line
 
-
 class World:
     def __init__(self, dimensions, initial_position=(0, 0), objects=None):
         self.dimensions = dimensions
@@ -15,3 +14,17 @@ class World:
         for obj in self.objects:
             if obj.redraw:
                 obj.draw(canvas)
+
+    def delete(self, canvas):
+        for obj in self.objects:
+            if obj.redraw:
+                obj.delete(canvas)
+
+    def tick(self, duration):
+        for obj in self.objects:
+            try:
+                do_tick = obj.do_tick
+                if do_tick:
+                    obj.tick(self, duration)
+            except AttributeError:
+                foo = 0  # TODO

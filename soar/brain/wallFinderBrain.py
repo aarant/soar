@@ -39,7 +39,7 @@ def on_step():
 # called when the stop button is pushed
 def on_stop():
     #PlotWindow().plot(robot.readings)
-    print('This is where the PlotWindow would display')
+    print('Brain on_stop() called')
     pass
 
 # called when brain or world is reloaded (before setup)
