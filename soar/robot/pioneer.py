@@ -1,6 +1,7 @@
 from soar.geometry import *
 from soar.robot.base import GenericRobot
 from soar.geometry import Line
+from soar.world.base import WorldObject
 
 def clip(value, m1, m2):
     lower = min(m1, m2)
@@ -12,9 +13,10 @@ def clip(value, m1, m2):
     else:
         return value
 
-class PioneerRobot(GenericRobot):
+class PioneerRobot(GenericRobot, WorldObject):
     def __init__(self, io=None, pos=None):
         GenericRobot.__init__(self, io, pos)
+        WorldObject.__init__(self, True, True)
         self.signals.update({'set_forward_velocity': self.set_forward_velocity,
                              'set_rotational_velocity': self.set_rotational_velocity,
                              'sonars': self.get_sonars})
@@ -47,6 +49,8 @@ class PioneerRobot(GenericRobot):
         self.tags = 'pioneer'
         self.FV_CAP = 2.0  # TODO: These are not correct
         self.RV_CAP = 0.5
+        self.SONAR_MAX = 1.5
+        self.collided = False
 
     def set_forward_velocity(self, fv):
         if self.io is None:
@@ -58,36 +62,39 @@ class PioneerRobot(GenericRobot):
 
     def get_sonars(self):
         if self.io is None:
-            i = 0
             sonars = [5.0]*8
-            for pose in self.sonar_poses:
-                temp = Pose(*pose)
+            for i in range(len(self.sonar_poses)):
+                # We take each sonar and build a line as long as the world's max dimension, and check for collisions
+                temp = Pose(*self.sonar_poses[i])
                 temp = temp.transform((self.polygon.center[0], self.polygon.center[1], -self.pos[2]))
                 temp.rotate(self.polygon.center, self.pos[2])
                 x0, y0 = temp[0], temp[1]
-                x1, y1 = x0 + 5.0 * cos(temp[2]), y0 + 5.0 * sin(temp[2])
-                l = Line((x0, y0), (x1, y1))
+                x1, y1 = x0 + max(self.world.dimensions) * cos(temp[2]), y0 + max(self.world.dimensions) * sin(temp[2])
+                ray = Line((x0, y0), (x1, y1))
                 intersects = []
-                for obj in self.world.objects:
-                    p = l.intersection(obj)
-                    if p is not None:
-                        p = Point(*p)
-                        intersects.append((p, p.distance(temp)))
-                intersects.sort(key=lambda t: t[1])
-                for p, distance in intersects:
-                    if l.has_point(p):
-                        if distance > 1.5:  # TODO: Sonar max
-                            sonars[i] = 5.0
-                        else:
-                            sonars[i] = distance
-                        break
-                i += 1
+                for obj in self.world:
+                    if obj is not self:
+                        p = ray.collision(obj)
+                        if p:
+                            p = Point(*p)
+                            intersects.append((p, p.distance(temp)))
+                intersects.sort(key=lambda t: t[1])  # Find the nearest collision
+                if len(intersects) > 0:
+                    p, distance = intersects[0]
+                    if distance < self.SONAR_MAX:
+                        sonars[i] = distance
             return sonars
 
     def tick(self, duration):
-        GenericRobot.tick(self, duration)
-        d_t = self.rv*duration
-        self.polygon.rotate(self.polygon.center, d_t)
+        if not self.collided:
+            GenericRobot.tick(self, duration)
+            d_t = self.rv*duration
+            self.polygon.rotate(self.polygon.center, d_t)
+            for obj in self.world:
+                if obj is not self:
+                    if self.collision(obj):
+                        self.collided = True
+                        self.polygon.options['fill'] = 'red'
 
     def draw(self, canvas):
         self.polygon.recenter(self.pos)
@@ -98,9 +105,22 @@ class PioneerRobot(GenericRobot):
             temp = temp.transform((self.polygon.center[0], self.polygon.center[1], -self.pos[2]))
             temp.rotate(self.polygon.center, self.pos[2])
             if dist > 1.5:
-                temp.draw(canvas, 5.0, tags=self.tags, fill='red')
+                temp.draw(canvas, max(self.world.dimensions), tags=self.tags, fill='red')  # TODO: Change max dimensions
             else:
                 temp.draw(canvas, dist, tags=self.tags, fill='gray')
+
+    def collision(self, obj):
+        if isinstance(obj, Line):
+            lines = []
+            for i in range(len(self.polygon)-1):
+                p1, p2 = self.polygon[i], self.polygon[i+1]
+                lines.append(Line(p1, p2))
+            lines.append(Line(self.polygon[len(self.polygon)-1], self.polygon[0]))
+            for line in lines:
+                intersect = line.collision(obj)
+                if intersect and line.has_point(intersect):
+                    return intersect
+            return None
 
     def delete(self, canvas):
         canvas.delete(self.tags)

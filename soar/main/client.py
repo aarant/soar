@@ -39,14 +39,12 @@ def mainloop():
     global headless, brain, world, robot, sim, queue, gui, output
     while True:
         topic, data = queue.get()
-        output('Threads: ' + str(threading.active_count()), topic, data)
+        print('Threads: ' + str(threading.active_count()), topic, data)
         if topic == MAKE_GUI:  # Open a SoaR UI
             gui = SoarUI(**data[0])
             def output(*texts):
-                s = ''
                 for text in texts:
-                    s += str(text) + ' '
-                gui.print_queue.put(s + '\n')
+                    gui.print_queue.put(text)
             gui.mainloop()  # Run Tk in main thread
         elif topic == LOAD_BRAIN:  # Load the brain module and initialize its robot
             brain = load_module(data[0])
@@ -73,10 +71,18 @@ def mainloop():
                 sim.on_start(single_step=True)
         elif topic == STOP_SIM:
             sim.running = False
-            sim.thread.join()
+            try:
+                sim.thread.join()
+            except AttributeError:
+                pass
             sim.on_stop()
         elif topic == CLOSE_SIM:
             if sim is not None:
+                sim.running = False
+                try:
+                    sim.thread.join()
+                except AttributeError:
+                    pass
                 if not headless:
                     gui.draw_queue.put('DESTROY')
                 sim = None
@@ -90,7 +96,7 @@ def main():
     """ Main entrypoint, for use from the command line """
     global headless, brain, world, robot, queue
     parser = ArgumentParser(prog='soar',
-                                     description='SoaR v0.5.0\n'
+                                     description='SoaR v0.6.0\n'
                                                  'Snakes on a Robot: An extensible Python framework '
                                                  'for simulating and interacting with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')

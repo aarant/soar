@@ -10,8 +10,13 @@ class OutputField(Frame):
         self.text_field.pack()
         self.scroll.config(command=self.text_field.yview)
 
-    def output(self, text):
+    def insert(self, text):
         self.text_field.config(state=NORMAL)
-        self.text_field.insert(END, text)
+        self.text_field.insert(END, '> ' + str(text) + '\n')
         self.text_field.see(END)
+        self.text_field.config(state=DISABLED)
+
+    def clear(self):
+        self.text_field.config(state=NORMAL)
+        self.text_field.delete(1.0, END)
         self.text_field.config(state=DISABLED)

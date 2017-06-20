@@ -16,19 +16,18 @@ class Simulator:
         self.tick_duration = 0.1  # 1 decisecond
 
     def on_load(self):
-        self.robot.pos = Pose(self.world.initial_position[0], self.world.initial_position[1], 0.0)  # TODO: Not always 0
-        self.robot.world = self.world
+        self.robot.pos = Pose(*self.world.initial_position)
+        self.world.add(self.robot)
         self.brain.print = client.output
         if not self.headless:
-            client.message(DRAW, self.world, self.robot)
+            client.message(DRAW, self.world)
         self.brain.on_load()
 
     def on_step(self):
         self.brain.on_step()
         self.world.tick(self.tick_duration)
-        self.robot.tick(self.tick_duration)
         if not self.headless:
-            client.message(DRAW, self.world, self.robot)
+            client.message(DRAW, self.world)
 
     def on_start(self, single_step=False):
         if not self.started:

@@ -33,7 +33,7 @@ def on_step():
     #PROPORTIONAL
     k = 2.5
     velocity = k * (distance - 0.6)
-    robot.set_forward_velocity(velocity)
+    robot.set_forward_velocity(0.5)
     robot.set_rotational_velocity(0.0)
 
 # called when the stop button is pushed

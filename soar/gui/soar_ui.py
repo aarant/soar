@@ -31,9 +31,8 @@ def polygon():
 class SoarUI(Tk):
     image_dir = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'media/')
 
-    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.5.0'):
+    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.6.0'):
         Tk.__init__(self, parent)
-        #self.parent = parent
         self.title(title)
         self.play_image = PhotoImage(file=os.path.join(self.image_dir, 'play.gif'))
         self.pause_image = PhotoImage(file=os.path.join(self.image_dir, 'pause.gif'))
@@ -78,7 +77,7 @@ class SoarUI(Tk):
         self.sim_but.grid(column=6, row=0)
         self.real.grid(column=7, row=0)
         self.output.grid(column=0, row=2, columnspan=8, sticky='EW')
-        self.resizable(False, False)  # TODO: Can only be resized horizontally
+        self.resizable(False, False)
 
     def reset(self):
         self.play.config(state=DISABLED, image=self.play_image, command=self.play_cmd)
@@ -89,6 +88,7 @@ class SoarUI(Tk):
         self.world_but.config(state=NORMAL, text='WORLD', command=self.world_cmd)
         self.sim_but.config(state=DISABLED, text='SIMULATOR', command=self.sim_cmd)
         self.real.config(state=DISABLED, text='REAL ROBOT', command=self.real_cmd)
+        self.output.clear()
 
     def mainloop(self, n=0):
         t = Thread(target=client.mainloop, daemon=True)
@@ -100,7 +100,7 @@ class SoarUI(Tk):
     def tick(self):
         while not self.print_queue.empty():
             text = self.print_queue.get()
-            self.output.output(text)
+            self.output.insert(text)
             self.print_queue.task_done()
         while not self.draw_queue.empty():
             obj = self.draw_queue.get()
@@ -111,6 +111,9 @@ class SoarUI(Tk):
             elif obj == 'DESTROY':
                 self.sim_window.destroy()
                 self.sim_window = None
+                self.draw_queue = Queue(maxsize=1000)
+                self.after(10, self.tick)
+                return
             else:
                 obj.delete(self.sim_window)
                 obj.draw(self.sim_window)
@@ -153,11 +156,13 @@ class SoarUI(Tk):
         self.load_world()
 
     def load_brain(self):
-        self.real.config(state=NORMAL)
+        #self.real.config(state=NORMAL)
+        self.output.insert('LOAD BRAIN: ' + self.brain_path)
         if self.world_path is not None:
             self.sim_but.config(state=NORMAL)
 
     def load_world(self):
+        self.output.insert('LOAD WORLD: ' + self.world_path)
         if self.brain_path is not None:
             self.sim_but.config(state=NORMAL)
 
@@ -198,13 +203,7 @@ class SoarUI(Tk):
         self.step.config(state=NORMAL)
         self.stop.config(state=DISABLED)
         self.reload.config(state=NORMAL)
-        self.sim_but.config(text='CLOSE', command=self.close_sim_cmd)
-
-
-    def close_sim_cmd(self):
-        client.message(CLOSE_SIM)
-        self.draw_queue.join()
-        self.sim_but.config(text='SIMULATOR', command=self.sim_cmd)
+        self.sim_but.config(state=DISABLED)
 
 
     def real_cmd(self):

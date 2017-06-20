@@ -1,4 +1,4 @@
-""" SoaR v0.5.0 geometry classes """
+""" SoaR v0.6.0 geometry classes """
 
 from math import sin, cos, pi, sqrt
 
@@ -105,6 +105,9 @@ class PointCollection(Drawable):
     def __getitem__(self, item):
         return self.points[item]
 
+    def __len__(self):
+        return len(self.points)
+
     def __str__(self):
         return str([str(p) for p in self.points])
 
@@ -138,6 +141,8 @@ class PointCollection(Drawable):
 class Line(Drawable):
     def __init__(self, start, end, **options):
         Drawable.__init__(self, **options)
+        self.do_draw = True
+        self.do_tick = False
         self.start = start
         self.end = end
         if 'width' not in options:
@@ -158,23 +163,29 @@ class Line(Drawable):
 
     def draw(self, canvas):
         canvas.create_line(self.start[0], self.start[1], self.end[0], self.end[1], **self.options)
-        self.redraw = False
+        self.do_draw = False
 
-    def intersection(self, other):
+    def collision(self, other):
+        # First solve for the intersections of the infinite length lines
         a = np.array([other.equ, self.equ])
         b = np.array([[other.c],
                       [self.c]])
         try:
             x = np.linalg.solve(a, b)
         except np.linalg.LinAlgError:
-            return None  # TODO: Catch errors
-        return x[0][0], x[1][0]
+            return None  # TODO: Does this always work?
+        else:
+            p = x[0][0], x[1][0]
+            if self.has_point(p) and other.has_point(p):  # Check whether the point is on the line *segments*
+                return p
+            else:
+                return None
 
     def has_point(self, p):
-        x, y = p.xy_tuple()
+        x, y = p[0], p[1]
         a, b = self.equ[0], self.equ[1]
         c = self.c
-        if abs(c-(a*x+b*y)) < 0.00000001:  # TODO: Epsilon
+        if abs(c-(a*x+b*y)) < 0.00000001:  # TODO: Epsilon?
             min_x, min_y = min(self.start[0], self.end[0]), min(self.start[1], self.end[1])
             max_x, max_y = max(self.start[0], self.end[0]), max(self.start[1], self.end[1])
             return min_x <= x <= max_x and min_y <= y <= max_y
