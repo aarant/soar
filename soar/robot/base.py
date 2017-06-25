@@ -15,7 +15,7 @@ class GenericRobot:
             self.pos = Pose(0, 0, 0)
         self.fv = 0
         self.rv = 0
-        self.signals = {'connect': self.connect}
+        self.signals = {}
 
     def signal(self, name, value=None):
         if name not in self.signals:
@@ -29,6 +29,9 @@ class GenericRobot:
         self.pos = self.pos.transform(Pose(d_x, d_y, d_t))
 
     def connect(self):
+        raise NotImplementedError
+
+    def disconnect(self):
         raise NotImplementedError
 
     def draw(self, canvas):

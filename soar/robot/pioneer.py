@@ -96,6 +96,12 @@ class PioneerRobot(GenericRobot, WorldObject):
                         self.collided = True
                         self.polygon.options['fill'] = 'red'
 
+    def move(self, pose):
+        x, y, t = pose
+        current_theta = self.pos[2]
+        self.polygon.rotate(self.polygon.center, t-current_theta)
+        self.pos = Pose(x, y, t)
+
     def draw(self, canvas):
         self.polygon.recenter(self.pos)
         self.polygon.draw(canvas)

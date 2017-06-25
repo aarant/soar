@@ -4,7 +4,7 @@ import threading
 from threading import Thread
 import importlib.util
 
-from soar.gui.soar_ui import SoarUI, polygon
+from soar.gui.soar_ui import SoarUI
 from soar.geometry import Point, Pose
 from soar.main.messages import *
 from soar.sim.sim import Simulator
@@ -56,6 +56,7 @@ def mainloop():
                 gui.draw_queue.put(item)
         elif topic == MAKE_SIM:
             sim = Simulator(robot, brain, world, headless)
+            sim.ui = gui
             sim.on_load()
         elif topic == START_SIM:
             t = Thread(target=sim.on_start, daemon=True)
@@ -96,7 +97,7 @@ def main():
     """ Main entrypoint, for use from the command line """
     global headless, brain, world, robot, queue
     parser = ArgumentParser(prog='soar',
-                                     description='SoaR v0.6.0\n'
+                                     description='SoaR v0.7.0\n'
                                                  'Snakes on a Robot: An extensible Python framework '
                                                  'for simulating and interacting with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')

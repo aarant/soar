@@ -16,9 +16,10 @@ class Simulator:
         self.tick_duration = 0.1  # 1 decisecond
 
     def on_load(self):
-        self.robot.pos = Pose(*self.world.initial_position)
+        self.robot.move(self.world.initial_position)
         self.world.add(self.robot)
         self.brain.print = client.output
+        self.brain.ui = self.ui
         if not self.headless:
             client.message(DRAW, self.world)
         self.brain.on_load()
