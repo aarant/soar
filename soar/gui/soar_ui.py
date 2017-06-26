@@ -1,7 +1,8 @@
+"""SoaR v0.7.1 UI """
+
 from queue import Queue
-from threading import Thread
+from threading import Thread, Lock
 import os
-import sys
 from time import sleep
 
 from tkinter import *
@@ -9,16 +10,15 @@ from tkinter import filedialog
 
 from soar.main import client
 from soar.main.messages import *
-from soar.geometry import *
 from soar.gui.canvas import SoarCanvas, SoarCanvasFrame
-from soar.gui.output import OutputField
+from soar.gui.output import OutputFrame
 from soar.world.base import World
 
 
 class SoarUI(Tk):
-    image_dir = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'gui/')
+    image_dir = os.path.dirname(__file__)
 
-    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.7.0'):
+    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.7.1'):
         Tk.__init__(self, parent)
         self.title(title)
         self.play_image = PhotoImage(file=os.path.join(self.image_dir, 'play.gif'))
@@ -33,7 +33,7 @@ class SoarUI(Tk):
         self.world_but = Button(self)
         self.sim_but = Button(self)
         self.real = Button(self)
-        self.output = OutputField(self)
+        self.output = OutputFrame(self)
         self.initialize()
         self.brain_path = brain_path
         self.world_path = world_path
@@ -42,7 +42,7 @@ class SoarUI(Tk):
         if self.world_path is not None:
             self.load_world()
         self.windows = []
-        self.sim_window = None
+        self.sim_canvas = None
         self.protocol('WM_DELETE_WINDOW', self.close)
         self.file_opt = {
             'defaultextension': '.py',
@@ -54,6 +54,7 @@ class SoarUI(Tk):
         self.print_queue = Queue(maxsize=1000)
 
     def initialize(self):
+        """ Initializes the grid geometry """
         self.grid()
         self.reset()
         self.play.grid(column=0, row=0, pady=5)
@@ -64,9 +65,10 @@ class SoarUI(Tk):
         self.world_but.grid(column=5, row=0)
         self.sim_but.grid(column=6, row=0)
         self.real.grid(column=7, row=0)
-        self.output.grid(column=0, row=2, columnspan=8, sticky='EW')
+        self.output.grid(column=0, row=1, columnspan=8, sticky='EW')
 
     def reset(self):
+        """ Resets all of the button states to what they are at the start of the program, before any files are loaded"""
         self.play.config(state=DISABLED, image=self.play_image, command=self.play_cmd)
         self.step.config(state=DISABLED, image=self.step_image, command=self.step_cmd)
         self.stop.config(state=DISABLED, image=self.stop_image, command=self.stop_cmd)
@@ -78,6 +80,7 @@ class SoarUI(Tk):
         self.output.clear()
 
     def mainloop(self, n=0):
+        """ Enters the Tk event loop, and restarts the client as a new thread """
         t = Thread(target=client.mainloop, daemon=True)
         t.start()
         self.after(0, self.tick)
@@ -85,37 +88,63 @@ class SoarUI(Tk):
         t.join()
 
     def toplevel(self, sim_linked=True):
+        """ Adds a new window to the UI's internal list, and returns a new Toplevel window,
+        optionally linking it to the simulator window's status
+
+        Args:
+            sim_linked (bool): If True, the window will be destroyed whenever the simulator window is destroyed.
+        """
         t = Toplevel()
         self.windows.append((t, sim_linked))
         return t
 
-    def flush(self):
+    def canvas_from_world(self, world):
+        dim_x, dim_y = world.dimensions
+        max_dim = max(dim_x, dim_y)
+        width = int(dim_x / max_dim * 500)
+        height = int(dim_y / max_dim * 500)
+        options = {'width': width, 'height': height, 'pixels_per_meter': 500 / max_dim, 'bg': 'white'}
+        t = self.toplevel()
+        t.title('SoaR v0.7.1 Simulation')
+        t.protocol('WM_DELETE_WINDOW', self.close_cmd)
+        t.aspect(width, height, width, height)
+        f = SoarCanvasFrame(t)
+        f.pack(fill=BOTH, expand=YES)
+        c = SoarCanvas(f, **options)
+        c.pack(fill=BOTH, expand=YES)
+        self.sim_canvas = c
+        return c
+
+    def reset_ui(self):
+        while not self.print_queue.empty():
+            task = self.print_queue.get()
+            self.print_queue.task_done()
         while not self.draw_queue.empty():
             task = self.draw_queue.get()
             self.draw_queue.task_done()
+        for tup in reversed(self.windows):
+            window, sim_linked = tup
+            if sim_linked:
+                self.windows.remove(tup)
+                window.destroy()
+        self.sim_canvas = None
 
     def tick(self):
         while not self.print_queue.empty():
-            text = self.print_queue.get()
-            self.output.insert(text)
+            texts = self.print_queue.get()
+            self.output.insert(texts)
             self.print_queue.task_done()
         while not self.draw_queue.empty():
             obj = self.draw_queue.get()
-            if isinstance(obj, World) and self.sim_window is None:
-                self.sim_window = self.canvas_from_world(obj)
-                self.sim_window.grid(row=1, columnspan=8)
-                obj.draw(self.sim_window)
-            elif obj == 'DESTROY':
-                for tup in reversed(self.windows):
-                    window, sim_linked = tup
-                    if sim_linked:
-                        self.windows.remove(tup)
-                        window.destroy()
-                self.sim_window = None
-                self.flush()
+            if isinstance(obj, World) and self.sim_canvas is None:
+                self.sim_canvas = self.canvas_from_world(obj)
+                obj.draw(self.sim_canvas)
+            elif obj == CLOSE_SIM:  # Need to flush the queues and kill sim-linked windows
+                self.reset_ui()
+                break
             else:
-                obj.delete(self.sim_window)
-                obj.draw(self.sim_window)
+                obj.delete(self.sim_canvas)
+                obj.draw(self.sim_canvas)
             self.draw_queue.task_done()
         self.after(10, self.tick)
 
@@ -143,36 +172,33 @@ class SoarUI(Tk):
         self.stop.config(state=DISABLED)
         client.message(STOP_SIM)
 
-    def reload_cmd(self):
+    def reload_cmd(self, remake_sim=True):
         # Reload consists of killing the brain, and simulator (or real robot process),
         # followed by opening them up again. We ignore brain death once when doing this.
         #
-        remake_sim = True if self.sim_window is not None else False
         client.message(CLOSE_SIM)
         client.message(LOAD_BRAIN, self.brain_path)
         client.message(LOAD_WORLD, self.world_path)
         self.reset()
         self.load_brain()
         self.load_world()
-        if remake_sim:
+        if self.sim_canvas is not None and remake_sim:
             self.sim_cmd()
 
     def close_cmd(self):
         client.message(CLOSE_SIM)
-        client.message(LOAD_BRAIN, self.brain_path)
-        client.message(LOAD_WORLD, self.world_path)
-        self.reset()
-        self.load_brain()
-        self.load_world()
+        self.play.config(state=DISABLED, image=self.play_image, command=self.play_cmd)
+        self.step.config(state=DISABLED, image=self.step_image, command=self.step_cmd)
+        self.stop.config(state=DISABLED, image=self.stop_image, command=self.stop_cmd)
 
     def load_brain(self):
         #self.real.config(state=NORMAL)
-        self.output.insert('LOAD BRAIN: ' + self.brain_path)
+        client.output('LOAD BRAIN:', self.brain_path)
         if self.world_path is not None:
             self.sim_but.config(state=NORMAL)
 
     def load_world(self):
-        self.output.insert('LOAD WORLD: ' + self.world_path)
+        client.output('LOAD WORLD:', self.world_path)
         if self.brain_path is not None:
             self.sim_but.config(state=NORMAL)
 
@@ -199,22 +225,6 @@ class SoarUI(Tk):
                 client.message(LOAD_WORLD, new_world)
                 self.load_world()
 
-    def canvas_from_world(self, world):
-        dim_x, dim_y = world.dimensions
-        max_dim = max(dim_x, dim_y)
-        width = int(dim_x/max_dim*500)
-        height = int(dim_y/max_dim*500)
-        options = {'width': width, 'height': height, 'pixels_per_meter': 500/max_dim, 'bg': 'white'}
-        t = self.toplevel()
-        t.title('SoaR v0.7.0 Simulation')
-        t.protocol('WM_DELETE_WINDOW', self.close_cmd)
-        t.aspect(width-5, height-5, width+5, height+5)
-        f = SoarCanvasFrame(t)
-        f.pack(fill=BOTH, expand=YES)
-        c = SoarCanvas(f, **options)
-        c.pack(fill=BOTH, expand=YES)
-        return c
-
     def sim_cmd(self):
         client.message(MAKE_SIM)  # TODO: Don't know how long this takes
         self.play.config(image=self.play_image, state=NORMAL)
@@ -222,7 +232,6 @@ class SoarUI(Tk):
         self.stop.config(state=DISABLED)
         self.reload.config(state=NORMAL)
         self.sim_but.config(state=DISABLED)
-
 
     def real_cmd(self):
         self.real_set = True

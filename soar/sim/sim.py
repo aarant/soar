@@ -2,7 +2,6 @@ from time import sleep
 
 from soar.main import client
 from soar.main.messages import *
-from soar.geometry import *
 
 
 class Simulator:
@@ -19,9 +18,6 @@ class Simulator:
         self.robot.move(self.world.initial_position)
         self.world.add(self.robot)
         self.brain.print = client.output
-        self.brain.ui = self.ui
-        if not self.headless:
-            client.message(DRAW, self.world)
         self.brain.on_load()
 
     def on_step(self):

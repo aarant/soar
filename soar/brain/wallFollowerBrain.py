@@ -1,12 +1,12 @@
 import math
 
 from soar.robot.pioneer import PioneerRobot
-
+from soar.gui.plugin import *
 import lib601.sonarDist as sonarDist
 from soar.gui.plotWindow import PlotWindow
 
+
 robot = PioneerRobot()
-ui = None
 
 
 # called when the brain is loaded
@@ -32,7 +32,7 @@ def on_step():
 
 # called when the stop button is pushed
 def on_stop():
-    p = PlotWindow(toplevel=lambda: ui.toplevel(False))
+    p = PlotWindow(toplevel=Toplevel)
     p.plot(robot.distance)    # plot the list of distances
     print(2*math.pi/math.atan2(math.sqrt(1.0*0.1*0.1*0.1), 1))
 

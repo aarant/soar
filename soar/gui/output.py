@@ -1,6 +1,6 @@
 from tkinter import *
 
-class OutputField(Frame):
+class OutputFrame(Frame):
     def __init__(self, master):
         Frame.__init__(self, master, bg='white')
         self.scroll = Scrollbar(self)
@@ -12,7 +12,7 @@ class OutputField(Frame):
 
     def insert(self, text):
         self.text_field.config(state=NORMAL)
-        self.text_field.insert(END, '> ' + str(text) + '\n')
+        self.text_field.insert(END, text)
         self.text_field.see(END)
         self.text_field.config(state=DISABLED)
 

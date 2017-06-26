@@ -11,7 +11,6 @@ class SoarCanvas(Canvas):
         self.height = options['height']
 
     def on_resize(self, event):
-        print('Resizing canvas')
         wscale = event.width / float(self.width)
         hscale = event.height / float(self.height)
         scale = min(wscale, hscale)
@@ -21,7 +20,6 @@ class SoarCanvas(Canvas):
         self.pixels_per_meter *= scale
         self.scale('all', 0, 0, scale, scale)
 
-
     def create_polygon(self, *args, **kw):
         args = list(map(lambda x: x*self.pixels_per_meter, args))
         Canvas.create_polygon(self, *args, **kw)
@@ -29,6 +27,7 @@ class SoarCanvas(Canvas):
     def create_line(self, *args, **kw):
         args = list(map(lambda x: x * self.pixels_per_meter, args))
         Canvas.create_line(self, *args, **kw)
+
 
 class SoarCanvasFrame(Frame):
     def __init__(self, parent, **options):

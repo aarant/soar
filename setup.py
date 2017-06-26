@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='SoaR',
-      version='0.7.0',
+      version='0.7.1',
       description='Snakes on a Robot: Python robotics framework',
       long_description='An extensible Python framework for simulating and interacting with robots',
       author='Andrew Antonitis',

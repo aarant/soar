@@ -25,7 +25,7 @@ class GenericRobot:
 
     def tick(self, duration):
         theta = self.pos.xyt_tuple()[2]
-        d_x, d_y, d_t = cos(-theta)*self.fv*duration, sin(-theta)*self.fv*duration, self.rv*duration
+        d_x, d_y, d_t = cos(-theta)*self.fv*duration, sin(-theta)*self.fv*duration, self.rv*duration  # TODO: Negative theta
         self.pos = self.pos.transform(Pose(d_x, d_y, d_t))
 
     def connect(self):

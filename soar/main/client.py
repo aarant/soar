@@ -5,6 +5,7 @@ from threading import Thread
 import importlib.util
 
 from soar.gui.soar_ui import SoarUI
+from soar.gui import plugin
 from soar.geometry import Point, Pose
 from soar.main.messages import *
 from soar.sim.sim import Simulator
@@ -16,24 +17,42 @@ robot = None
 sim = None
 queue = Queue(maxsize=1000)
 tk_queue = None
-output = print
 gui = None
+
 
 def reset_queue():
     """ Reset the queue """
     global queue
     queue = Queue(maxsize=1000)
 
+
 def message(topic, *data):
     if len(data) == 0:
         data = None
     queue.put((topic, data))
+
 
 def load_module(path):
     spec = importlib.util.spec_from_file_location('', path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def output(*strs):
+    if gui:
+        gui.print_queue.put('> ' + ' '.join([str(s) for s in strs]) + '\n')
+    else:
+        print(*strs)
+
+
+def set_brain_plugins():
+    global brain
+    for key in plugin.__dict__:
+        if key == 'Toplevel':
+            print(key, plugin.__dict__[key])
+            setattr(brain, key, plugin.__dict__[key])
+            print(getattr(brain, key))
 
 def mainloop():
     global headless, brain, world, robot, sim, queue, gui, output
@@ -42,12 +61,11 @@ def mainloop():
         print('Threads: ' + str(threading.active_count()), topic, data)
         if topic == MAKE_GUI:  # Open a SoaR UI
             gui = SoarUI(**data[0])
-            def output(*texts):
-                for text in texts:
-                    gui.print_queue.put(text)
+            plugin.Toplevel = gui.toplevel
             gui.mainloop()  # Run Tk in main thread
         elif topic == LOAD_BRAIN:  # Load the brain module and initialize its robot
             brain = load_module(data[0])
+            set_brain_plugins()
             robot = brain.robot
         elif topic == LOAD_WORLD:
             world = load_module(data[0]).world
@@ -56,8 +74,9 @@ def mainloop():
                 gui.draw_queue.put(item)
         elif topic == MAKE_SIM:
             sim = Simulator(robot, brain, world, headless)
-            sim.ui = gui
             sim.on_load()
+            if not headless:
+                gui.draw_queue.put(world)
         elif topic == START_SIM:
             t = Thread(target=sim.on_start, daemon=True)
             sim.thread = t
@@ -78,15 +97,13 @@ def mainloop():
                 pass
             sim.on_stop()
         elif topic == CLOSE_SIM:
-            if sim is not None:
-                sim.running = False
-                try:
-                    sim.thread.join()
-                except AttributeError:
-                    pass
-                if not headless:
-                    gui.draw_queue.put('DESTROY')
-                sim = None
+            sim.running = False
+            try:
+                sim.thread.join()
+            except AttributeError:
+                pass
+            if not headless:
+                gui.draw_queue.put(CLOSE_SIM)
         elif topic == CLOSE:
             queue.task_done()
             break
@@ -96,10 +113,8 @@ def mainloop():
 def main():
     """ Main entrypoint, for use from the command line """
     global headless, brain, world, robot, queue
-    parser = ArgumentParser(prog='soar',
-                                     description='SoaR v0.7.0\n'
-                                                 'Snakes on a Robot: An extensible Python framework '
-                                                 'for simulating and interacting with robots')
+    parser = ArgumentParser(prog='soar', description='SoaR v0.7.1\nSnakes on a Robot: An extensible Python framework '
+                                                     'for simulating and interacting with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')
     parser.add_argument('-b', metavar='brain', type=str, help='Path to the brain file', required=False)
     parser.add_argument('-w', metavar='world', type=str, help='Path to the world file', required=False)
