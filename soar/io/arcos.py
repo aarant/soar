@@ -53,6 +53,7 @@ command_types = {
     ENABLE: int,
     VEL: int,
     RVEL: int,
+    SONAR: int,
     }
 
 
@@ -97,7 +98,7 @@ def decode_packet(packet):
     """
 
     def b_2_i(l, i):  # Takes a list and an index and returns the two bytes combined into an int
-        return (l[i] << 8) | (l[i] & 0xff)
+        return l[i] | (l[i+1] << 8)
 
     data = {'TYPE': packet[3], 'XPOS': b_2_i(packet, 4), 'YPOS': b_2_i(packet, 6),
             'THPOS': b_2_i(packet, 8), 'L VEL': b_2_i(packet, 10), 'R VEL': b_2_i(packet, 12),
@@ -118,8 +119,12 @@ class ARCOSClient:
     def __init__(self, timeout=1.0, write_timeout=1.0):
         self.timeout = timeout
         self.write_timeout = write_timeout
+        self.ser = None
         self.serial_lock = Lock()  # A lock is needed so that packets sent by separate threads do not interfere
         self.pulse_running = False
+        self.sip_running = False
+        self.sip = None
+        self.sonars = [5000]*32
 
     def send_packet(self, *data):
         """ Sends arbitrary data (in the form of a tuple of bytes) to the ARCOS server
@@ -140,23 +145,23 @@ class ARCOSClient:
             If the header or checksum are invalid, raises an InvalidPacket exception
         """
         def read():
-            try:
-                b = ord(self.ser.read())
-            except TypeError:
-                raise Timeout
-            else:
-                return b
-
-        # Grab the packet header and ensure it is valid
-        h1 = read()
-        h2 = read()
-        if h1 != 0xfa or h2 != 0xfb:
-            raise InvalidPacket
-        data = [0xfa, 0xfb]
-        l = read()
-        data.append(l)
-        for i in range(l):
-            data.append(read())
+                try:
+                    b = ord(self.ser.read())
+                except TypeError:
+                    raise Timeout
+                else:
+                    return b
+        with self.serial_lock:
+            # Grab the packet header and ensure it is valid
+            h1 = read()
+            h2 = read()
+            if h1 != 0xfa or h2 != 0xfb:
+                raise InvalidPacket
+            data = [0xfa, 0xfb]
+            l = read()
+            data.append(l)
+            for i in range(l):
+                data.append(read())
 
         received_crc = (data[-1] & 0xFF) | (data[-2] << 8)
         crc = packet_checksum(data)
@@ -169,7 +174,11 @@ class ARCOSClient:
         if command_types[code] == None:
             self.send_packet(code)
         elif command_types[code] == int:
-            arg_type = 0x1b  # Negative or absolute integer
+            if data > 0:
+                arg_type = 0x3b # Positive integer
+            else:
+                arg_type = 0x1b
+                data *= -1
             b = [data >> 8, data & 0xff]
             b.reverse()
             self.send_packet(code, arg_type, *b)
@@ -196,6 +205,7 @@ class ARCOSClient:
                 # Try to sync; if there is a timeout, the port is probably not connected to a robot, so move on
                 try:
                     self.sync()
+                    self.start()
                 except Timeout:
                     pass
                 else:
@@ -205,9 +215,11 @@ class ARCOSClient:
     def disconnect(self):
         """ Stops the connected ARCOS server and closes the serial port """
         self.pulse_running = False  # Kill the pulse timer
-        self.send_packet(STOP)  # Stop the robot
-        self.send_packet(CLOSE)
-        self.ser.close()
+        self.sip_running = False
+        if self.ser:  # Only attempt this if the serial port exists
+            self.send_packet(STOP)  # Stop the robot
+            self.send_packet(CLOSE)
+            self.ser.close()
 
     def sync(self):
         """ Syncs with and initializes an ARCOS server connected over an open serial port
@@ -230,23 +242,26 @@ class ARCOSClient:
             s += c
         print(s)
 
-        # Once we've synced, open the servers, enable the motors, and set up the pulse timer
-        self.send_packet(OPEN)
-        self.send_command(ENABLE, 1)
-        t = Thread(target=self.pulse, daemon=True)
-        t.start()
-
     def pulse(self):
         self.pulse_running = True
         while self.pulse_running:
             self.send_packet(PULSE)
-            packet = self.receive_packet()
-            # print(hex(packet[3]))
             sleep(1.0)
-        
-            
-        
 
-arcos = ARCOSClient()
-arcos.connect()
+    def update_sip(self):
+        self.sip_running = True
+        while self.sip_running:
+            self.sip = decode_packet(self.receive_packet())
+            for sonar, dist in self.sip['SONARS'].items():
+                self.sonars[sonar] = dist
+
+    def start(self):
+        """ Open the servers, enable the motors & sonars, and start the pulse & sip timers """
+        self.send_packet(OPEN)
+        self.send_command(ENABLE, 1)
+        self.send_command(SONAR, 1)
+        pulse = Thread(target=self.pulse, daemon=True)
+        pulse.start()
+        sip = Thread(target=self.update_sip, daemon=True)
+        sip.start()
 

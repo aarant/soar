@@ -39,3 +39,18 @@ class GenericRobot:
 
     def delete(self, canvas):
         raise NotImplementedError
+
+    def on_load(self):
+        pass
+
+    def on_start(self):
+        pass
+
+    def on_step(self):
+        pass
+
+    def on_stop(self):
+        pass
+
+    def on_shutdown(self):
+        pass

@@ -1,7 +1,7 @@
 from time import sleep
 
-from soar.main import client
-from soar.main.messages import *
+from soar.client import client
+from soar.client.messages import *
 
 
 class Simulator:
@@ -24,7 +24,7 @@ class Simulator:
         self.brain.on_step()
         self.world.tick(self.tick_duration)
         if not self.headless:
-            client.message(DRAW, self.world)
+            client.message(draw, self.world)
 
     def on_start(self, single_step=False):
         if not self.started:
@@ -42,3 +42,4 @@ class Simulator:
         self.running = False
         self.started = False
         self.brain.on_stop()
+

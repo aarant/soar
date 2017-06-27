@@ -1,4 +1,4 @@
-""" SoaR v0.7.1 geometry classes """
+""" SoaR v0.7.2 geometry classes """
 
 from math import sin, cos, pi, sqrt
 

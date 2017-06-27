@@ -2,6 +2,8 @@ from soar.geometry import *
 from soar.robot.base import GenericRobot
 from soar.geometry import Line
 from soar.world.base import WorldObject
+from soar.io.arcos import *
+from soar.controller import ControllerError
 
 def clip(value, m1, m2):
     lower = min(m1, m2)
@@ -47,13 +49,16 @@ class PioneerRobot(GenericRobot, WorldObject):
                             (0.09972419534513688, 0.18369591654177436, 1.21),
                             (0.013008094924083946, 0.20348830058744055, 1.57)]
         self.tags = 'pioneer'
+        self.world = None
         self.FV_CAP = 2.0  # TODO: These are not correct
         self.RV_CAP = 0.5
         self.SONAR_MAX = 1.5
         self.collided = False
 
     def set_forward_velocity(self, fv):
-        if self.io is None:
+        if self.io:
+            self.io.send_command(VEL, int(fv*1000))
+        else:
             self.fv = clip(fv, -self.FV_CAP, self.FV_CAP)
 
     def set_rotational_velocity(self, rv):
@@ -61,7 +66,9 @@ class PioneerRobot(GenericRobot, WorldObject):
             self.rv = clip(rv, -self.RV_CAP, self.RV_CAP)
 
     def get_sonars(self):
-        if self.io is None:
+        if self.io:
+            return io.sonars[:8]  # TODO
+        else:
             sonars = [5.0]*8
             for i in range(len(self.sonar_poses)):
                 # We take each sonar and build a line as long as the world's max dimension, and check for collisions
@@ -130,3 +137,27 @@ class PioneerRobot(GenericRobot, WorldObject):
 
     def delete(self, canvas):
         canvas.delete(self.tags)
+
+    def on_load(self):
+        if self.world:
+            self.io = None
+        else:
+            self.io = ARCOSClient()
+            try:
+                self.io.connect()
+            except ARCOSError as e:
+                raise ControllerError(str(e))
+
+    def on_start(self):
+        pass
+
+    def on_step(self):
+        pass
+
+    def on_stop(self):
+        if self.io:
+            self.io.send_command(STOP)
+
+    def on_shutdown(self):
+        if self.io:
+            self.io.disconnect()

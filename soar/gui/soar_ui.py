@@ -1,4 +1,4 @@
-"""SoaR v0.7.1 UI """
+"""SoaR v0.7.2 UI """
 
 from queue import Queue
 from threading import Thread, Lock
@@ -8,8 +8,7 @@ from time import sleep
 from tkinter import *
 from tkinter import filedialog
 
-from soar.main import client
-from soar.main.messages import *
+from soar import client
 from soar.gui.canvas import SoarCanvas, SoarCanvasFrame
 from soar.gui.output import OutputFrame
 from soar.world.base import World
@@ -18,7 +17,7 @@ from soar.world.base import World
 class SoarUI(Tk):
     image_dir = os.path.dirname(__file__)
 
-    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.7.1'):
+    def __init__(self, parent=None, brain_path=None, world_path=None, title='SoaR v0.7.2'):
         Tk.__init__(self, parent)
         self.title(title)
         self.play_image = PhotoImage(file=os.path.join(self.image_dir, 'play.gif'))
@@ -105,7 +104,7 @@ class SoarUI(Tk):
         height = int(dim_y / max_dim * 500)
         options = {'width': width, 'height': height, 'pixels_per_meter': 500 / max_dim, 'bg': 'white'}
         t = self.toplevel()
-        t.title('SoaR v0.7.1 Simulation')
+        t.title('SoaR v0.7.2 Simulation')
         t.protocol('WM_DELETE_WINDOW', self.close_cmd)
         t.aspect(width, height, width, height)
         f = SoarCanvasFrame(t)
@@ -139,7 +138,7 @@ class SoarUI(Tk):
             if isinstance(obj, World) and self.sim_canvas is None:
                 self.sim_canvas = self.canvas_from_world(obj)
                 obj.draw(self.sim_canvas)
-            elif obj == CLOSE_SIM:  # Need to flush the queues and kill sim-linked windows
+            elif obj == 'CLOSE_SIM':  # Need to flush the queues and kill sim-linked windows
                 self.reset_ui()
                 break
             else:
@@ -150,49 +149,57 @@ class SoarUI(Tk):
 
     def close(self):
         self.destroy()
-        client.message(CLOSE)  # HACK
-        client.message(CLOSE)
+        client.message('CLOSE')  # HACK
+        client.message('CLOSE')
 
     def play_cmd(self):
         self.play.config(image=self.pause_image, command=self.pause_cmd)
         self.stop.config(state=NORMAL)
-        client.message(START_SIM)
+        client.message(client.start_controller)
 
     def pause_cmd(self):
         self.play.config(image=self.play_image, command=self.play_cmd)
-        client.message(PAUSE_SIM)
+        client.message(client.pause_controller)
 
     def step_cmd(self):
         self.stop.config(state=NORMAL)
-        client.message(STEP_SIM)
+        client.message(client.step_controller)
 
     def stop_cmd(self):
         self.play.config(image=self.play_image, command=self.play_cmd, state=DISABLED)
         self.step.config(state=DISABLED)
         self.stop.config(state=DISABLED)
-        client.message(STOP_SIM)
+        client.message(client.stop_controller)
 
-    def reload_cmd(self, remake_sim=True):
+    def reload_cmd(self):
         # Reload consists of killing the brain, and simulator (or real robot process),
         # followed by opening them up again. We ignore brain death once when doing this.
         #
-        client.message(CLOSE_SIM)
-        client.message(LOAD_BRAIN, self.brain_path)
-        client.message(LOAD_WORLD, self.world_path)
+        client.message(client.shutdown_controller)
+        if self.sim_canvas:
+            self.draw_queue.put('CLOSE_SIM')
         self.reset()
-        self.load_brain()
-        self.load_world()
-        if self.sim_canvas is not None and remake_sim:
+        if self.brain_path:
+            client.message(client.load_brain, self.brain_path)
+            self.load_brain()
+        if self.world_path:
+            client.message(client.load_world, self.world_path)
+            self.load_world()
+        if self.sim_canvas:
             self.sim_cmd()
 
-    def close_cmd(self):
-        client.message(CLOSE_SIM)
+    def close_cmd(self, shutdown=True):
+        if shutdown:
+            client.message(client.shutdown_controller)
+        if self.sim_canvas:
+            self.draw_queue.put('CLOSE_SIM')
         self.play.config(state=DISABLED, image=self.play_image, command=self.play_cmd)
         self.step.config(state=DISABLED, image=self.step_image, command=self.step_cmd)
         self.stop.config(state=DISABLED, image=self.stop_image, command=self.stop_cmd)
+        self.reload.config(state=NORMAL)
 
     def load_brain(self):
-        #self.real.config(state=NORMAL)
+        self.real.config(state=NORMAL)
         client.output('LOAD BRAIN:', self.brain_path)
         if self.world_path is not None:
             self.sim_but.config(state=NORMAL)
@@ -211,7 +218,7 @@ class SoarUI(Tk):
                 self.reload_cmd()
             else:
                 self.brain_path = new_brain
-                client.message(LOAD_BRAIN, new_brain)
+                client.message(client.load_brain, new_brain)
                 self.load_brain()
 
     def world_cmd(self):
@@ -222,16 +229,20 @@ class SoarUI(Tk):
                 self.reload_cmd()
             else:
                 self.world_path = new_world
-                client.message(LOAD_WORLD, new_world)
+                client.message(client.load_world, new_world)
                 self.load_world()
 
     def sim_cmd(self):
-        client.message(MAKE_SIM)  # TODO: Don't know how long this takes
+        client.message(client.make_sim)  # TODO: Don't know how long this takes
         self.play.config(image=self.play_image, state=NORMAL)
         self.step.config(state=NORMAL)
         self.stop.config(state=DISABLED)
         self.reload.config(state=NORMAL)
         self.sim_but.config(state=DISABLED)
+        self.real.config(state=DISABLED)
 
     def real_cmd(self):
-        self.real_set = True
+        client.message(client.make_interface)
+        self.play.config(image=self.play_image, state=NORMAL)
+        self.sim_but.config(state=DISABLED)
+        self.real.config(state=DISABLED)
