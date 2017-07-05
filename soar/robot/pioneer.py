@@ -1,9 +1,12 @@
+from math import pi
+
 from soar.geometry import *
-from soar.robot.base import GenericRobot
+from soar.robot.base import BaseRobot
 from soar.geometry import Line
 from soar.world.base import WorldObject
 from soar.io.arcos import *
-from soar.controller import ControllerError
+from soar.controller import SoarIOError
+from soar.plugins.name import name
 
 def clip(value, m1, m2):
     lower = min(m1, m2)
@@ -15,13 +18,10 @@ def clip(value, m1, m2):
     else:
         return value
 
-class PioneerRobot(GenericRobot, WorldObject):
-    def __init__(self, io=None, pos=None):
-        GenericRobot.__init__(self, io, pos)
+class PioneerRobot(BaseRobot, WorldObject):
+    def __init__(self):
+        BaseRobot.__init__(self)
         WorldObject.__init__(self, True, True)
-        self.signals.update({'set_forward_velocity': self.set_forward_velocity,
-                             'set_rotational_velocity': self.set_rotational_velocity,
-                             'sonars': self.get_sonars})
         self.polygon = PointCollection([(-0.034120395949525435, -0.21988658579769327),
                                         (0.057113186972574566, -0.21988658579769327),
                                         (0.13931180489258044, -0.17002226170095702),
@@ -50,24 +50,26 @@ class PioneerRobot(GenericRobot, WorldObject):
                             (0.013008094924083946, 0.20348830058744055, 1.57)]
         self.tags = 'pioneer'
         self.world = None
-        self.FV_CAP = 2.0  # TODO: These are not correct
-        self.RV_CAP = 0.5
-        self.SONAR_MAX = 1.5
+        self.FV_CAP = 1.5  # m/s
+        self.RV_CAP = 2*pi  # rad/sec
+        self.SONAR_MAX = 1.5  # meters
         self.collided = False
 
     def set_forward_velocity(self, fv):
         if self.io:
-            self.io.send_command(VEL, int(fv*1000))
+            self.io.send_command(VEL, int(fv*1000))  # Convert m/s to mm/s
         else:
             self.fv = clip(fv, -self.FV_CAP, self.FV_CAP)
 
     def set_rotational_velocity(self, rv):
+        if self.io:
+            self.io.send_command(RVEL, int(rv*180/pi))  # Convert radians/sec to degrees/sec
         if self.io is None:
             self.rv = clip(rv, -self.RV_CAP, self.RV_CAP)
 
     def get_sonars(self):
         if self.io:
-            return io.sonars[:8]  # TODO
+            return [s/1000.0 for s in self.io.sonars[:8]]  # Convert mm to meters
         else:
             sonars = [5.0]*8
             for i in range(len(self.sonar_poses)):
@@ -94,7 +96,7 @@ class PioneerRobot(GenericRobot, WorldObject):
 
     def tick(self, duration):
         if not self.collided:
-            GenericRobot.tick(self, duration)
+            BaseRobot.tick(self, duration)
             d_t = self.rv*duration
             self.polygon.rotate(self.polygon.center, d_t)
             for obj in self.world:
@@ -142,17 +144,29 @@ class PioneerRobot(GenericRobot, WorldObject):
         if self.world:
             self.io = None
         else:
-            self.io = ARCOSClient()
             try:
+                self.io = ARCOSClient()
                 self.io.connect()
+                self.io.send_command(CONFIG)
+                self.io.wait_for(self.io.config_event, 1.0, 'Error retrieving robot configuration')
+                config = self.io.config_pac
+                serial_num = config['SERNUM']
+                print('Connected to ' + ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']]) + ' \'' + name(serial_num) + '\'')
+                self.io.send_command(ENCODER, 2)
+                self.io.wait_for(self.io.encoder_event, 1.0, 'Error retrieving encoder data')
+                encoder = self.io.encoder_pac
+                print(encoder['L_ENCODER'], encoder['R_ENCODER'])
             except ARCOSError as e:
-                raise ControllerError(str(e))
+                raise SoarIOError(str(e)) from e
 
     def on_start(self):
         pass
 
     def on_step(self):
         pass
+        # if self.world:
+        #     encoder = self.io.encoder_pac
+        #     print(encoder['L_ENCODER'], encoder['R_ENCODER'])
 
     def on_stop(self):
         if self.io:

@@ -1,6 +1,9 @@
+from math import pi
+
 from soar.robot.pioneer import PioneerRobot
 
 robot = PioneerRobot()
+robot.count = 0
 
 # this function is called when the brain is (re)loaded
 def on_load():
@@ -12,6 +15,7 @@ def on_start():
 
 # this function is called 10 times per second
 def on_step():
+    foo = 2 / 0
     #io.sonar_monitor(True)
     
     #read in the sonar readings from the robot.
@@ -21,7 +25,7 @@ def on_step():
 
     #print the reading from the central sonar
     distance = s[3]
-    print(distance)
+    #print(s[3])
     robot.readings.append(distance)
 
     #BANG BANG
@@ -33,8 +37,11 @@ def on_step():
     #PROPORTIONAL
     k = 2.5
     velocity = k * (distance - 0.6)
-    robot.set_forward_velocity(velocity)
-    robot.set_rotational_velocity(0.0)
+    #print(int(velocity*1000))
+    if robot.count >= 50:
+        robot.set_forward_velocity(0)
+        robot.set_rotational_velocity(0)
+    robot.count += 1
 
 # called when the stop button is pushed
 def on_stop():
