@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>soar.controller &mdash; Soar 0.9.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+        <link rel="up" title="soar" href="soar.html"/>
+        <link rel="prev" title="soar.client" href="soar.client.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Soar
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="soar.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="soar.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="soar.client.html">soar.client</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.controller</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Soar</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="soar.html">soar</a> &raquo;</li>
+        
+      <li>soar.controller</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/soar.controller.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-soar.controller">
+<span id="soar-controller"></span><h1>soar.controller<a class="headerlink" href="#module-soar.controller" title="Permalink to this headline">¶</a></h1>
+<p>soar.controller</p>
+<dl class="class">
+<dt id="soar.controller.Controller">
+<em class="property">class </em><code class="descclassname">soar.controller.</code><code class="descname">Controller</code><span class="sig-paren">(</span><em>robot</em>, <em>brain</em>, <em>world=None</em>, <em>step_duration=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A class for interacting with simulated or real robots</p>
+<p>Initialized by the client and used to call the user defined methods of the robot and brain</p>
+<dl class="attribute">
+<dt id="soar.controller.Controller.running">
+<code class="descname">running</code><a class="headerlink" href="#soar.controller.Controller.running" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – Indicates whether the controller is currently running; i.e, repeatedly stepping</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.controller.Controller.started">
+<code class="descname">started</code><a class="headerlink" href="#soar.controller.Controller.started" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – Indicates whether the controller has been started</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.controller.Controller.thread">
+<code class="descname">thread</code><a class="headerlink" href="#soar.controller.Controller.thread" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Thread</em> – The thread in which the controller is currently running</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>robot</strong> – An instance of a subclass of BaseRobot</li>
+<li><strong>brain</strong> – The currently loaded brain module, supporting the on_load(), on_start(), on_step(), on_stop(), and
+on_shutdown() methods</li>
+<li><strong>world</strong> – An instance of World or one of its subclasses. If this argument is omitted or None, the Controller
+will be interacting with a real robot</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="soar.controller.Controller.on_failure">
+<code class="descname">on_failure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller fails</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.controller.Controller.on_load">
+<code class="descname">on_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller is loaded</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.controller.Controller.on_shutdown">
+<code class="descname">on_shutdown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller is shut down</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.controller.Controller.on_start">
+<code class="descname">on_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller is started/unpaused</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.controller.Controller.on_step">
+<code class="descname">on_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller undergoes a single step</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.controller.Controller.on_stop">
+<code class="descname">on_stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller is stopped</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.controller.Controller.protected_exc">
+<code class="descname">protected_exc</code><span class="sig-paren">(</span><em>*funcs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.protected_exc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes function(s) with protection, notifying the client of exceptions which occur</p>
+<p>If a SoarIOError exception occurs during the execution of any function, print the exception’s content to stderr.
+This triggers a controller soft error, which necessitates reloading the brain and world</p>
+<p>If any other exception occurs, print the full traceback to stderr, and signal a controller failure to the client</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*funcs</strong> – A variable length list of callables</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="soar.controller.SoarIOError">
+<em class="property">exception </em><code class="descclassname">soar.controller.</code><code class="descname">SoarIOError</code><a class="headerlink" href="#soar.controller.SoarIOError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+<p>Raised whenever an error occurs communicating with a real robot</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="soar.client.html" class="btn btn-neutral" title="soar.client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Andrew Antonitis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.9.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

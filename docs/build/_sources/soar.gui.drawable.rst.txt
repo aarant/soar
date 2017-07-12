@@ -1,0 +1,7 @@
+soar\.gui\.drawable module
+==========================
+
+.. automodule:: soar.gui.drawable
+    :members:
+    :undoc-members:
+    :show-inheritance:

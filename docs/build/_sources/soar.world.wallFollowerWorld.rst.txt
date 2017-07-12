@@ -1,0 +1,7 @@
+soar\.world\.wallFollowerWorld module
+=====================================
+
+.. automodule:: soar.world.wallFollowerWorld
+    :members:
+    :undoc-members:
+    :show-inheritance:

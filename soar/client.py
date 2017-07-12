@@ -7,10 +7,8 @@ import importlib
 import traceback as tb
 import sys
 
-from soar.gui.soar_ui import SoarUI
-from soar.gui.output import OutputRedirect
+import soar.gui.soar_ui as soar_ui
 from soar.gui import plugin
-from soar.geometry import Point, Pose
 from soar.controller import *
 
 headless = False
@@ -23,6 +21,7 @@ controller = None
 gui = None
 queue = Queue(maxsize=1000)
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -34,6 +33,7 @@ def reset_queue():
 
 
 def message(func, *data):
+    global queue
     queue.put((func, data))
 
 
@@ -57,7 +57,7 @@ def set_brain_plugins():
 def make_gui(*data):
     """ Creates the GUI, updates plugin attributes, and enters the main UI loop """
     global gui
-    gui = SoarUI()
+    gui = soar_ui.SoarUI()
     plugin.Toplevel = gui.toplevel
     gui.mainloop()
     print('Mainloop over')  # TODO
@@ -99,6 +99,7 @@ def make_interface(*data):
     global robot, brain, controller
     controller = Controller(robot, brain)
     controller.on_load()
+    gui.real_ready()
 
 
 def start_controller(*data):
@@ -130,10 +131,11 @@ def stop_controller(*data):
 
 def shutdown_controller(*data):
     global controller
-    controller.running = False
-    if controller.thread != current_thread():
-        controller.thread.join()
-    controller.on_shutdown()
+    if controller:
+        controller.running = False
+        if controller.thread != current_thread():
+            controller.thread.join()
+        controller.on_shutdown()
 
 
 def controller_soft_error(*data):
@@ -152,13 +154,19 @@ def controller_soft_error(*data):
 def controller_failure(*data):
     """ The controller has failed in an unanticipated way """
     global controller
-    controller.running = False
-    controller.on_failure()
-    if gui:
-        gui.close_cmd(shutdown=False)
+    if controller:
+        controller.running = False
+        controller.on_failure()
+        if gui:
+            gui.controller_failure()
 
 
 def close(*data):
+    global robot
+    try:
+        robot.on_shutdown()
+    except Exception:
+        pass
     return True
 
 
@@ -186,7 +194,7 @@ def mainloop():
 def main():
     """ Main entrypoint, for use from the command line """
     global headless, brain, world, robot, queue
-    parser = ArgumentParser(prog='soar', description='SoaR v0.8.0\nSnakes on a Robot: An extensible Python framework '
+    parser = ArgumentParser(prog='soar', description='SoaR v0.9.0\nSnakes on a Robot: An extensible Python framework '
                                                      'for simulating and interacting with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')
     parser.add_argument('-b', metavar='brain', type=str, help='Path to the brain file', required=False)

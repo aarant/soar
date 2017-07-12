@@ -1,4 +1,4 @@
-"""SoaR v0.8.0 UI """
+"""SoaR v0.9.0 UI """
 
 from queue import Queue
 from threading import Thread, Lock, Event
@@ -12,15 +12,56 @@ from tkinter import filedialog
 from soar import client
 from soar.gui.canvas import SoarCanvas, SoarCanvasFrame
 from soar.gui.output import OutputRedirect, OutputFrame, SoarIO
-from soar.world.base import World
+from soar.sim.world import World
+
+
+class ButtonFrame(Frame):
+    """ A Tk frame containing an image Button and a Label immediately beneath it, arranged via the grid geometry manager
+
+    Attributes:
+        button: The button inside the frame
+        label: The label inside the frame
+
+    Args:
+        master: The parent widget or window in which to place the frame
+        image (optional): The image to place inside the button
+        text (optional): The text to place inside the label
+        command (optional): The function to call when the button is clicked
+        state (optional): The state of the button, either NORMAL or DISABLED
+    """
+    def __init__(self, master, image=None, text=None, command=None, state=None):
+        Frame.__init__(self, master)
+        self.button = Button(self)
+        self.label = Label(self)
+        self.config(image, text, command, state)
+        self.button.grid(row=0, column=0)
+        self.label.grid(row=1, column=0)
+
+    def config(self, image=None, text=None, command=None, state=None):
+        """ Sets the parameters of the button/label
+
+        Args:
+            image (optional): The image to place inside the button
+            text (optional): The text to place inside the label
+            command (optional): The function to call when the button is clicked
+            state (optional): The state of the button, either NORMAL or DISABLED
+        """
+        if image:
+            self.button.config(image=image)
+        if text:
+            self.label.config(text=text)
+        if command:
+            self.button.config(command=command)
+        if state:
+            self.button.config(state=state)
 
 
 class SoarUI(Tk):
     image_dir = os.path.dirname(__file__)
-    world_dir = os.path.join(image_dir, '../world/')
-    brain_dir = os.path.join(image_dir, '../brain/')
+    world_dir = os.path.join(image_dir, '../worlds/')
+    brain_dir = os.path.join(image_dir, '../brains/')
 
-    def __init__(self, parent=None, title='SoaR v0.8.0'):
+    def __init__(self, parent=None, title='SoaR v0.9.0'):
         Tk.__init__(self, parent)
         self.brain_path = None
         self.world_path = None
@@ -29,18 +70,22 @@ class SoarUI(Tk):
         self.pause_image = PhotoImage(file=os.path.join(self.image_dir, 'pause.gif'))
         self.step_image = PhotoImage(file=os.path.join(self.image_dir, 'step.gif'))
         self.stop_image = PhotoImage(file=os.path.join(self.image_dir, 'stop.gif'))
-        self.play = Button(self)
-        self.step = Button(self)
-        self.stop = Button(self)
-        self.reload = Button(self)
-        self.brain_but = Button(self)
-        self.world_but = Button(self)
+        self.reload_image = PhotoImage(file=os.path.join(self.image_dir, 'reload.gif'))
+        self.brain_image = PhotoImage(file=os.path.join(self.image_dir, 'brain.gif'))
+        self.world_image = PhotoImage(file=os.path.join(self.image_dir, 'world.gif'))
+        self.play = ButtonFrame(self)
+        self.step = ButtonFrame(self)
+        self.stop = ButtonFrame(self)
+        self.reload = ButtonFrame(self)
+        self.brain_but = ButtonFrame(self)
+        self.world_but = ButtonFrame(self)
         self.sim_but = Button(self)
         self.real = Button(self)
         self.output = OutputFrame(self)
         self.initialize()
         self.windows = []
         self.sim_canvas = None
+        self.connected = False
         self.protocol('WM_DELETE_WINDOW', self.close)
         self.file_opt = {
             'defaultextension': '.py',
@@ -54,31 +99,41 @@ class SoarUI(Tk):
         """ Initializes the grid geometry """
         self.grid()
         self.reset(clear_output=False)
-        self.play.grid(column=0, row=0, pady=5)
-        self.step.grid(column=1, row=0, pady=5)
-        self.stop.grid(column=2, row=0, pady=5)
-        self.reload.grid(column=3, row=0, pady=5)
-        self.brain_but.grid(column=4, row=0)
-        self.world_but.grid(column=5, row=0)
-        self.sim_but.grid(column=6, row=0)
-        self.real.grid(column=7, row=0)
-        self.output.grid(column=0, row=1, columnspan=8, sticky='EW')
+        self.play.grid(column=0, row=0, pady=5, sticky='W')
+        self.step.grid(column=1, row=0, pady=5, sticky='W')
+        self.stop.grid(column=2, row=0, pady=5, sticky='W')
+        self.reload.grid(column=3, row=0, pady=5, sticky='W')
+        self.brain_but.grid(column=4, row=0, padx=5)
+        self.world_but.grid(column=5, row=0, padx=5)
+        self.sim_but.grid(column=6, row=0, sticky='E')
+        self.real.grid(column=7, row=0, sticky='E')
+        self.grid_columnconfigure(3, weight=1)
+        self.grid_columnconfigure(6, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+        self.output.grid(column=0, row=2, columnspan=8, sticky='NSEW')
 
     def reset(self, clear_output=True):
-        """ Resets all of the button states to what they are at the start of the program, before any files are loaded"""
-        self.play.config(state=DISABLED, image=self.play_image, command=self.play_cmd)
-        self.step.config(state=DISABLED, image=self.step_image, command=self.step_cmd)
-        self.stop.config(state=DISABLED, image=self.stop_image, command=self.stop_cmd)
-        self.reload.config(state=DISABLED, text='RELOAD', command=self.reload_cmd)
-        self.brain_but.config(state=NORMAL, text='BRAIN', command=self.brain_cmd)
-        self.world_but.config(state=NORMAL, text='WORLD', command=self.world_cmd)
-        self.sim_but.config(state=DISABLED, text='SIMULATOR', command=self.sim_cmd)
-        self.real.config(state=DISABLED, text='REAL ROBOT', command=self.real_cmd)
+        """ Resets all of the button states to what they are at initialization, before any files are loaded
+
+        Args:
+            clear_output (bool, optional): If True, clears the contents of the output frame
+        """
+        self.play.config(image=self.play_image, text='Play', command=self.play_cmd, state=DISABLED)
+        self.step.config(image=self.step_image, text='Step', command=self.step_cmd, state=DISABLED)
+        self.stop.config(image=self.stop_image, text='Stop', command=self.stop_cmd, state=DISABLED)
+        self.reload.config(image=self.reload_image, text='Reload', command=self.reload_cmd, state=DISABLED)
+        self.brain_but.config(image=self.brain_image, text='Load Brain', command=self.brain_cmd, state=NORMAL)
+        self.world_but.config(image=self.world_image, text='Load World', command=self.world_cmd, state=NORMAL)
+        self.sim_but.config(text='SIMULATOR', command=self.sim_cmd, state=DISABLED)
+        self.real.config(text='REAL ROBOT', command=self.real_cmd, state=DISABLED)
         if clear_output:
             self.output.clear()
 
     def mainloop(self, n=0):
-        """ Enters the Tk event loop, and restarts the client as a new thread """
+        """ Enters the Tk event loop, and restarts the client as a new thread
+
+        Redirects stdout and stderr to the GUI's output frame
+        """
         t = Thread(target=client.mainloop, daemon=True)
         t.start()
         self.after(0, self.tick)
@@ -95,24 +150,35 @@ class SoarUI(Tk):
 
     def toplevel(self, sim_linked=True):
         """ Adds a new window to the UI's internal list, and returns a new Toplevel window,
-        optionally linking it to the simulator window's status
+        optionally linking it to the simulator window
 
         Args:
             sim_linked (bool): If True, the window will be destroyed whenever the simulator window is destroyed.
+
+        Returns:
+            The new Toplevel window
         """
         t = Toplevel()
         self.windows.append((t, sim_linked))
         return t
 
     def canvas_from_world(self, world):
+        """ Creates a SoarCanvas in a new window from a World
+
+        Args:
+            world: An instance of World or a subclass
+
+        Returns:
+            The new SoarCanvas
+        """
         dim_x, dim_y = world.dimensions
         max_dim = max(dim_x, dim_y)
         width = int(dim_x / max_dim * 500)
         height = int(dim_y / max_dim * 500)
         options = {'width': width, 'height': height, 'pixels_per_meter': 500 / max_dim, 'bg': 'white'}
         t = self.toplevel()
-        t.title('SoaR v0.8.0 Simulation')
-        t.protocol('WM_DELETE_WINDOW', self.close_cmd)
+        t.title('SoaR v0.9.0 Simulation')
+        t.protocol('WM_DELETE_WINDOW', lambda: self.reload_cmd(False))
         t.aspect(width, height, width, height)
         f = SoarCanvasFrame(t)
         f.pack(fill=BOTH, expand=YES)
@@ -149,16 +215,19 @@ class SoarUI(Tk):
 
     def close(self):
         self.destroy()
-        client.message(client.close)  # HACK
+        client.message(client.close)  # HACK TODO
         client.message(client.close)
 
     def play_cmd(self):
-        self.play.config(image=self.pause_image, command=self.pause_cmd)
+        if self.connected:
+            self.play.config(state=DISABLED)
+        else:
+            self.play.config(image=self.pause_image, text='Pause', command=self.pause_cmd)
         self.stop.config(state=NORMAL)
         client.message(client.start_controller)
 
     def pause_cmd(self):
-        self.play.config(image=self.play_image, command=self.play_cmd)
+        self.play.config(image=self.play_image, text='Play', command=self.play_cmd)
         client.message(client.pause_controller)
 
     def step_cmd(self):
@@ -171,7 +240,7 @@ class SoarUI(Tk):
         self.stop.config(state=DISABLED)
         client.message(client.stop_controller)
 
-    def reload_cmd(self):
+    def reload_cmd(self, load_controller=True):
         """ Kill the controller, any sim-linked windows, and reload the brain and world """
         client.message(client.shutdown_controller)
         if self.sim_canvas:
@@ -183,12 +252,16 @@ class SoarUI(Tk):
         if self.world_path:
             client.message(client.load_world, self.world_path)
             self.load_world()
-        if self.sim_canvas:
-            self.sim_cmd()
+        if load_controller:
+            if self.sim_canvas:
+                self.sim_cmd()
+            if self.connected:
+                self.real_cmd()
 
     def brain_cmd(self):
         new_brain = filedialog.askopenfilename(initialdir=self.brain_dir, **self.file_opt)
         if new_brain:
+            # If a brain and world were already loaded, reload
             if self.brain_path is not None and self.world_path is not None:
                 self.brain_path = new_brain
                 self.reload_cmd()
@@ -211,25 +284,29 @@ class SoarUI(Tk):
             self.world_dir = os.path.dirname(self.world_path)
 
     def sim_cmd(self):
+        if self.connected:
+            client.message(client.shutdown_controller)
+            self.reload_cmd(False)
         client.message(client.make_sim)
         self.disable_all()  # Client could take arbitrarily long to create the simulator, so disable everything
 
     def real_cmd(self):
+        if self.sim_canvas:
+            client.message(client.shutdown_controller)
+            self.reload_cmd(False)
         client.message(client.make_interface)
         self.disable_all()
 
-    def close_cmd(self, shutdown=True):
-        """ Kill the controller and any associated windows, but allow them to be reloaded """
-        if shutdown:
-            client.message(client.shutdown_controller)
-        if self.sim_canvas:
-            self.draw_queue.put('CLOSE_SIM')
-        self.play.config(state=DISABLED, image=self.play_image, command=self.play_cmd)
-        self.step.config(state=DISABLED, image=self.step_image, command=self.step_cmd)
-        self.stop.config(state=DISABLED, image=self.stop_image, command=self.stop_cmd)
+    def controller_failure(self):
+        self.reset(clear_output=False)
         self.reload.config(state=NORMAL)
+        if self.sim_canvas:
+            t = self.sim_canvas.master.master
+            self.reload.config(command=lambda: self.reload_cmd(load_controller=False))
+            t.protocol('WM_DELETE_WINDOW', lambda: self.draw_queue.put('CLOSE_SIM'))
 
     def sim_ready(self):
+        self.connected = False
         self.play.config(image=self.play_image, state=NORMAL)
         self.step.config(state=NORMAL)
         self.stop.config(state=DISABLED)
@@ -237,16 +314,18 @@ class SoarUI(Tk):
         self.brain_but.config(state=NORMAL)
         self.world_but.config(state=NORMAL)
         self.sim_but.config(state=DISABLED)
-        self.real.config(state=DISABLED)
+        self.real.config(state=NORMAL)
 
     def real_ready(self):
+        self.connected = True
+        self.sim_canvas = None
         self.play.config(image=self.play_image, state=NORMAL)
-        self.step.config(state=NORMAL)
+        self.step.config(state=DISABLED)
         self.stop.config(state=DISABLED)
         self.reload.config(state=NORMAL)
         self.brain_but.config(state=NORMAL)
         self.world_but.config(state=NORMAL)
-        self.sim_but.config(state=DISABLED)
+        self.sim_but.config(state=NORMAL if self.world_path else DISABLED)
         self.real.config(state=DISABLED)
 
     def soft_reload(self):

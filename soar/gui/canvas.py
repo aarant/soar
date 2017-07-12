@@ -1,7 +1,5 @@
 from tkinter import *
 
-from soar.geometry import *
-
 class SoarCanvas(Canvas):
     def __init__(self, parent, **options):  # Will add additional options later TODO
         self.pixels_per_meter = options.pop('pixels_per_meter', 100)
@@ -21,12 +19,21 @@ class SoarCanvas(Canvas):
         self.scale('all', 0, 0, scale, scale)
 
     def create_polygon(self, *args, **kw):
-        args = list(map(lambda x: x*self.pixels_per_meter, args))
+        args = self.remap_coords(args)
         Canvas.create_polygon(self, *args, **kw)
 
     def create_line(self, *args, **kw):
-        args = list(map(lambda x: x * self.pixels_per_meter, args))
+        args = self.remap_coords(args)
         Canvas.create_line(self, *args, **kw)
+
+    def remap_coords(self, coords):
+        remapped = []
+        for i in range(len(coords)):
+            c = coords[i]*self.pixels_per_meter
+            if i % 2 == 1:  # Every other coordinate is a y coordinate, and so must be remapped
+                c = self.height-c
+            remapped.append(c)
+        return remapped
 
 
 class SoarCanvasFrame(Frame):

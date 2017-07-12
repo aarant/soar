@@ -1,0 +1,7 @@
+soar\.geometry module
+=====================
+
+.. automodule:: soar.geometry
+    :members:
+    :undoc-members:
+    :show-inheritance:

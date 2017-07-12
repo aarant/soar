@@ -1,0 +1,17 @@
+soar\.brain package
+===================
+
+.. automodule:: soar.brain
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   soar.brain.testBrain
+   soar.brain.wallFinderBrain
+   soar.brain.wallFollowerBrain
+

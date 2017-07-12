@@ -1,16 +1,17 @@
 from math import sin, cos
-from soar.geometry import Pose
+from soar.sim.geometry import Pose
 from soar.controller import SoarIOError
+from soar.sim.world import WorldObject
 
 
-class BaseRobot:
+class BaseRobot(WorldObject):
     """ A base robot class, intended to be subclassed and overridden
 
     Any robot usable in SoaR should implement all of this class's methods, as well as any required additional behavior
 
     Attributes:
-        world: An instance of BaseWorld or a subclass of it, or None. Any BaseRobot subclass should consider the robot
-               to be real if this is None, and simulated otherwise
+        world: An instance of :class:`soar.sim.world.World` or a subclass of it, or None. Any BaseRobot subclass should
+               consider the robot to be real if this is None, and simulated otherwise
         pos: An instance of Pose representing the robot's x, y, theta position. In simulation, this is the actual
              position; on a real robot this may or may not be accurate
         fv (float): Represents the robot's forward velocity in some units
@@ -19,20 +20,20 @@ class BaseRobot:
     """
 
     def __init__(self):
+        WorldObject.__init__(self, do_draw=True, do_step=True)
         self.world = None
         self.pos = Pose(0, 0, 0)
         self.fv = 0.0
         self.rv = 0.0
 
-    def tick(self, duration):
-        """ Performs a tick of some duration on the robot, updating its internal pose
+    def move(self, pose):
+        """ Moves the robot to the specified x, y, theta position
 
         Args:
-            duration (float): The duration of the tick in seconds
+            pose: An x, y, t Pose or 3-tuple-like object to move the robot to
         """
-        theta = self.pos.xyt_tuple()[2]
-        d_x, d_y, d_t = cos(-theta)*self.fv*duration, sin(-theta)*self.fv*duration, self.rv*duration  # TODO: Negative theta, move this into on_step
-        self.pos = self.pos.transform(Pose(d_x, d_y, d_t))
+        x, y, t = pose
+        self.pos = Pose(x, y, t)
 
     def draw(self, canvas):
         """ Draw the robot on a canvas with units
@@ -63,9 +64,16 @@ class BaseRobot:
         """ Called when the controller of the robot is started """
         pass
 
-    def on_step(self):
-        """ Called when the controller of the robot undergoes a single step """
-        pass
+    def on_step(self, step_duration):
+        """ Called when the controller of the robot undergoes a single step of a specified duration
+
+        Args:
+            step_duration (float): The duration of the step, in seconds
+        """
+        if self.world:  # Updates the robot's pose in the world
+            theta = self.pos.xyt_tuple()[2]
+            d_x, d_y, d_t = cos(theta)*self.fv*step_duration, sin(theta)*self.fv*step_duration, self.rv*step_duration
+            self.pos = self.pos.transform(Pose(d_x, d_y, d_t))
 
     def on_stop(self):
         """ Called when the controller of the robot is stopped"""

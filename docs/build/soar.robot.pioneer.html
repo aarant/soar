@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>soar.robot.pioneer &mdash; Soar 0.9.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+        <link rel="up" title="soar.robot" href="soar.robot.html"/>
+        <link rel="next" title="soar.sim" href="soar.sim.html"/>
+        <link rel="prev" title="soar.robot.names" href="soar.robot.names.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Soar
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="soar.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="soar.robot.html">soar.robot</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="soar.robot.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="soar.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Soar</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="soar.html">soar</a> &raquo;</li>
+        
+          <li><a href="soar.robot.html">soar.robot</a> &raquo;</li>
+        
+      <li>soar.robot.pioneer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/soar.robot.pioneer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="soar-robot-pioneer">
+<h1>soar.robot.pioneer<a class="headerlink" href="#soar-robot-pioneer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="soar.robot.pioneer.PioneerRobot">
+<em class="property">class </em><code class="descclassname">soar.robot.pioneer.</code><code class="descname">PioneerRobot</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="soar.robot.base.html#soar.robot.base.BaseRobot" title="soar.robot.base.BaseRobot"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.base.BaseRobot</span></code></a></p>
+<p>An abstract, universal Pioneer 3 robot–that is, instances of this class can be fully simulated or used to
+connect with an actual Pioneer 3 robot.</p>
+<dl class="attribute">
+<dt id="PioneerRobot.FV_CAP">
+<code class="descname">FV_CAP</code><a class="headerlink" href="#PioneerRobot.FV_CAP" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The maximum translational velocity at which the robot can move, in meters/second.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PioneerRobot.RV_CAP">
+<code class="descname">RV_CAP</code><a class="headerlink" href="#PioneerRobot.RV_CAP" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The maximum rotational velocity at which the robot can move, in radians/second.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PioneerRobot.SONAR_MAX">
+<code class="descname">SONAR_MAX</code><a class="headerlink" href="#PioneerRobot.SONAR_MAX" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The maximum distance that the sonars can sense, in meters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.robot.pioneer.PioneerRobot.get_sonars">
+<code class="descname">get_sonars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.get_sonars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the latest sonar distances as an array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list containing The latest distance sensed by each sonar, in order from the robot’s left clockwise to its
+right, in meters, accurate to the millimeter. If no distance was sensed by a sonar, its value will be 5.0.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.robot.pioneer.PioneerRobot.set_forward_velocity">
+<code class="descname">set_forward_velocity</code><span class="sig-paren">(</span><em>fv</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.set_forward_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the robot’s forward velocity subject to <cite>FV_CAP</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fv</strong> (<em>float</em>) – The new forward velocity, in meters/second. Positive values move forwards and negative values
+move backwards.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.robot.pioneer.PioneerRobot.set_rotational_velocity">
+<code class="descname">set_rotational_velocity</code><span class="sig-paren">(</span><em>rv</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.set_rotational_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the robot’s rotational velocity subject to <cite>RV_CAP</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rv</strong> (<em>float</em>) – The new rotational velocity, in radians/second. Positive values move counterclockwise and
+negative ones move clockwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="soar.sim.html" class="btn btn-neutral float-right" title="soar.sim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="soar.robot.names.html" class="btn btn-neutral" title="soar.robot.names" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Andrew Antonitis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.9.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

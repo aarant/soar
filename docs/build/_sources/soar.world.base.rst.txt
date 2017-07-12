@@ -1,0 +1,7 @@
+soar\.world\.base module
+========================
+
+.. automodule:: soar.world.base
+    :members:
+    :undoc-members:
+    :show-inheritance:

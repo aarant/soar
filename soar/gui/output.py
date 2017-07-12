@@ -39,17 +39,17 @@ class OutputFrame(Frame):
         self.scroll.pack(side=RIGHT, fill=Y)
         self.text_field = Text(self, fg='black', bg='white', wrap=WORD, yscrollcommand=self.scroll.set)
         self.text_field.config(height=16, padx=5, pady=5, state=DISABLED)
-        self.text_field.tag_config('output', background='white', foreground='black')
-        self.text_field.tag_config('error', background='white', foreground='red')
-        self.text_field.pack()
+        self.text_field.tag_config('output', foreground='black')
+        self.text_field.tag_config('error', foreground='red')
+        self.text_field.bind("<1>", lambda event: self.text_field.focus_set())
+        self.text_field.pack(expand=True, fill='both')
         self.scroll.config(command=self.text_field.yview)
-        self.output('SoaR v0.8.0: Snakes on a robot: An extensible Python framework for simulating and '
-                    'interacting with robots\n\nOutput will appear in this window\n')
+        self.output('SoaR v0.9.0: Snakes on a robot: Output will appear in this window\n\n')
 
     def insert(self, text, *tags):
         self.text_field.config(state=NORMAL)
         self.text_field.insert(END, text, *tags)
-        self.text_field.see(END)  # Ensure the inserted text is visible
+        self.text_field.see("%s-2c" % END)  # Ensure the inserted text is visible
         self.text_field.config(state=DISABLED)
 
     def output(self, text):

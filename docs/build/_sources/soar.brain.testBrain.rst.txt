@@ -1,0 +1,7 @@
+soar\.brain\.testBrain module
+=============================
+
+.. automodule:: soar.brain.testBrain
+    :members:
+    :undoc-members:
+    :show-inheritance:

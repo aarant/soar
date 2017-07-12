@@ -1,0 +1,18 @@
+soar\.world package
+===================
+
+.. automodule:: soar.world
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   soar.world.base
+   soar.world.testWorld
+   soar.world.wallFinderWorld
+   soar.world.wallFollowerWorld
+
