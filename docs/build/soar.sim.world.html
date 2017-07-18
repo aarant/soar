@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.sim.world &mdash; Soar 0.9.0 documentation</title>
+  <title>soar.sim.world &mdash; Soar 0.10.0 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
         <link rel="up" title="soar.sim" href="soar.sim.html"/>
-        <link rel="next" title="soar.client" href="soar.client.html"/>
+        <link rel="next" title="soar.controller" href="soar.controller.html"/>
         <link rel="prev" title="soar.sim.geometry" href="soar.sim.geometry.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.10.0
               </div>
             
           
@@ -94,16 +94,16 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="soar.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
-<li class="toctree-l3"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="soar.sim.html">soar.sim</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="soar.sim.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="soar.sim.html">soar.sim</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="soar.sim.geometry.html">soar.sim.geometry</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.sim.world</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="soar.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 </ul>
 </li>
 </ul>
@@ -175,12 +175,13 @@
             
   <div class="section" id="module-soar.sim.world">
 <span id="soar-sim-world"></span><h1>soar.sim.world<a class="headerlink" href="#module-soar.sim.world" title="Permalink to this headline">¶</a></h1>
-<p>World and WorldObject classes/subclasses, for simulating and drawing worlds</p>
+<p>Soar v0.10.0 world classes</p>
+<p>World and basic WorldObject classes/subclasses, for simulating and drawing worlds.</p>
 <dl class="class">
 <dt id="soar.sim.world.Line">
 <em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Line</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a></p>
-<p>A line segment with Tk options and collision detection</p>
+<p>A line segment with Tk options and collision detection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -197,12 +198,12 @@
 <dl class="method">
 <dt id="soar.sim.world.Line.collision">
 <code class="descname">collision</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.collision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines whether two Line segments intersect</p>
+<dd><p>Determine whether two Line segments intersect.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An instance of Line or supporter <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a> subclass</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An instance of Line or supported <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a> subclass</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An x, y tuple representing the intersection point, or <cite>None</cite> if there is none</td>
 </tr>
@@ -218,14 +219,14 @@
 <dl class="method">
 <dt id="soar.sim.world.Line.has_point">
 <code class="descname">has_point</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.has_point" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines if a point lies on the line segment</p>
+<dd><p>Determines if a point lies on the line segment.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> – An x, y tuple or an instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the point to check</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> – An (x, y) tuple or an instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the point to check.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the point is on the line segment, and false otherwise</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the point is on the line segment, and false otherwise.</td>
 </tr>
 </tbody>
 </table>
@@ -237,7 +238,7 @@
 <dt id="soar.sim.world.Polygon">
 <em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Polygon</code><span class="sig-paren">(</span><em>points</em>, <em>center=None</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Polygon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.PointCollection" title="soar.sim.geometry.PointCollection"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.PointCollection</span></code></a>, <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a></p>
-<p>A movable polygon with Tk options</p>
+<p>A movable polygon with Tk options.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -263,7 +264,7 @@
 <em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">World</code><span class="sig-paren">(</span><em>dimensions</em>, <em>initial_position</em>, <em>objects=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>A simulated world containing objects that can be simulated stepwise and drawn on a
-<a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a></p>
+<a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>.</p>
 <dl class="attribute">
 <dt id="soar.sim.world.World.dimensions">
 <code class="descname">dimensions</code><a class="headerlink" href="#soar.sim.world.World.dimensions" title="Permalink to this definition">¶</a></dt>
@@ -288,14 +289,20 @@
 <dd><p><em>int</em> – The highest layer currently allocated to an object in the world</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="soar.sim.world.World.canvas">
+<code class="descname">canvas</code><a class="headerlink" href="#soar.sim.world.World.canvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, if the world is being drawn, otherwise <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dimensions</strong> (<em>tuple</em>) – An x, y tuple representing the worlds length and height</li>
-<li><strong>initial_position</strong> – A <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> or an x, y, theta tuple representing the robot’s initial
-position in the world</li>
+<li><strong>initial_position</strong> – A <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> or an x, y, theta tuple representing the robot’s initial</li>
+<li><strong>in the world.</strong> (<em>position</em>) – </li>
 <li><strong>objects</strong> (<em>list</em>) – The initial WorldObject(s) to add to the world</li>
 </ul>
 </td>
@@ -373,19 +380,19 @@ How each object is drawn is up to the object</td>
 <em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">WorldObject</code><span class="sig-paren">(</span><em>do_draw</em>, <em>do_step</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>An object that can be simulated and drawn in a <a class="reference internal" href="#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> on a
-<a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a></p>
+<a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>.</p>
 <p>Classes that are designed to work with a World in Soar may either subclass from this class or implement its methods
-and attributes to be considered valid</p>
+and attributes to be considered valid.</p>
 <dl class="attribute">
 <dt id="soar.sim.world.WorldObject.do_draw">
 <code class="descname">do_draw</code><a class="headerlink" href="#soar.sim.world.WorldObject.do_draw" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – Used by a World instance to decide whether to draw the object on a canvas</p>
+<dd><p><em>bool</em> – Used by a World instance to decide whether to draw the object on a canvas.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.sim.world.WorldObject.do_step">
 <code class="descname">do_step</code><a class="headerlink" href="#soar.sim.world.WorldObject.do_step" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – Used by a World instance to decide whether to step the object in simulation</p>
+<dd><p><em>bool</em> – Used by a World instance to decide whether to step the object in simulation.</p>
 </dd></dl>
 
 <table class="docutils field-list" frame="void" rules="none">
@@ -393,9 +400,9 @@ and attributes to be considered valid</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>do_draw</strong> (<em>bool</em>) – Sets the value of the do_draw attribute</li>
-<li><strong>do_step</strong> (<em>bool</em>) – Sets the value of the do_step attribute</li>
-<li><strong>**options</strong> – Tk options</li>
+<li><strong>do_draw</strong> (<em>bool</em>) – Sets the value of the do_draw attribute.</li>
+<li><strong>do_step</strong> (<em>bool</em>) – Sets the value of the do_step attribute.</li>
+<li><strong>**options</strong> – Tkinter options.</li>
 </ul>
 </td>
 </tr>
@@ -404,12 +411,16 @@ and attributes to be considered valid</p>
 <dl class="method">
 <dt id="soar.sim.world.WorldObject.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the object from a canvas</p>
+<dd><p>Delete the object from a canvas</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – A Tk Canvas or a subclass, typically a SoarCanvas, on which the object will be drawn</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically an instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>,</li>
+<li><strong>which the object will be drawn.</strong> (<em>on</em>) – </li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -418,12 +429,16 @@ and attributes to be considered valid</p>
 <dl class="method">
 <dt id="soar.sim.world.WorldObject.draw">
 <code class="descname">draw</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject.draw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draws the object on a canvas</p>
+<dd><p>Draw the object on a canvas.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – A Tk Canvas or a subclass, typically a SoarCanvas, on which the object will be drawn</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically an instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>,</li>
+<li><strong>which the object will be drawn.</strong> (<em>on</em>) – </li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -432,7 +447,7 @@ and attributes to be considered valid</p>
 <dl class="method">
 <dt id="soar.sim.world.WorldObject.on_step">
 <code class="descname">on_step</code><span class="sig-paren">(</span><em>step_duration</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject.on_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulates the object for a step of a specified duration</p>
+<dd><p>Simulate the object for a step of a specified duration</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -457,7 +472,7 @@ and attributes to be considered valid</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="soar.client.html" class="btn btn-neutral float-right" title="soar.client" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="soar.controller.html" class="btn btn-neutral float-right" title="soar.controller" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="soar.sim.geometry.html" class="btn btn-neutral" title="soar.sim.geometry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -491,7 +506,7 @@ and attributes to be considered valid</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.9.0',
+            VERSION:'0.10.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

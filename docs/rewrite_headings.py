@@ -1,7 +1,7 @@
 import os
 
 for i in os.listdir(os.path.join('.', 'source/')):
-    print(i)
+    i = os.path.join('source/', i)
     if os.path.isfile(i) and os.path.splitext(i)[1] == '.rst':
         if os.path.splitext(i)[0] != 'index':
             with open(i, 'r') as f:

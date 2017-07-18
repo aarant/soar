@@ -1,7 +1,7 @@
-soar\.brain\.testBrain module
+soar\.client\.common
 =============================
 
-.. automodule:: soar.brain.testBrain
+.. automodule:: soar.client.common
     :members:
     :undoc-members:
     :show-inheritance:

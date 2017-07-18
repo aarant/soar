@@ -6,11 +6,7 @@ soar\.sim
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
-
 .. toctree::
 
    soar.sim.geometry
    soar.sim.world
-

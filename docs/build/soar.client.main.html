@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>soar.client.main &mdash; Soar 0.10.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
+        <link rel="up" title="soar.client" href="soar.client.html"/>
+        <link rel="next" title="soar.client.common" href="soar.client.common.html"/>
+        <link rel="prev" title="soar.client" href="soar.client.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Soar
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.10.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="soar.client.html">soar.client</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.client.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.client.common.html">soar.client.common</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Soar</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="soar.html">soar</a> &raquo;</li>
+        
+          <li><a href="soar.client.html">soar.client</a> &raquo;</li>
+        
+      <li>soar.client.main</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/soar.client.main.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-soar.client.main">
+<span id="soar-client-main"></span><h1>soar.client.main<a class="headerlink" href="#module-soar.client.main" title="Permalink to this headline">¶</a></h1>
+<p>Soar v0.10.0 client entrypoint.</p>
+<p>Classes and functions for interacting with Soar in general. This module serves as the main entrypoint to the package.
+Projects desiring to invoke a Soar instance should import this module and call <a class="reference internal" href="#soar.client.main.main" title="soar.client.main.main"><code class="xref py py-func docutils literal"><span class="pre">soar.client.main.main()</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<p>This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If invoking a headless instance, paths to brain and world files should be specified:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">brain_path</span><span class="o">=</span><span class="s1">&#39;path/to/brain.py&#39;</span><span class="p">,</span> <span class="n">world_path</span><span class="o">=</span><span class="s1">&#39;path/to/world.py&#39;</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case, the return value will be 1 if an exception occurred and 0 otherwise.</p>
+<p>Logging is handled via passing a path:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">logfile</span><span class="o">=</span><span class="s1">&#39;path/to/logfile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or, using a file-like object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">logfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;path/to/logfile&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="soar.client.main.main">
+<code class="descclassname">soar.client.main.</code><code class="descname">main</code><span class="sig-paren">(</span><em>brain_path=None</em>, <em>world_path=None</em>, <em>headless=False</em>, <em>logfile=None</em>, <em>step_duration=0.1</em>, <em>realtime=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.client.main.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main entrypoint, for use from the command line or other packages. Starts a Soar instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>brain_path</strong> (<em>optional</em>) – The path to the initial brain to load. Required if headless, otherwise not required.</li>
+<li><strong>world_path</strong> (<em>optional</em>) – The path to the initial world to load. Required if headless, otherwise not required.</li>
+<li><strong>headless</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, run Soar in headless mode, immediately running a simulation.</li>
+<li><strong>logfile</strong> (<em>optional</em>) – The path to the log file, or a file-like object to log data to.</li>
+<li><strong>step_duration</strong> (<em>float</em>) – The duration of a controller step, in seconds.</li>
+<li><strong>realtime</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, the controller will never sleep to make a step last the proper length. Instead,</li>
+<li><strong>will run as fast as possible.</strong> (<em>it</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0 if Soar’s execution successfully completed, 1 otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="soar.client.main.message">
+<code class="descclassname">soar.client.main.</code><code class="descname">message</code><span class="sig-paren">(</span><em>msg</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.client.main.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a message with data for the client to execute in the future, by putting it on the client’s internal queue.</p>
+<p>Note that if an exception or controller failure occurs, the message may never be read as the queue will be purged.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msg</strong> – The message to send, defined in <a class="reference internal" href="soar.client.common.html#module-soar.client.common" title="soar.client.common"><code class="xref py py-mod docutils literal"><span class="pre">soar.client.common</span></code></a>.</li>
+<li><strong>*args</strong> – The variable length arguments to pass to the function.</li>
+<li><strong>**kwargs</strong> – The keyword arguments to pass to the function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="soar.client.common.html" class="btn btn-neutral float-right" title="soar.client.common" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="soar.client.html" class="btn btn-neutral" title="soar.client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Andrew Antonitis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.10.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

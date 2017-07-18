@@ -1,5 +1,7 @@
-""" World and WorldObject classes/subclasses, for simulating and drawing worlds """
+""" Soar v0.11.0 world classes
 
+World and basic WorldObject classes/subclasses, for simulating and drawing worlds.
+"""
 import uuid
 
 import numpy as np
@@ -9,19 +11,19 @@ from soar.sim.geometry import PointCollection
 
 class WorldObject:
     """ An object that can be simulated and drawn in a :class:`soar.sim.world.World` on a
-    :class:`soar.gui.canvas.SoarCanvas`
+    :class:`soar.gui.canvas.SoarCanvas`.
 
     Classes that are designed to work with a World in Soar may either subclass from this class or implement its methods
-    and attributes to be considered valid
+    and attributes to be considered valid.
 
     Attributes:
-        do_draw (bool): Used by a World instance to decide whether to draw the object on a canvas
-        do_step (bool): Used by a World instance to decide whether to step the object in simulation
+        do_draw (bool): Used by a World instance to decide whether to draw the object on a canvas.
+        do_step (bool): Used by a World instance to decide whether to step the object in simulation.
 
     Args:
-        do_draw (bool): Sets the value of the do_draw attribute
-        do_step (bool): Sets the value of the do_step attribute
-        **options: Tk options
+        do_draw (bool): Sets the value of the do_draw attribute.
+        do_step (bool): Sets the value of the do_step attribute.
+        **options: Tkinter options.
     """
     def __init__(self, do_draw, do_step, **options):
         self.do_draw = do_draw
@@ -29,27 +31,29 @@ class WorldObject:
         self.options = options
         if 'tags' in options:
             self.tags = options['tags']
-        else:  # If tags are not specified, make sure this object has a (hopefully) unique tag
+        else:  # If tags are not specified, make sure this object has a unique tag
             self.tags = uuid.uuid4().hex
 
     def draw(self, canvas):
-        """ Draws the object on a canvas
+        """ Draw the object on a canvas.
 
         Args:
-            canvas: A Tk Canvas or a subclass, typically a SoarCanvas, on which the object will be drawn
+            canvas: A Tkinter Canvas or a subclass, typically an instance of :class:`soar.gui.canvas.SoarCanvas`,
+            on which the object will be drawn.
         """
         pass
 
     def delete(self, canvas):
-        """ Deletes the object from a canvas
+        """ Delete the object from a canvas
 
         Args:
-            canvas: A Tk Canvas or a subclass, typically a SoarCanvas, on which the object will be drawn
+            canvas: A Tkinter Canvas or a subclass, typically an instance of :class:`soar.gui.canvas.SoarCanvas`,
+            on which the object will be drawn.
         """
         canvas.delete(self.tags)
 
     def on_step(self, step_duration):
-        """ Simulates the object for a step of a specified duration
+        """ Simulate the object for a step of a specified duration
 
         Args:
             step_duration: The duration of the step, in seconds
@@ -58,7 +62,7 @@ class WorldObject:
 
 
 class Polygon(PointCollection, WorldObject):
-    """ A movable polygon with Tk options
+    """ A movable polygon with Tk options.
 
     Args:
         points: A list of x, y tuples or Points
@@ -77,7 +81,7 @@ class Polygon(PointCollection, WorldObject):
 
 
 class Line(WorldObject):
-    """ A line segment with Tk options and collision detection
+    """ A line segment with Tk options and collision detection.
 
     Args:
         p1: An x, y tuple or an instance of :class:`soar.sim.geometry.Point` as the first endpoint of the line segment
@@ -109,10 +113,10 @@ class Line(WorldObject):
         self.do_draw = False  # For a line drawn each frame, subclass this class
 
     def collision(self, other):
-        """ Determines whether two Line segments intersect
+        """ Determine whether two Line segments intersect.
 
         Args:
-            other: An instance of Line or supporter :class:`soar.sim.world.WorldObject` subclass
+            other: An instance of Line or supported :class:`soar.sim.world.WorldObject` subclass
 
         Returns:
             An x, y tuple representing the intersection point, or `None` if there is none
@@ -121,10 +125,21 @@ class Line(WorldObject):
         a = np.array([other.equ, self.equ])
         b = np.array([[other.c],
                       [self.c]])
+        intersects = []
+        if self.has_point(other.p1):
+            intersects.append(other.p1)
+        if self.has_point(other.p2):
+            intersects.append(other.p2)
+        if other.has_point(self.p1):
+            intersects.append(self.p1)
+        if other.has_point(self.p2):
+            intersects.append(self.p2)
+        if len(intersects) > 0:
+            return intersects
         try:
             x = np.linalg.solve(a, b)
         except np.linalg.LinAlgError:
-            return None  # TODO: Does this always work?
+            return None  # TODO: This fails if the line segments are on the same line
         else:
             p = x[0][0], x[1][0]
             if self.has_point(p) and other.has_point(p):  # Check whether the point is on the line *segments*
@@ -133,13 +148,13 @@ class Line(WorldObject):
                 return None
 
     def has_point(self, p):
-        """ Determines if a point lies on the line segment
+        """ Determines if a point lies on the line segment.
 
         Args:
-            p: An x, y tuple or an instance of :class:`soar.sim.geometry.Point` as the point to check
+            p: An (x, y) tuple or an instance of :class:`soar.sim.geometry.Point` as the point to check.
 
         Returns:
-            True if the point is on the line segment, and false otherwise
+            True if the point is on the line segment, and false otherwise.
         """
         x, y = p[0], p[1]
         a, b = self.equ[0], self.equ[1]
@@ -153,18 +168,19 @@ class Line(WorldObject):
 
 class World:
     """ A simulated world containing objects that can be simulated stepwise and drawn on a
-    :class:`soar.gui.canvas.SoarCanvas`
+    :class:`soar.gui.canvas.SoarCanvas`.
 
     Attributes:
         dimensions (tuple): An x, y tuple representing the worlds length and height
         initial_position: A Pose or an x, y, theta tuple representing the robot's initial position in the world
         objects (list): A list of (WorldObject, layer) tuples containing all of the world's objects
         layer_max (int): The highest layer currently allocated to an object in the world
+        canvas: An instance of :class:`soar.gui.canvas.SoarCanvas`, if the world is being drawn, otherwise ``None``.
 
     Args:
         dimensions (tuple): An x, y tuple representing the worlds length and height
         initial_position: A :class:`soar.sim.geometry.Pose` or an x, y, theta tuple representing the robot's initial
-                          position in the world
+        position in the world.
         objects (list): The initial WorldObject(s) to add to the world
     """
     def __init__(self, dimensions, initial_position, objects=None):
@@ -172,6 +188,7 @@ class World:
         self.initial_position = initial_position
         self.objects = []
         self.layer_max = -1
+        self.canvas = None
         if objects:
             for obj in objects:
                 self.add(obj)

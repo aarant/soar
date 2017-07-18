@@ -1,9 +1,14 @@
-"""
+""" Soar v0.11.0 Plotting classes
+
 Tkinter wrapper for plotting using matplotlib_
 
 .. _matplotlib: http://matplotlib.org
+
+TODO: Determine whether reafter code is necessary, etc, add PlotWindow documentation.
+TODO: Make sure plots are actually saved when the simulation is completed.
 """
 # hartz 01 august 2012
+from io import BytesIO
 
 #imports for tk backend
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg, FigureCanvasAgg
@@ -25,7 +30,7 @@ class PlotWindow(_p.Figure):
     .. _Axes: http://matplotlib.sourceforge.net/api/axes_api.html
     .. _Figure: http://matplotlib.sourceforge.net/api/figure_api.html
     """
-    def __init__(self, title="Plotting Window", visible=True, toplevel=tkinter.Toplevel):
+    def __init__(self, title="Plotting Window", visible=True, toplevel=tkinter.Toplevel, log=None, linked=True):
         """
         :param title: The title to be used for the window initially
         :param visible: Whether to actually display a Tk window (set to
@@ -33,10 +38,11 @@ class PlotWindow(_p.Figure):
                         popping up)
         """
         _p.Figure.__init__(self)
+        self.log = log
         self.add_subplot(111)
         self.visible = visible
         if self.visible:
-            self.canvas = FigureCanvasTkAgg(self, toplevel())
+            self.canvas = FigureCanvasTkAgg(self, toplevel(linked=linked))
             self.title(title)
             self.makeWindow()
             self.show()
@@ -134,3 +140,10 @@ class PlotWindow(_p.Figure):
         the end of the execution of a script)
         """
         self.canvas._master.mainloop()
+
+    def plot(self, *args, **kwargs):
+        self.__getattr__('plot')(*args, **kwargs)
+        if self.log:
+            file_obj = BytesIO()
+            self.savefig(file_obj, format='png')
+            self.log({'type': 'plot', 'data': file_obj.getvalue().hex()})

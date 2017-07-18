@@ -1,4 +1,9 @@
-import sys
+""" Soar v0.1.0 Output classes.
+
+Tk widgets allowing the capture and display of text output in the GUI.
+
+TODO: Make output capturing more elegant.
+"""
 from io import StringIO
 
 from tkinter import *
@@ -13,7 +18,7 @@ class SoarIO(StringIO):
         self.write_func(s)
 
 
-class OutputRedirect:
+class OutputRedirect:  # TODO: Class may no longer be necessary
     def __init__(self, frame):
         self.frame = frame
 
@@ -25,7 +30,6 @@ class OutputRedirect:
         return self
 
     def __exit__(self):
-        self._stdout.write('whut')
         sys.stdout.close()
         sys.stderr.close()
         sys.stdout = self._stdout
@@ -33,6 +37,11 @@ class OutputRedirect:
 
 
 class OutputFrame(Frame):
+    """ A read-only Tk output frame that can display normal and error output.
+
+    Args:
+        master: The parent widget or window.
+    """
     def __init__(self, master):
         Frame.__init__(self, master, bg='white')
         self.scroll = Scrollbar(self)
@@ -44,21 +53,39 @@ class OutputFrame(Frame):
         self.text_field.bind("<1>", lambda event: self.text_field.focus_set())
         self.text_field.pack(expand=True, fill='both')
         self.scroll.config(command=self.text_field.yview)
-        self.output('SoaR v0.9.0: Snakes on a robot: Output will appear in this window\n\n')
+        self.output('SoaR v0.11.0: Snakes on a robot: Output will appear in this window\n\n')
 
     def insert(self, text, *tags):
+        """ Insert text at the end of the text field.
+
+        Args:
+            text (str): The text to insert.
+            *tags: Variable length ``str`` list of tags to attach to the text. The 'output' tag signifies normal output,
+                   and the 'error' take signifies that the text will be red.
+        """
         self.text_field.config(state=NORMAL)
         self.text_field.insert(END, text, *tags)
         self.text_field.see("%s-2c" % END)  # Ensure the inserted text is visible
         self.text_field.config(state=DISABLED)
 
     def output(self, text):
+        """ Insert normal output text at the end of the text field.
+
+        Args:
+            text (str): The text to insert.
+        """
         self.insert(text, 'output')
 
     def error(self, text):
+        """ Insert error output text at the end of the text field.
+
+        Args:
+             text (str): The text to insert.
+        """
         self.insert(text, 'error')
 
     def clear(self):
+        """ Clear the entire text field. """
         self.text_field.config(state=NORMAL)
         self.text_field.delete(1.0, END)
         self.text_field.config(state=DISABLED)

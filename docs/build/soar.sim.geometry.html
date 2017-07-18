@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.sim.geometry &mdash; Soar 0.9.0 documentation</title>
+  <title>soar.sim.geometry &mdash; Soar 0.10.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
         <link rel="up" title="soar.sim" href="soar.sim.html"/>
         <link rel="next" title="soar.sim.world" href="soar.sim.world.html"/>
         <link rel="prev" title="soar.sim" href="soar.sim.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.10.0
               </div>
             
           
@@ -94,16 +94,16 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="soar.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
-<li class="toctree-l3"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="soar.sim.html">soar.sim</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="soar.sim.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="soar.sim.html">soar.sim</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.sim.geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.sim.world.html">soar.sim.world</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="soar.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 </ul>
 </li>
 </ul>
@@ -175,21 +175,21 @@
             
   <div class="section" id="module-soar.sim.geometry">
 <span id="soar-sim-geometry"></span><h1>soar.sim.geometry<a class="headerlink" href="#module-soar.sim.geometry" title="Permalink to this headline">¶</a></h1>
-<p>Geometry classes, for manipulating points and collections of points</p>
+<p>Soar v0.10.0 Geometry classes, for manipulating points and collections of points.</p>
 <dl class="class">
 <dt id="soar.sim.geometry.Point">
 <em class="property">class </em><code class="descclassname">soar.sim.geometry.</code><code class="descname">Point</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Represents a point in the x, y plane</p>
+<p>Represents a point in the x, y plane.</p>
 <blockquote>
-<div>Points can be interpreted and treated as x, y tuples in most cases</div></blockquote>
+<div>Points can be interpreted and treated as x, y tuples in most cases.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x</strong> (<em>float</em>) – The x coordinate of the point</li>
-<li><strong>y</strong> (<em>float</em>) – The y coordinate of the point</li>
+<li><strong>x</strong> (<em>float</em>) – The x coordinate of the point.</li>
+<li><strong>y</strong> (<em>float</em>) – The y coordinate of the point.</li>
 </ul>
 </td>
 </tr>
@@ -198,12 +198,12 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.add">
 <code class="descname">add</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vector addition; adds other to self</p>
+<dd><p>Vector addition; adds other to self.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
 </tr>
 </tbody>
 </table>
@@ -212,14 +212,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.distance">
 <code class="descname">distance</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.distance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the distance between two points</p>
+<dd><p>Calculates the distance between two points.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A float representing the distance between the points</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A float representing the distance between the points.</td>
 </tr>
 </tbody>
 </table>
@@ -228,14 +228,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.midpoint">
 <code class="descname">midpoint</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.midpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new Point that is the midpoint of self and other</p>
+<dd><p>Returns a new Point that is the midpoint of self and other.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Point that is the midpoint of self and other</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Point that is the midpoint of self and other.</td>
 </tr>
 </tbody>
 </table>
@@ -244,14 +244,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.rotate">
 <code class="descname">rotate</code><span class="sig-paren">(</span><em>other</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.rotate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotate about other by theta radians (positive values are counterclockwise)</p>
+<dd><p>Rotate about other by theta radians (positive values are counterclockwise).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>other</strong> – An x, y tuple or an instance of Point</li>
-<li><strong>theta</strong> (<em>float</em>) – The number of radians to rotate counterclockwise</li>
+<li><strong>other</strong> – An x, y tuple or an instance of Point.</li>
+<li><strong>theta</strong> (<em>float</em>) – The number of radians to rotate counterclockwise.</li>
 </ul>
 </td>
 </tr>
@@ -262,14 +262,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.scale">
 <code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>other=(0</em>, <em>0)</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.scale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scale the vector from other to self by value, and make this point the endpoint of that vector</p>
+<dd><p>Scale the vector from other to self by value, and make this point the endpoint of that vector.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>value</strong> (<em>float</em>) – The value to scale by</li>
-<li><strong>other</strong> – An x, y tuple or an instance of Point as the origin to scale from</li>
+<li><strong>value</strong> (<em>float</em>) – The value to scale by.</li>
+<li><strong>other</strong> – An x, y tuple or an instance of Point as the origin to scale from.</li>
 </ul>
 </td>
 </tr>
@@ -280,12 +280,12 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.sub">
 <code class="descname">sub</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.sub" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vector subtraction; subtracts other from self</p>
+<dd><p>Vector subtraction; subtracts other from self.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
 </tr>
 </tbody>
 </table>
@@ -294,7 +294,7 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.xy_tuple">
 <code class="descname">xy_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.xy_tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: An x, y tuple representing the point</p>
+<dd><p>Returns: An x, y tuple representing the point.</p>
 </dd></dl>
 
 </dd></dl>
@@ -303,16 +303,15 @@
 <dt id="soar.sim.geometry.PointCollection">
 <em class="property">class </em><code class="descclassname">soar.sim.geometry.</code><code class="descname">PointCollection</code><span class="sig-paren">(</span><em>points</em>, <em>center=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.PointCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>A movable collection of Points</p>
-<blockquote>
-<div>Can be iterated over like a list of Points</div></blockquote>
+<p>A movable collection of Points.</p>
+<p>Can be iterated over like a list of Points.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>points</strong> – A list of x, y tuples or Points</li>
-<li><strong>center</strong> – An x, y tuple or Point as the pivot or center of the collection</li>
+<li><strong>points</strong> – A list of (x, y) tuples or Points.</li>
+<li><strong>center</strong> – An (x, y) tuple or Point as the pivot or center of the collection.</li>
 </ul>
 </td>
 </tr>
@@ -321,12 +320,12 @@
 <dl class="method">
 <dt id="soar.sim.geometry.PointCollection.recenter">
 <code class="descname">recenter</code><span class="sig-paren">(</span><em>new_center</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.PointCollection.recenter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-centers the collection</p>
+<dd><p>Re-center the collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_center</strong> – An x, y tuple or Point that will be the collection’s new center</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_center</strong> – An x, y tuple or Point that will be the collection’s new center.</td>
 </tr>
 </tbody>
 </table>
@@ -335,14 +334,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.PointCollection.rotate">
 <code class="descname">rotate</code><span class="sig-paren">(</span><em>pivot</em>, <em>theta</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.PointCollection.rotate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotate about other by theta radians (positive values are counterclockwise)</p>
+<dd><p>Rotate about other by theta radians (positive values are counterclockwise).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pivot</strong> – An x, y tuple or an instance of Point</li>
-<li><strong>theta</strong> (<em>float</em>) – The number of radians to rotate counterclockwise</li>
+<li><strong>pivot</strong> – An x, y tuple or an instance of Point.</li>
+<li><strong>theta</strong> (<em>float</em>) – The number of radians to rotate counterclockwise.</li>
 </ul>
 </td>
 </tr>
@@ -353,14 +352,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.PointCollection.scale">
 <code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>origin=(0</em>, <em>0)</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.PointCollection.scale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scales each point away/towards some origin</p>
+<dd><p>Scale each point away/towards some origin.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>value</strong> (<em>float</em>) – The scale amount</li>
-<li><strong>origin</strong> – An x, y tuple or Point from which the collection’s points will move away/towards</li>
+<li><strong>value</strong> (<em>float</em>) – The scale amount.</li>
+<li><strong>origin</strong> – An x, y tuple or Point from which the collection’s points will move away/towards.</li>
 </ul>
 </td>
 </tr>
@@ -371,12 +370,12 @@
 <dl class="method">
 <dt id="soar.sim.geometry.PointCollection.translate">
 <code class="descname">translate</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.PointCollection.translate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Translates the collection by the vector delta</p>
+<dd><p>Translate the collection by the vector delta.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> – An x, y tuple or Point, treated as a vector and added to each point in the collection</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> – An x, y tuple or Point, treated as a vector and added to each point in the collection.</td>
 </tr>
 </tbody>
 </table>
@@ -388,36 +387,43 @@
 <dt id="soar.sim.geometry.Pose">
 <em class="property">class </em><code class="descclassname">soar.sim.geometry.</code><code class="descname">Pose</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a></p>
-<p>Represents a point facing a direction in the xy plane</p>
-<p>Poses can be interpreted and treated as x, y, t tuples in most cases</p>
+<p>A point facing a direction in the xy plane.</p>
+<p>Poses can be interpreted and treated as x, y, t tuples in most cases.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x</strong> – The x coordinate of the pose</li>
-<li><strong>y</strong> – The y coordinate of the pose</li>
-<li><strong>t</strong> – The angle between the direction the pose is facing and the positive x axis, in radians</li>
+<li><strong>x</strong> – The x coordinate of the pose.</li>
+<li><strong>y</strong> – The y coordinate of the pose.</li>
+<li><strong>t</strong> – The angle between the direction the pose is facing and the positive x axis, in radians.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="soar.sim.geometry.Pose.draw">
-<code class="descname">draw</code><span class="sig-paren">(</span><em>canvas</em>, <em>length</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose.draw" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="soar.sim.geometry.Pose.transform">
 <code class="descname">transform</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a pose translated by other[0], other[1], and rotated by other[2]</p>
+<dd><p>Return a new pose that has been transformed (translated and rotated).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – A <code class="docutils literal"><span class="pre">Pose</span></code> or 3-tuple-like object, by which to translate and rotate.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns: A new <code class="docutils literal"><span class="pre">Pose</span></code> equivalent to translating <code class="docutils literal"><span class="pre">self</span></code> by <code class="docutils literal"><span class="pre">(other[0],</span> <span class="pre">other[1])</span></code> and rotating by</dt>
+<dd><code class="docutils literal"><span class="pre">other[2]</span></code>.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.sim.geometry.Pose.xyt_tuple">
 <code class="descname">xyt_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose.xyt_tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: An x, y, t tuple representing the pose</p>
+<dd><p>Returns: An (x, y, t) tuple representing the pose.</p>
 </dd></dl>
 
 </dd></dl>
@@ -468,7 +474,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.9.0',
+            VERSION:'0.10.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

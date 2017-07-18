@@ -1,7 +1,0 @@
-soar\.brain\.wallFinderBrain module
-===================================
-
-.. automodule:: soar.brain.wallFinderBrain
-    :members:
-    :undoc-members:
-    :show-inheritance:

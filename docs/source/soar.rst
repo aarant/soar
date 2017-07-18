@@ -6,20 +6,13 @@ soar
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
-
 .. toctree::
 
+    soar.client
     soar.gui
     soar.robot
     soar.sim
+    soar.controller
+    soar.errors
 
-Submodules
-----------
-
-.. toctree::
-
-   soar.client
-   soar.controller
 

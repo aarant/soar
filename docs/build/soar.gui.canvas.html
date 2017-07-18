@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.canvas &mdash; Soar 0.9.0 documentation</title>
+  <title>soar.gui.canvas &mdash; Soar 0.10.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.gui.output" href="soar.gui.output.html"/>
         <link rel="prev" title="soar.gui" href="soar.gui.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.10.0
               </div>
             
           
@@ -94,16 +94,18 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="soar.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="soar.gui.html">soar.gui</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="soar.gui.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="soar.gui.html">soar.gui</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.gui.canvas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.output.html">soar.gui.output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.plot_window.html">soar.gui.plot_window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.soar_ui.html">soar.gui.soar_ui</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="soar.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 </ul>
 </li>
 </ul>
@@ -175,6 +177,9 @@
             
   <div class="section" id="module-soar.gui.canvas">
 <span id="soar-gui-canvas"></span><h1>soar.gui.canvas<a class="headerlink" href="#module-soar.gui.canvas" title="Permalink to this headline">¶</a></h1>
+<p>Soar v0.1.0 Canvas classes and methods.</p>
+<p>Defines <code class="docutils literal"><span class="pre">SoarCanvas</span></code> and <code class="docutils literal"><span class="pre">SoarCanvasFrame</span></code> classes, as well as a method of creating them from an instance of
+<a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a>.</p>
 <dl class="class">
 <dt id="soar.gui.canvas.SoarCanvas">
 <em class="property">class </em><code class="descclassname">soar.gui.canvas.</code><code class="descname">SoarCanvas</code><span class="sig-paren">(</span><em>parent</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas" title="Permalink to this definition">¶</a></dt>
@@ -210,6 +215,31 @@
 <code class="descname">on_resize</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvasFrame.on_resize" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="soar.gui.canvas.canvas_from_world">
+<code class="descclassname">soar.gui.canvas.</code><code class="descname">canvas_from_world</code><span class="sig-paren">(</span><em>world</em>, <em>toplevel=&lt;class 'tkinter.Toplevel'&gt;</em>, <em>close_cmd=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.canvas_from_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a> in a new window from a World. Optionally, call a different
+<code class="docutils literal"><span class="pre">toplevel()</span></code> method to create the window, and set its behavior on close.</p>
+<p>Additionally, if an object in the world defines <code class="docutils literal"><span class="pre">on_press</span></code>, <code class="docutils literal"><span class="pre">on_release</span></code>, and <code class="docutils literal"><span class="pre">on_motion</span></code> methods, bind those
+to the associated mouse events for that tag, making it draggable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>world</strong> – An instance of <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> or a subclass.</li>
+<li><strong>toplevel</strong> (<em>optional</em>) – The function or method to call to create the window itself.</li>
+<li><strong>close_cmd</strong> (<em>optional</em>) – The function or method to call when the window is destroyed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The new <cite>SoarCanvas</cite>.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -258,7 +288,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.9.0',
+            VERSION:'0.10.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -1,7 +1,7 @@
-soar\.gui\.plotWindow
+soar\.gui\.plot_window
 ============================
 
-.. automodule:: soar.gui.plotWindow
+.. automodule:: soar.gui.plot_window
     :members:
     :undoc-members:
     :show-inheritance:

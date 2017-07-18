@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.soar_ui &mdash; Soar 0.9.0 documentation</title>
+  <title>soar.gui.soar_ui &mdash; Soar 0.10.0 documentation</title>
   
 
   
@@ -35,10 +35,10 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.robot" href="soar.robot.html"/>
-        <link rel="prev" title="soar.gui.plugin" href="soar.gui.plugin.html"/> 
+        <link rel="prev" title="soar.gui.plot_window" href="soar.gui.plot_window.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.10.0
               </div>
             
           
@@ -94,16 +94,18 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="soar.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="soar.gui.html">soar.gui</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="soar.gui.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="soar.gui.html">soar.gui</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.canvas.html">soar.gui.canvas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.output.html">soar.gui.output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.gui.plot_window.html">soar.gui.plot_window</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.gui.soar_ui</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="soar.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 </ul>
 </li>
 </ul>
@@ -175,22 +177,23 @@
             
   <div class="section" id="module-soar.gui.soar_ui">
 <span id="soar-gui-soar-ui"></span><h1>soar.gui.soar_ui<a class="headerlink" href="#module-soar.gui.soar_ui" title="Permalink to this headline">¶</a></h1>
-<p>SoaR v0.9.0 UI</p>
+<p>Soar v0.10.0 Main GUI</p>
+<p>Classes for building the main GUI, which allows the user to load brains &amp; worlds, start simulations, etc.</p>
 <dl class="class">
 <dt id="soar.gui.soar_ui.ButtonFrame">
 <em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">ButtonFrame</code><span class="sig-paren">(</span><em>master</em>, <em>image=None</em>, <em>text=None</em>, <em>command=None</em>, <em>state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.ButtonFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Frame</span></code></p>
-<p>A Tk frame containing an image Button and a Label immediately beneath it, arranged via the grid geometry manager</p>
+<p>A Tk frame containing an image Button and a Label immediately beneath it, arranged via the grid geometry manager.</p>
 <dl class="attribute">
 <dt id="soar.gui.soar_ui.ButtonFrame.button">
 <code class="descname">button</code><a class="headerlink" href="#soar.gui.soar_ui.ButtonFrame.button" title="Permalink to this definition">¶</a></dt>
-<dd><p>The button inside the frame</p>
+<dd><p>The button inside the frame.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.gui.soar_ui.ButtonFrame.label">
 <code class="descname">label</code><a class="headerlink" href="#soar.gui.soar_ui.ButtonFrame.label" title="Permalink to this definition">¶</a></dt>
-<dd><p>The label inside the frame</p>
+<dd><p>The label inside the frame.</p>
 </dd></dl>
 
 <table class="docutils field-list" frame="void" rules="none">
@@ -198,11 +201,11 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>master</strong> – The parent widget or window in which to place the frame</li>
-<li><strong>image</strong> (<em>optional</em>) – The image to place inside the button</li>
-<li><strong>text</strong> (<em>optional</em>) – The text to place inside the label</li>
-<li><strong>command</strong> (<em>optional</em>) – The function to call when the button is clicked</li>
-<li><strong>state</strong> (<em>optional</em>) – The state of the button, either NORMAL or DISABLED</li>
+<li><strong>master</strong> – The parent widget or window in which to place the frame.</li>
+<li><strong>image</strong> (<em>optional</em>) – The image to place inside the button.</li>
+<li><strong>text</strong> (<em>optional</em>) – The text to place inside the label.</li>
+<li><strong>command</strong> (<em>optional</em>) – The function to call when the button is clicked.</li>
+<li><strong>state</strong> (<em>optional</em>) – The state of the button, either NORMAL or DISABLED.</li>
 </ul>
 </td>
 </tr>
@@ -211,16 +214,16 @@
 <dl class="method">
 <dt id="soar.gui.soar_ui.ButtonFrame.config">
 <code class="descname">config</code><span class="sig-paren">(</span><em>image=None</em>, <em>text=None</em>, <em>command=None</em>, <em>state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.ButtonFrame.config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the parameters of the button/label</p>
+<dd><p>Sets the parameters of the button/label.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>image</strong> (<em>optional</em>) – The image to place inside the button</li>
-<li><strong>text</strong> (<em>optional</em>) – The text to place inside the label</li>
-<li><strong>command</strong> (<em>optional</em>) – The function to call when the button is clicked</li>
-<li><strong>state</strong> (<em>optional</em>) – The state of the button, either NORMAL or DISABLED</li>
+<li><strong>image</strong> (<em>optional</em>) – The image to place inside the button.</li>
+<li><strong>text</strong> (<em>optional</em>) – The text to place inside the label.</li>
+<li><strong>command</strong> (<em>optional</em>) – The function to call when the button is clicked.</li>
+<li><strong>state</strong> (<em>optional</em>) – The state of the button, either NORMAL or DISABLED.</li>
 </ul>
 </td>
 </tr>
@@ -231,166 +234,331 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="soar.gui.soar_ui.SoarUI">
-<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">SoarUI</code><span class="sig-paren">(</span><em>parent=None</em>, <em>title='SoaR v0.9.0'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Tk</span></code></p>
-<dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.brain_cmd">
-<code class="descname">brain_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.brain_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="soar.gui.soar_ui.SoarUI.brain_dir">
-<code class="descname">brain_dir</code><em class="property"> = '/home/ariel/Desktop/Athena/SoaR/soar/gui/../brains/'</em><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.brain_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.canvas_from_world">
-<code class="descname">canvas_from_world</code><span class="sig-paren">(</span><em>world</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.canvas_from_world" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a SoarCanvas in a new window from a World</p>
+<dt id="soar.gui.soar_ui.IntegerEntry">
+<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">IntegerEntry</code><span class="sig-paren">(</span><em>parent</em>, <em>value=''</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.IntegerEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Entry</span></code></p>
+<p>A Tk entry that only allows integers.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>world</strong> – An instance of World or a subclass</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> – The parent Tk widget or window.</li>
+<li><strong>value</strong> (<em>str</em>) – The initial value. Must be able to be cast to <code class="docutils literal"><span class="pre">int</span></code>.</li>
+<li><strong>**kwargs</strong> – Arbitrary Tk keyword arguments.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The new SoarCanvas</td>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="soar.gui.soar_ui.LoadingIcon">
+<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">LoadingIcon</code><span class="sig-paren">(</span><em>parent</em>, <em>file</em>, <em>frames</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.LoadingIcon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Label</span></code></p>
+<p>An animated loading icon that can be shown or hidden.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> – The parent Tk widget or window.</li>
+<li><strong>file</strong> (<em>str</em>) – The path to an animated <code class="docutils literal"><span class="pre">.gif</span></code>. The last frame should be empty/transparent.</li>
+<li><strong>frames</strong> (<em>int</em>) – The number of frames in the <code class="docutils literal"><span class="pre">.gif</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="soar.gui.soar_ui.SoarUI">
+<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">SoarUI</code><span class="sig-paren">(</span><em>client_msg</em>, <em>client_mainloop</em>, <em>parent=None</em>, <em>title='SoaR v0.10.0'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Tk</span></code></p>
+<p>The main GUI window.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>client_msg</strong> – The function to call to send a message to the client.</li>
+<li><strong>client_mainloop</strong> – The client’s mainloop function, restarted after the main thread switches to Tk execution.</li>
+<li><strong>parent</strong> (<em>optional</em>) – The parent window. It is almost always unnecessary to change this from the default.</li>
+<li><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – The main window title.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.brain_cmd">
+<code class="descname">brain_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.brain_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the brain button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.brain_ready">
+<code class="descname">brain_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.brain_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure buttons and paths when a brain is loaded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.cancel_all_loading">
+<code class="descname">cancel_all_loading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.cancel_all_loading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hide the loading icon and delete all button state frames.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.close_windows">
+<code class="descname">close_windows</code><span class="sig-paren">(</span><em>close_unlinked=False</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.close_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close windows, optionally unlinked ones, clear the draw queue, and set the simulator canvas to <code class="docutils literal"><span class="pre">None</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>close_unlinked</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, closes all windows. Otherwise, closes only the linked ones.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.close">
-<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.close" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.controller_failure">
 <code class="descname">controller_failure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.controller_failure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called by the client when the controller fails.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.disable_all">
-<code class="descname">disable_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.disable_all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="soar.gui.soar_ui.SoarUI.controller_io_error">
+<code class="descname">controller_io_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.controller_io_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when an error occurs connecting to the real robot.</p>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="soar.gui.soar_ui.SoarUI.image_dir">
-<code class="descname">image_dir</code><em class="property"> = '/home/ariel/Desktop/Athena/SoaR/soar/gui'</em><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.image_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.done_loading">
+<code class="descname">done_loading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.done_loading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-enable user interaction, and hide the loading icon.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.gui_error">
+<code class="descname">gui_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.gui_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a GUI error occurs, such as an error while drawing a world or window.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.initialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the grid geometry</p>
+<dd><p>Initialize the grid geometry.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.load_brain">
-<code class="descname">load_brain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.load_brain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.load_world">
-<code class="descname">load_world</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.load_world" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="soar.gui.soar_ui.SoarUI.loading">
+<code class="descname">loading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.loading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable user interaction and animate the loading icon.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.mainloop">
 <code class="descname">mainloop</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.mainloop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Enters the Tk event loop, and restarts the client as a new thread</p>
-<p>Redirects stdout and stderr to the GUI’s output frame</p>
+<dd><p>Enter the Tk event loop, and restart the client as a new thread.</p>
+<p>Redirect stdout and stderr to the GUI’s output frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.message">
+<code class="descname">message</code><span class="sig-paren">(</span><em>msg</em>, <em>*data</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a message to the GUI’s tick loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.on_close">
+<code class="descname">on_close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.on_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the main window is closed.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.pause_cmd">
 <code class="descname">pause_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.pause_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the pause button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.pause_ready">
+<code class="descname">pause_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.pause_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller has finished pausing.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.play_cmd">
 <code class="descname">play_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.play_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the play button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.play_ready">
+<code class="descname">play_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.play_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after the controller has started playing.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.real_cmd">
 <code class="descname">real_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.real_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the real robot button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.real_load">
+<code class="descname">real_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.real_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the real robot’s requested reload has finished.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.real_ready">
 <code class="descname">real_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.real_ready" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.reload_cmd">
-<code class="descname">reload_cmd</code><span class="sig-paren">(</span><em>load_controller=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.reload_cmd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kill the controller, any sim-linked windows, and reload the brain and world</p>
+<dd><p>Called when the real robot is ready.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><em>clear_output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets all of the button states to what they are at initialization, before any files are loaded</p>
+<dt id="soar.gui.soar_ui.SoarUI.reload_cmd">
+<code class="descname">reload_cmd</code><span class="sig-paren">(</span><em>reload_controller=True</em>, <em>clear_output=True</em>, <em>silent=False</em>, <em>close_unlinked=False</em>, <em>callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.reload_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill the controller, close windows, and reload the brain and world.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clear_output</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, clears the contents of the output frame</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reload_controller</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, immediately reload whatever controller was in effect previously.</li>
+<li><strong>close_unlinked</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, close all windows, not just the linked ones.</li>
+<li><strong>clear_output</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, clears the output of the output frame.</li>
+<li><strong>silent</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, stops the client from printing ‘LOAD BRAIN’-like messages.</li>
+<li><strong>callback</strong> – The function to call after the reload has finished, or <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.reset_ui">
-<code class="descname">reset_ui</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.reset_ui" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="soar.gui.soar_ui.SoarUI.reload_finished">
+<code class="descname">reload_finished</code><span class="sig-paren">(</span><em>reload_controller</em>, <em>sim_canvas</em>, <em>connected</em>, <em>callback</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.reload_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after the client has finished reloading.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reload_controller</strong> (<em>bool</em>) – reload_controller (bool): If <code class="docutils literal"><span class="pre">True</span></code>, reload the previous controller.</li>
+<li><strong>sim_canvas</strong> – If not <code class="docutils literal"><span class="pre">None</span></code>, the controller to be reloaded is the simulator.</li>
+<li><strong>connected</strong> – If <code class="docutils literal"><span class="pre">True</span></code>, the controller to be reloaded is the real robot controller.</li>
+<li><strong>callback</strong> – A function to call once the reload has finished, or <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.report_callback_exception">
+<code class="descname">report_callback_exception</code><span class="sig-paren">(</span><em>exc</em>, <em>val</em>, <em>traceback</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.report_callback_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report callback exception to sys.stderr, as well as notifying the Soar client.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><em>clear_output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset all of the button states to what they are at initialization, before any files are loaded.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clear_output</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, clear the contents of the output frame.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.sim_cmd">
 <code class="descname">sim_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.sim_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the simulator button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.sim_load">
+<code class="descname">sim_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.sim_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the simulator’s reload has finished.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.sim_ready">
 <code class="descname">sim_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.sim_ready" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.soft_reload">
-<code class="descname">soft_reload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.soft_reload" title="Permalink to this definition">¶</a></dt>
-<dd><p>A soft reload, that sends no commands to the client</p>
+<dd><p>Called when the simulator is ready.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.step_cmd">
 <code class="descname">step_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.step_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the step button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.step_finished">
+<code class="descname">step_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.step_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller finishes multi-stepping.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.stop_cmd">
 <code class="descname">stop_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.stop_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the stop button is pushed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.stop_ready">
+<code class="descname">stop_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.stop_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the controller has stopped.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.tick">
 <code class="descname">tick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.tick" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called 100 times per second to update the canvas.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.toplevel">
-<code class="descname">toplevel</code><span class="sig-paren">(</span><em>sim_linked=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.toplevel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a new window to the UI’s internal list, and returns a new Toplevel window,
-optionally linking it to the simulator window</p>
+<code class="descname">toplevel</code><span class="sig-paren">(</span><em>linked=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.toplevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new window to the UI’s internal list, and return a new Toplevel window, optionally linked.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sim_linked</strong> (<em>bool</em>) – If True, the window will be destroyed whenever the simulator window is destroyed.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linked</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, the window will be destroyed whenever the simulator window is destroyed.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The new Toplevel window</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The new Toplevel window.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.wait_for">
+<code class="descname">wait_for</code><span class="sig-paren">(</span><em>condition</em>, <em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.wait_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a function in the main Tk thread when some condition evaluates to true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>func</strong> – The function to eventually execute.</li>
+<li><strong>condition</strong> – The condition function. Should return a boolean.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -399,12 +567,14 @@ optionally linking it to the simulator window</p>
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.world_cmd">
 <code class="descname">world_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.world_cmd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called when the world button is pushed.</p>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="soar.gui.soar_ui.SoarUI.world_dir">
-<code class="descname">world_dir</code><em class="property"> = '/home/ariel/Desktop/Athena/SoaR/soar/gui/../worlds/'</em><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.world_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.world_ready">
+<code class="descname">world_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.world_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure buttons and paths when a world is ready.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -423,7 +593,7 @@ optionally linking it to the simulator window</p>
         <a href="soar.robot.html" class="btn btn-neutral float-right" title="soar.robot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="soar.gui.plugin.html" class="btn btn-neutral" title="soar.gui.plugin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="soar.gui.plot_window.html" class="btn btn-neutral" title="soar.gui.plot_window" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -454,7 +624,7 @@ optionally linking it to the simulator window</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.9.0',
+            VERSION:'0.10.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

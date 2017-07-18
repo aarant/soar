@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.robot.pioneer &mdash; Soar 0.9.0 documentation</title>
+  <title>soar.robot.pioneer &mdash; Soar 0.10.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.9.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
         <link rel="up" title="soar.robot" href="soar.robot.html"/>
         <link rel="next" title="soar.sim" href="soar.sim.html"/>
         <link rel="prev" title="soar.robot.names" href="soar.robot.names.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.10.0
               </div>
             
           
@@ -94,16 +94,18 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="soar.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="soar.robot.html">soar.robot</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="soar.robot.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="soar.robot.html">soar.robot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="soar.robot.arcos.html">soar.robot.arcos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.robot.base.html">soar.robot.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="soar.robot.names.html">soar.robot.names</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">soar.robot.pioneer</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="soar.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 </ul>
 </li>
 </ul>
@@ -173,8 +175,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="soar-robot-pioneer">
-<h1>soar.robot.pioneer<a class="headerlink" href="#soar-robot-pioneer" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-soar.robot.pioneer">
+<span id="soar-robot-pioneer"></span><h1>soar.robot.pioneer<a class="headerlink" href="#module-soar.robot.pioneer" title="Permalink to this headline">¶</a></h1>
+<p>Soar v0.10.0 Pioneer Robot Model</p>
+<p>Class for representing a Pioneer 3 robot, real or simulated.</p>
 <dl class="class">
 <dt id="soar.robot.pioneer.PioneerRobot">
 <em class="property">class </em><code class="descclassname">soar.robot.pioneer.</code><code class="descname">PioneerRobot</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot" title="Permalink to this definition">¶</a></dt>
@@ -182,66 +186,91 @@
 <p>An abstract, universal Pioneer 3 robot–that is, instances of this class can be fully simulated or used to
 connect with an actual Pioneer 3 robot.</p>
 <dl class="attribute">
-<dt id="PioneerRobot.FV_CAP">
-<code class="descname">FV_CAP</code><a class="headerlink" href="#PioneerRobot.FV_CAP" title="Permalink to this definition">¶</a></dt>
+<dt id="soar.robot.pioneer.PioneerRobot.type">
+<code class="descname">type</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.type" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Always ‘Pioneer3’; used to identify this robot type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.simulated">
+<code class="descname">simulated</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.simulated" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> – If <cite>True</cite>, the robot is being simulated. Otherwise it should be assumed to be real.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.pos">
+<code class="descname">pos</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> representing the robot’s <code class="docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> position.
+In simulation, this is the actual position; on a real robot this is based on information from the encoders.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.world">
+<code class="descname">world</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.world" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> or a subclass of it, or <code class="docutils literal"><span class="pre">None</span></code>, if the robot is real.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.FV_CAP">
+<code class="descname">FV_CAP</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.FV_CAP" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>float</em> – The maximum translational velocity at which the robot can move, in meters/second.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="PioneerRobot.RV_CAP">
-<code class="descname">RV_CAP</code><a class="headerlink" href="#PioneerRobot.RV_CAP" title="Permalink to this definition">¶</a></dt>
+<dt id="soar.robot.pioneer.PioneerRobot.RV_CAP">
+<code class="descname">RV_CAP</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.RV_CAP" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>float</em> – The maximum rotational velocity at which the robot can move, in radians/second.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="PioneerRobot.SONAR_MAX">
-<code class="descname">SONAR_MAX</code><a class="headerlink" href="#PioneerRobot.SONAR_MAX" title="Permalink to this definition">¶</a></dt>
+<dt id="soar.robot.pioneer.PioneerRobot.SONAR_MAX">
+<code class="descname">SONAR_MAX</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.SONAR_MAX" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>float</em> – The maximum distance that the sonars can sense, in meters.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="soar.robot.pioneer.PioneerRobot.get_sonars">
-<code class="descname">get_sonars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.get_sonars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the latest sonar distances as an array.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list containing The latest distance sensed by each sonar, in order from the robot’s left clockwise to its
-right, in meters, accurate to the millimeter. If no distance was sensed by a sonar, its value will be 5.0.</td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.arcos">
+<code class="descname">arcos</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.arcos" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of <a class="reference internal" href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient" title="soar.robot.arcos.ARCOSClient"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.arcos.ARCOSClient</span></code></a> if the robot is real and has been loaded, otherwise
+<code class="docutils literal"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.analogs">
+<code class="descname">analogs</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.analogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the robot’s 4 analog inputs, so long as it is real and not simulated, as a 4 tuple.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.fv">
+<code class="descname">fv</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.fv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set the robot’s current translational velocity, in meters/second. Positive values indicate movement
+towards the front of the robot, and negative values indicate movement towards the back.</p>
+<p>Setting the robot’s forward velocity is always subject to <a class="reference internal" href="#soar.robot.pioneer.PioneerRobot.FV_CAP" title="soar.robot.pioneer.PioneerRobot.FV_CAP"><code class="xref py py-attr docutils literal"><span class="pre">soar.robot.pioneer.PioneerRobot.FV_CAP</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.rv">
+<code class="descname">rv</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.rv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set the robot’s current rotational velocity, in radians/second. Positive values indicate
+counterclockwise rotation (when viewed from above) and negative values indicate clockwise rotation.</p>
+<p>Setting the robot’s forward velocity is always subject to <a class="reference internal" href="#soar.robot.pioneer.PioneerRobot.RV_CAP" title="soar.robot.pioneer.PioneerRobot.RV_CAP"><code class="xref py py-attr docutils literal"><span class="pre">soar.robot.pioneer.PioneerRobot.RV_CAP</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.pioneer.PioneerRobot.sonars">
+<code class="descname">sonars</code><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.sonars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the latest sonar readings as an array.</p>
+<p>The array contains the latest distance sensed by each sonar, in order, clockwise from the robot’s far left to
+its far right. Readings are given in meters and are accurate to the millimeter. If no distance was sensed by a
+sonar, its entry in the array will be <code class="docutils literal"><span class="pre">None</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.robot.pioneer.PioneerRobot.set_forward_velocity">
-<code class="descname">set_forward_velocity</code><span class="sig-paren">(</span><em>fv</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.set_forward_velocity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the robot’s forward velocity subject to <cite>FV_CAP</cite>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fv</strong> (<em>float</em>) – The new forward velocity, in meters/second. Positive values move forwards and negative values
-move backwards.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="soar.robot.pioneer.PioneerRobot.set_rotational_velocity">
-<code class="descname">set_rotational_velocity</code><span class="sig-paren">(</span><em>rv</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.set_rotational_velocity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the robot’s rotational velocity subject to <cite>RV_CAP</cite>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rv</strong> (<em>float</em>) – The new rotational velocity, in radians/second. Positive values move counterclockwise and
-negative ones move clockwise.</td>
-</tr>
-</tbody>
-</table>
+<dt id="soar.robot.pioneer.PioneerRobot.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.pioneer.PioneerRobot.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary representation of the robot, usable for serialization.</p>
+<p>This contains the robot type, position, sonar data, and forward and rotational velocities.</p>
 </dd></dl>
 
 </dd></dl>
@@ -292,7 +321,7 @@ negative ones move clockwise.</td>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.9.0',
+            VERSION:'0.10.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

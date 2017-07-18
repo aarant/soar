@@ -1,7 +1,0 @@
-soar\.world\.wallFinderWorld module
-===================================
-
-.. automodule:: soar.world.wallFinderWorld
-    :members:
-    :undoc-members:
-    :show-inheritance:
