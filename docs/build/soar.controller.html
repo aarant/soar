@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.controller &mdash; Soar 0.10.0 documentation</title>
+  <title>soar.controller &mdash; Soar 0.11.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.10.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
         <link rel="up" title="soar" href="soar.html"/>
         <link rel="next" title="soar.errors" href="soar.errors.html"/>
         <link rel="prev" title="soar.sim.world" href="soar.sim.world.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.10.0
+                0.11.0
               </div>
             
           
@@ -169,7 +169,7 @@
             
   <div class="section" id="module-soar.controller">
 <span id="soar-controller"></span><h1>soar.controller<a class="headerlink" href="#module-soar.controller" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.10.0 Controller</p>
+<p>Soar v0.11.0 Controller</p>
 <p>Classes and functions for controlling robots, simulated or real.</p>
 <dl class="class">
 <dt id="soar.controller.Controller">
@@ -293,14 +293,14 @@ Otherwise, for <code class="docutils literal"><span class="pre">n</span> <span c
 <dl class="function">
 <dt id="soar.controller.log">
 <code class="descclassname">soar.controller.</code><code class="descname">log</code><span class="sig-paren">(</span><em>obj</em>, <em>logfile</em>, <em>mode='a'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Log a serialized JSON object to a file, adding a newline.</p>
+<dd><p>Log a serialized JSON object to a path or file-like object, adding a newline after.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>obj</strong> – The object to be serialized.</li>
-<li><strong>logfile</strong> – The path to the log file.</li>
+<li><strong>logfile</strong> – The path to the log file, or a file-like object that supports <code class="docutils literal"><span class="pre">write()</span></code>.</li>
 <li><strong>mode</strong> – The mode in which the file is to be opened.</li>
 </ul>
 </td>
@@ -370,7 +370,7 @@ Otherwise, for <code class="docutils literal"><span class="pre">n</span> <span c
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.10.0',
+            VERSION:'0.11.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
