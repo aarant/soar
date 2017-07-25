@@ -26,18 +26,17 @@ Examples:
         from soar.client.main import main
         return_value = main(logfile=open('path/to/logfile', 'r+'))
     """
-import os
 import importlib.util
+import os
 import traceback as tb
 from queue import Queue
 
-from soar.errors import *
-from soar.client.common import *
-from soar.gui.soar_ui import SoarUI
-from soar.gui.plot_window import PlotWindow
+from soar.common import *
 from soar.controller import Controller
 from soar.controller import log
-
+from soar.errors import *
+from soar.gui.plot_window import PlotWindow
+from soar.gui.soar_ui import SoarUI
 
 brain = None
 brain_path = None

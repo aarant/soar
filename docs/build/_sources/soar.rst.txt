@@ -9,10 +9,9 @@ soar
 .. toctree::
 
     soar.client
+    soar.common
+    soar.controller
+    soar.errors
     soar.gui
     soar.robot
     soar.sim
-    soar.controller
-    soar.errors
-
-

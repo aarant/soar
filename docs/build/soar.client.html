@@ -37,7 +37,7 @@
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
         <link rel="up" title="soar" href="soar.html"/>
-        <link rel="next" title="soar.client.main" href="soar.client.main.html"/>
+        <link rel="next" title="soar.common" href="soar.common.html"/>
         <link rel="prev" title="soar" href="soar.html"/> 
 
   
@@ -94,16 +94,13 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">soar.client</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="soar.client.main.html">soar.client.main</a></li>
-<li class="toctree-l3"><a class="reference internal" href="soar.client.common.html">soar.client.common</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">soar.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.common.html">soar.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
-<li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 </ul>
 </li>
 </ul>
@@ -173,14 +170,77 @@
             
   <div class="section" id="module-soar.client">
 <span id="soar-client"></span><h1>soar.client<a class="headerlink" href="#module-soar.client" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 Client.</p>
-<p>Package for interacting with the Soar client.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="soar.client.main.html">soar.client.main</a></li>
-<li class="toctree-l1"><a class="reference internal" href="soar.client.common.html">soar.client.common</a></li>
-</ul>
+<p>Soar v0.11.0 client entrypoint.</p>
+<p>Classes and functions for interacting with Soar in general. This module serves as the main entrypoint to the package.
+Projects desiring to invoke a Soar instance should import this module and call <code class="xref py py-func docutils literal"><span class="pre">soar.client.main.main()</span></code>.</p>
+<p class="rubric">Examples</p>
+<p>This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">()</span>
+</pre></div>
 </div>
+<p>If invoking a headless instance, paths to brain and world files should be specified:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">brain_path</span><span class="o">=</span><span class="s1">&#39;path/to/brain.py&#39;</span><span class="p">,</span> <span class="n">world_path</span><span class="o">=</span><span class="s1">&#39;path/to/world.py&#39;</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case, the return value will be 1 if an exception occurred and 0 otherwise.</p>
+<p>Logging is handled via passing a path:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">logfile</span><span class="o">=</span><span class="s1">&#39;path/to/logfile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or, using a file-like object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">logfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;path/to/logfile&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="soar.client.main">
+<code class="descclassname">soar.client.</code><code class="descname">main</code><span class="sig-paren">(</span><em>brain_path=None</em>, <em>world_path=None</em>, <em>headless=False</em>, <em>logfile=None</em>, <em>step_duration=0.1</em>, <em>realtime=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.client.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main entrypoint, for use from the command line or other packages. Starts a Soar instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>brain_path</strong> (<em>optional</em>) – The path to the initial brain to load. Required if headless, otherwise not required.</li>
+<li><strong>world_path</strong> (<em>optional</em>) – The path to the initial world to load. Required if headless, otherwise not required.</li>
+<li><strong>headless</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, run Soar in headless mode, immediately running a simulation.</li>
+<li><strong>logfile</strong> (<em>optional</em>) – The path to the log file, or a file-like object to log data to.</li>
+<li><strong>step_duration</strong> (<em>float</em>) – The duration of a controller step, in seconds.</li>
+<li><strong>realtime</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, the controller will never sleep to make a step last the proper length. Instead,</li>
+<li><strong>will run as fast as possible.</strong> (<em>it</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">0 if Soar’s execution successfully completed, 1 otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="soar.client.message">
+<code class="descclassname">soar.client.</code><code class="descname">message</code><span class="sig-paren">(</span><em>msg</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.client.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a message with data for the client to execute in the future, by putting it on the client’s internal queue.</p>
+<p>Note that if an exception or controller failure occurs, the message may never be read as the queue will be purged.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msg</strong> – The message to send, defined in <code class="xref py py-mod docutils literal"><span class="pre">soar.client.common</span></code>.</li>
+<li><strong>*args</strong> – The variable length arguments to pass to the function.</li>
+<li><strong>**kwargs</strong> – The keyword arguments to pass to the function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -193,7 +253,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="soar.client.main.html" class="btn btn-neutral float-right" title="soar.client.main" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="soar.common.html" class="btn btn-neutral float-right" title="soar.common" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="soar.html" class="btn btn-neutral" title="soar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

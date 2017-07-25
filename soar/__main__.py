@@ -3,10 +3,10 @@
 
 Allows use of Soar from the command line by passing arguments to :func:`soar.client.main.main`.
 """
-from sys import exit
 from argparse import ArgumentParser
+from sys import exit
 
-from soar.client.main import main as invoke_client
+from soar.client import main as invoke_client
 
 
 def main():

@@ -1,7 +1,7 @@
-soar\.client\.common
+soar\.common
 =============================
 
-.. automodule:: soar.client.common
+.. automodule:: soar.common
     :members:
     :undoc-members:
     :show-inheritance:

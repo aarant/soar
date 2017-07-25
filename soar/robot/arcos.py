@@ -10,7 +10,7 @@ from serial import *
 from serial.tools.list_ports import comports
 
 from soar.errors import SoarError
-from soar.client.main import printerr
+from soar.client import printerr
 
 # ARCOS Client command codes
 

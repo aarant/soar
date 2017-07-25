@@ -3,13 +3,13 @@
 Classes and functions for controlling robots, simulated or real.
 """
 import json
+from io import StringIO
+from threading import Thread
 from time import sleep
 from timeit import default_timer as timer
-from threading import Thread
-from io import StringIO
 
+from soar.common import DRAW, CONTROLLER_COMPLETE, STEP_FINISHED, MAKE_WORLD_CANVAS
 from soar.errors import LoggingError
-from soar.client.common import DRAW, CONTROLLER_COMPLETE, STEP_FINISHED, MAKE_WORLD_CANVAS
 
 
 def sim_completed(obj=None):

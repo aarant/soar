@@ -3,14 +3,13 @@
 Classes for building the main GUI, which allows the user to load brains & worlds, start simulations, etc.
 """
 import os
+import traceback as tb
 from queue import Queue
 from threading import Thread
-import traceback as tb
-
 from tkinter import *
 from tkinter import filedialog
 
-from soar.client.common import *
+from soar.common import *
 from soar.gui.canvas import canvas_from_world
 from soar.gui.output import OutputFrame, SoarIO
 
