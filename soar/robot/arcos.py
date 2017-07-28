@@ -1,7 +1,9 @@
-""" Soar v0.11.0 ARCOS (Advanced Robot Control and Operations Software) Client
+""" ARCOS (Advanced Robot Control and Operations Software) Client
 
 Classes and functions for communicating with an ARCOS server running on an Adept MobileRobot platform
 (typically Pioneer 2 and 3).
+
+TODO: ARCOS Command ordering
 """
 from threading import Thread, Lock, Event
 from time import sleep
@@ -12,13 +14,15 @@ from serial.tools.list_ports import comports
 from soar.errors import SoarError
 from soar.client import printerr
 
+__version__ = '1.0'
+
 # ARCOS Client command codes
 
 SYNC0 = 0  # Synchronization packets, sent in sequence
 SYNC1 = 1
 SYNC2 = 2  # Robot specific information is sent back after SYNC2
-PULSE = 0  # Reset server watchdog (typically sent every second so that the robot knows the client is alive_
-OPEN = 1  # Start up ARCOS server
+PULSE = 0  #: Reset server watchdog (typically sent every second so that the robot knows the client is alive.
+OPEN = 1  #: Start the ARCOS servers.
 CLOSE = 2  # Close servers and client connection
 POLLING = 3  # Change sonar polling sequence
 ENABLE = 4  # if argument is 1, enables the motors, if 0, disables them
@@ -77,25 +81,25 @@ command_types = {
 
 
 class ARCOSError(SoarError):
-    """ Umbrella class for ARCOS-related exceptions """
+    """ Umbrella class for ARCOS-related exceptions. """
 
 
 class Timeout(ARCOSError):
-    """ Raised when no packet is read after a certain interval """
+    """ Raised when no packet is read after a certain interval. """
 
 
 class InvalidPacket(ARCOSError):
-    """ Raised when a packet's checksum is incorrect """
+    """ Raised when a packet's checksum is incorrect. """
 
 
 def packet_checksum(data):
-    """ Calculates and returns the ARCOS packet checksum of a packet which does not have one
+    """ Calculate and returns the ARCOS packet checksum of a packet which does not have one.
 
     Args:
-        data (list): A list of data bytes
+        data (list): A list of data bytes.
 
     Returns:
-        int: The packet checksum
+        int: The packet checksum.
     """
     checksum = 0
     i = 3
@@ -110,84 +114,89 @@ def packet_checksum(data):
     return checksum
 
 
-def decode_packet(packet):  # TODO: Make this cleaner
-    """ Decodes a packet into a field-indexable dictionary
+def __b_2_i(l, i):  # Takes a list and an index and returns the two bytes combined into an int
+    return l[i] | (l[i + 1] << 8)
+
+
+def __str_from_i(l, i):  # Takes a list and an index and returns a string and the index after the null terminator
+    s = ''
+    while l[i] != 0:
+        s += chr(l[i])
+        i += 1
+    i += 1
+    return s, i
+
+
+def __unpack_byte_fields(data, packet, i, *fields):  # Unpack an arbitrary number of byte fields starting at index i
+    for field in fields:
+        data.update({field: packet[i]})
+        i += 1
+    return i
+
+
+def __unpack_int_fields(data, packet, i, *fields):  # Unpack an arbitrary number of int fields starting at index i
+    for field in fields:
+        data.update({field: __b_2_i(packet, i)})
+        i += 2
+    return i
+
+
+def __unpack_str_fields(data, packet, i, *fields):  # Unpack an arbitrary number of str fields starting at index i
+    for field in fields:
+        s, i = __str_from_i(packet, i)
+        data.update({field: s})
+    return i
+
+
+def decode_packet(packet):
+    """ Decode a SIP (Server Information Packet) into a field-indexable dictionary.
 
     Returns:
-        dict: A dictionary with field names as keys and values as corresponding numbers. The 'TYPE' key holds a value of
-        'STANDARD', 'CONFIG', or 'ENCODER', corresponding to the packet type
+        dict: A dictionary with field names as keys and values as corresponding numbers. The `'TYPE'` key holds a value
+        of `'STANDARD'`, `'CONFIG'`, `'ENCODER'`, or `'IO'`, corresponding to the packet type.
 
     Raises:
-        InvalidPacket: If a packet's fields could not be decoded
+        `InvalidPacket`: If a packet's fields could not be decoded.
     """
-
-    def b_2_i(l, i):  # Takes a list and an index and returns the two bytes combined into an int
-        return l[i] | (l[i+1] << 8)
-
-    def str_from_i(l, i):  # Takes a list and an index and returns a null terminated string with index after the null terminator
-        s = ''
-        while l[i] != 0:
-            s += chr(l[i])
-            i += 1
-        i += 1
-        return s, i
-
-    def unpack_byte_fields(data, packet, i, *fields):
-        for field in fields:
-            data.update({field: packet[i]})
-            i += 1
-        return i
-
-    def unpack_int_fields(data, packet, i, *fields):
-        for field in fields:
-            data.update({field: b_2_i(packet, i)})
-            i += 2
-        return i
-
-    def unpack_str_fields(data, packet, i, *fields):
-        for field in fields:
-            s, i = str_from_i(packet, i)
-            data.update({field: s})
-        return i
-
     try:
-        data = {'TYPE': packet[3]}
+        data = {'TYPE': packet[3], 'CHECKSUM': (packet[-1] & 0xff) | (packet[-2] << 8)}
         if data['TYPE'] in [0x32, 0x33]:  # Standard sip
             data['TYPE'] = 'STANDARD'
-            unpack_int_fields(data, packet, 4, 'XPOS', 'YPOS', 'THPOS', 'L VEL', 'R VEL')
+            __unpack_int_fields(data, packet, 4, 'XPOS', 'YPOS', 'THPOS', 'L VEL', 'R VEL')
             data.update({'BATTERY': packet[14]})
-            unpack_int_fields(data, packet, 15, 'STALL AND BUMPERS', 'CONTROL', 'FLAGS')
+            __unpack_int_fields(data, packet, 15, 'STALL AND BUMPERS', 'CONTROL', 'FLAGS')
             data.update({'COMPASS': packet[21], 'SONAR_COUNT': packet[22]})
             sonars = {}
             i = 23
             for sonar in range(data['SONAR_COUNT']):
                 number = packet[i]
-                dist = b_2_i(packet, i + 1)
+                dist = __b_2_i(packet, i + 1)
                 sonars.update({number: dist})
                 i += 3
             data.update({'SONARS': sonars})
         elif data['TYPE'] == 0x20:  # CONFIGpac
             data['TYPE'] = 'CONFIG'
-            i = unpack_str_fields(data, packet, 4, 'ROBOT_TYPE', 'SUBTYPE', 'SERNUM')
+            i = __unpack_str_fields(data, packet, 4, 'ROBOT_TYPE', 'SUBTYPE', 'SERNUM')
             data.update({'4MOTS': packet[i]})
-            i = unpack_int_fields(data, packet, i+1, 'ROTVELTOP', 'TRANSVELTOP', 'ROTACCTOP', 'TRANSACCTOP', 'PWMMAX')
-            s, i = str_from_i(packet, i)
+            i = __unpack_int_fields(data, packet, i+1, 'ROTVELTOP', 'TRANSVELTOP', 'ROTACCTOP', 'TRANSACCTOP', 'PWMMAX')
+            s, i = __str_from_i(packet, i)
             data.update({'NAME': s})
-            i = unpack_byte_fields(data, packet, i, 'SIPCycle', 'HOSTBAUD', 'AUXBAUD')
-            i = unpack_int_fields(data, packet, i, 'GRIPPER', 'FRONT_SONAR')
+            i = __unpack_byte_fields(data, packet, i, 'SIPCycle', 'HOSTBAUD', 'AUXBAUD')
+            i = __unpack_int_fields(data, packet, i, 'GRIPPER', 'FRONT_SONAR')
             data.update({'REAR_SONAR': packet[i]})
             i += 1
-            data.update({'LOWBATTERY': b_2_i(packet, i)})
+            data.update({'LOWBATTERY': __b_2_i(packet, i)})
         elif data['TYPE'] == 0x90:  # ENCODERpac
             data['TYPE'] = 'ENCODER'
-            data.update({'L_ENCODER': (b_2_i(packet, 6) << 16) | b_2_i(packet, 4),
-                         'R_ENCODER': (b_2_i(packet, 10) << 16) | b_2_i(packet, 8)})
+            data.update({'L_ENCODER': (__b_2_i(packet, 6) << 16) | __b_2_i(packet, 4),
+                         'R_ENCODER': (__b_2_i(packet, 10) << 16) | __b_2_i(packet, 8)})
         elif data['TYPE'] == 0xF0:  # IOpac
             data['TYPE'] = 'IO'
-            i = unpack_byte_fields(data, packet, 4, 'N DIGIN', 'DIGIN', 'FRONTBUMPS', 'REARBUMPS', 'IRS', 'N_DIGOUT', 'DIGOUT', 'N_AN')
+            i = __unpack_byte_fields(data, packet, 4, 'N DIGIN', 'DIGIN', 'FRONTBUMPS', 'REARBUMPS', 'IRS', 'N_DIGOUT',
+                                     'DIGOUT', 'N_AN')
             analogs = []
             for analog in range(data['N_AN']):
-                analogs.append(b_2_i(packet, i))
+                analogs.append(__b_2_i(packet, i))
                 i += 2
             data.update({'ANALOGS': analogs})
     except IndexError:
@@ -201,18 +210,18 @@ class ARCOSClient:
     Args:
         timeout (float): The time to wait while receiving data before a timeout occurs, in seconds.
         write_timeout (float): The time to wait while sending data before a timeout occurs, in seconds.
-        allowed_timeouts (int): The number of timeouts to tolerate before the update coroutine closes the port
+        allowed_timeouts (int): The number of timeouts to tolerate before the update coroutine closes the port.
 
     Attributes:
-        standard (dict): The last standard Server Information Packet (SIP) received. If no packet of this type has been
-                         received, this will be None.
-        config (dict): The last CONFIGpac SIP received. If no packet of this type has been received, this will be None.
-        encoder (dict): The last ENCODERpac SIP received. If no packet of this type has been received, this will be None.
+        standard (dict): The last standard Server Information Packet (SIP) received, or `None`, if one hasn't been
+        received yet.
+        config (dict): The last CONFIGpac SIP received, or `None`, if one hasn't been received yet.
+        encoder (dict): The last ENCODERpac SIP received, or `None`, if one hasn't been received yet.
+        io (dict): The last IOpac SIP received, or `None`, if one hasn't been received yet.
         standard_event (:class:`threading.Event`): Set whenever a standard SIP is received.
         config_event (:class:`threading.Event`): Set whenever a CONFIGpac SIP is received.
         encoder_event (:class:`threading.Event`): Set whenever an ENCODERpac SIP is received.
         io_event (:class:`threading.Event`): Set whenever an IOpac is received.
-        io (dict): The last IOpac SIP received. If no packet of this type has been received, this will be None.
         sonars (list): A list of the latest Sonar array values, updated whenever a standard SIP is received.
     """
     def __init__(self, timeout=1.0, write_timeout=1.0, allowed_timeouts=2):
@@ -256,8 +265,8 @@ class ARCOSClient:
             list: The entire packet as a list of bytes, including header and checksum bytes.
 
         Raises:
-            Timeout: If at any point a timeout occurs and fewer bytes than expected are read.
-            InvalidPacket: If the packet header, checksum, or packet length are invalid.
+            `Timeout`: If at any point a timeout occurs and fewer bytes than expected are read.
+            `InvalidPacket`: If the packet header, checksum, or packet length are invalid.
         """
         def read():
             try:
@@ -290,8 +299,8 @@ class ARCOSClient:
         """ Send a command and data to the ARCOS server.
 
         Args:
-            code: The command code. Must be in :data:`soar.robot.arcos.command_types`
-            data (optional): The associated command argument, assumed to be of the correct type
+            code: The command code. Must be in :data:`soar.robot.arcos.command_types`.
+            data (optional): The associated command argument, assumed to be of the correct type.
         """
         if command_types[code] is None:  # No argument
             self.send_packet(code)
@@ -315,22 +324,22 @@ class ARCOSClient:
         Returns if successful.
 
         Raises:
-            ARCOSError: If unable to connect to any available ports
+            `ARCOSError`: If unable to connect to any available ports.
         """
         ports = [port_info.device for port_info in comports()]  # Try every available port until we find a robot
         for port in ports:
-            def connect_with_baud(baud):
-                return Serial(port=port, baudrate=baud, timeout=self.timeout, writeTimeout=self.write_timeout)
-            for baud in [115200, 57600, 38400, 19200, 9600]:  # Connect with the highest baudrate possible
+            def connect_with_baudrate(baudrate):
+                return Serial(port=port, baudrate=baudrate, timeout=self.timeout, writeTimeout=self.write_timeout)
+            for baudrate in [115200, 57600, 38400, 19200, 9600]:  # Connect with the highest baudrate possible
                 # Attempt to open the port
                 try:
                     # Kill the microcontroller servers in case they are already running
-                    self.ser = connect_with_baud(baud)
+                    self.ser = connect_with_baudrate(baudrate)
                     self.send_packet(CLOSE)
                     self.ser.close()
 
                     # Connect for real, and flush the input and output buffers
-                    self.ser = connect_with_baud(baud)
+                    self.ser = connect_with_baudrate(baudrate)
                     self.ser.reset_input_buffer()
                     self.ser.reset_output_buffer()
                 except SerialException as e:  # Any error opening the port (permissions, etc) will cause us to move on
@@ -344,7 +353,7 @@ class ARCOSClient:
                 else:
                     self.start()
                     return
-        # If we have tried every available port without success, except out
+        # If we have tried every available port without success, raise an exception
         raise ARCOSError('Unable to sync with an ARCOS server--is the robot connected and its port accessible?')
 
     def disconnect(self):
@@ -368,7 +377,7 @@ class ARCOSClient:
             tries (int, optional): The number of failures to tolerate before timing out.
 
         Raises:
-            Timeout: If the number of tries is exhausted and syncing was not completed
+            `Timeout`: If the number of tries is exhausted and syncing was not completed.
         """
         for sync in [SYNC0, SYNC1, SYNC2]:
             echo = None
@@ -387,17 +396,16 @@ class ARCOSClient:
                 if tries < 0:
                     raise Timeout('An error occurred while syncing')
         return
-            
 
     def pulse(self):
-        """ Continually send the PULSE command so that the robot knows the client is alive """
+        """ Continually send the PULSE command so that the robot knows the client is alive. """
         self.pulse_running = True
         while self.pulse_running:
             self.send_packet(PULSE)
             sleep(1.0)  # Default Watchdog interval is 2 seconds, so PULSE every second just to be safe
 
     def update(self):
-        """ Continually receive and decode packets, storing them as attributes and triggering events """
+        """ Continually receive and decode packets, storing them as attributes and triggering events. """
         self.update_running = True
         timeouts = 0
         invalids = 0
@@ -406,15 +414,13 @@ class ARCOSClient:
                 received = self.receive_packet()
                 decoded = decode_packet(received)
             except Timeout:  # Count timeouts and close the port if too many occur, killing this routine
-                print('Timeout')
                 timeouts += 1
                 if timeouts > self.allowed_timeouts:
                     self.disconnect()
                     break
             except InvalidPacket:  # As per the Pioneer handbook, ignore invalid SIPs and move on
-                print('Invalid')
                 invalids += 1
-                if invalids > 10:  # If many packets are invalid, try flushing the input buffer
+                if invalids > 10:  # If many consecutive packets are invalid, try flushing the input buffer
                     self.ser.reset_input_buffer()
                 continue
             else:
@@ -441,29 +447,29 @@ class ARCOSClient:
         pulse.start()
         update = Thread(target=self.update, daemon=True)
         update.start()
-        self.wait_for(self.standard_event, 5.0, 'Failed to receive SIPs from the robot')
+        self.wait_or_timeout(self.standard_event, 5.0, 'Failed to receive SIPs from the robot')
         for i in range(5):  # Try multiple times to enable the sonars
             if self.standard['FLAGS'] & 0x2 != 0x2:
                 self.send_command(SONAR, 1)
                 sleep(1.0)
             else:
                 break
-        if self.standard['FLAGS'] & 0x2 != 0x2:
+        if self.standard['FLAGS'] & 0x2 != 0x2:  # If they still aren't enabled, raise an exception
             raise ARCOSError('Unable to enable the robot sonars.')
 
-    def wait_for(self, event, timeout=1.0, message=''):
-        """ Waits for an event to occur, with an optional timeout.
+    def wait_or_timeout(self, event, timeout=1.0, timeout_msg=''):
+        """ Wait for an event to occur, with an optional timeout and message.
 
         Args:
             event (Event): The event to wait for. Expected to be one of the attribute events of this class.
             timeout (float, optional): How long to wait for the event before timing out.
-            message (str): The message to pass if a timeout occurs.
+            timeout_msg (str): The message to pass if a timeout occurs.
 
         Raises:
-            Timeout: If the event has not occurred by the specified time.
+            `Timeout`: If the event has not occurred by the specified time.
         """
         event_occurred = event.wait(timeout)
         event.clear()
         if not event_occurred:
-            raise Timeout(message)
+            raise Timeout(timeout_msg)
 

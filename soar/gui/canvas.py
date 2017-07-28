@@ -1,17 +1,19 @@
-""" Soar v0.1.0 Canvas classes and methods.
+""" Soar canvas classes and methods.
 
-Defines ``SoarCanvas`` and ``SoarCanvasFrame`` classes, as well as a method of creating them from an instance of
+Defines `SoarCanvas` and `SoarCanvasFrame` classes, as well as a method of creating them from an instance of
 :class:`soar.sim.world.World`.
+
+TODO: Documentation
 """
 from tkinter import *
 
 
 def canvas_from_world(world, toplevel=Toplevel, close_cmd=None):
     """ Return a :class:`soar.gui.canvas.SoarCanvas` in a new window from a World. Optionally, call a different
-    ``toplevel()`` method to create the window, and set its behavior on close.
+    `toplevel()` method to create the window, and set its behavior on close.
 
-    Additionally, if an object in the world defines ``on_press``, ``on_release``, and ``on_motion`` methods, bind those
-    to the associated mouse events for that tag, making it draggable.
+    Additionally, if an object in the world defines `on_press`, `on_release`, and `on_motion` methods, bind those to
+    the associated mouse events for that tag, making it draggable.
 
     Args:
         world: An instance of :class:`soar.sim.world.World` or a subclass.
@@ -27,7 +29,7 @@ def canvas_from_world(world, toplevel=Toplevel, close_cmd=None):
     height = int(dim_y / max_dim * 500)
     options = {'width': width, 'height': height, 'pixels_per_meter': 500 / max_dim, 'bg': 'white'}
     t = toplevel()
-    t.title('SoaR v0.11.0 Simulation')
+    t.title('SoaR v1.0.0.dev0 Simulation')
     if close_cmd:
         t.protocol('WM_DELETE_WINDOW', close_cmd)
     t.aspect(width, height, width, height)

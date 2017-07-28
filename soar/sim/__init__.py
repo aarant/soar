@@ -1,4 +1,4 @@
-""" Soar v0.11.0 simulator classes.
+""" Soar simulator modules.
 
 Contains geometry and world-related classes for simulation.
 """

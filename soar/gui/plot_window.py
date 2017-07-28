@@ -1,4 +1,4 @@
-""" Soar v0.11.0 Plotting classes
+""" Soar plotting classes.
 
 Tkinter wrapper for plotting using matplotlib_
 

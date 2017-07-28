@@ -1,7 +1,4 @@
-""" Soar v0.11.0 Pioneer Robot Model
-
-Class for representing a Pioneer 3 robot, real or simulated.
-"""
+""" Soar PioneerRobot class, for representing a real or simulated Pioneer 3 robot. """
 from math import pi, sin, cos
 
 from soar.errors import SoarIOError
@@ -24,25 +21,24 @@ def clip(value, m1, m2):  # Clips a value between a min and a max
 
 
 class PioneerRobot(BaseRobot):
-    """ An abstract, universal Pioneer 3 robot--that is, instances of this class can be fully simulated or used to
-    connect with an actual Pioneer 3 robot.
+    """ An abstract, universal Pioneer 3 robot. Instances of this class can be fully simulated, or used to communicate
+    with an actual Pioneer3 robot over a serial port.
 
     Attributes:
-        type (str): Always 'Pioneer3'; used to identify this robot type.
+        type (str): Always `'Pioneer3'`; used to identify this robot type.
         simulated (bool): If `True`, the robot is being simulated. Otherwise it should be assumed to be real.
-        pos: An instance of :class:`soar.sim.geometry.Pose` representing the robot's ``(x, y, theta)`` position.
+        pos: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
              In simulation, this is the actual position; on a real robot this is based on information from the encoders.
-        world: An instance of :class:`soar.sim.world.World` or a subclass of it, or ``None``, if the robot is real.
+        world: An instance of :class:`soar.sim.world.World` or a subclass of it, or `None`, if the robot is real.
         FV_CAP (float): The maximum translational velocity at which the robot can move, in meters/second.
         RV_CAP (float): The maximum rotational velocity at which the robot can move, in radians/second.
         SONAR_MAX (float): The maximum distance that the sonars can sense, in meters.
         arcos: An instance of :class:`soar.robot.arcos.ARCOSClient` if the robot is real and has been loaded, otherwise
-               ``None``.
+               `None`.
     """
     def __init__(self):
-        BaseRobot.__init__(self)
+        BaseRobot.__init__(self, tags='pioneer')
         self.type = 'Pioneer3'
-        self.tags = 'pioneer'
         self.polygon = Polygon([(-0.034120395949525435, -0.21988658579769327),
                                 (0.057113186972574566, -0.21988658579769327),
                                 (0.13931180489258044, -0.17002226170095702),
@@ -72,12 +68,12 @@ class PioneerRobot(BaseRobot):
         self.FV_CAP = 1.5  # meters/second
         self.RV_CAP = 2*pi  # radians/second
         self.SONAR_MAX = 1.5  # meters
-        self._fv = 0.0
-        self._rv = 0.0
-        self.collided = False
+        self.__fv = 0.0  # Internal forward velocity storage
+        self.__rv = 0.0  # Internal rotational velocity storage
+        self.__collided = False
         self.arcos = None
-        self._sonars = None  # Super secret calculated sonars (shh)
-        self._drag_data = {'x': 0, 'y': 0, 'item': None}
+        self.__sonars = None  # Super secret calculated sonars (shh)
+        self.__drag_data = {'x': 0, 'y': 0, 'item': None}
 
     def to_dict(self):
         """ Return a dictionary representation of the robot, usable for serialization.
@@ -90,46 +86,52 @@ class PioneerRobot(BaseRobot):
 
     @property
     def fv(self):
-        """ Get or set the robot's current translational velocity, in meters/second. Positive values indicate movement
-        towards the front of the robot, and negative values indicate movement towards the back.
+        """ `float` The robot's current translational velocity, in meters/second.
+
+        Positive values indicate movement towards the front of the robot, and negative values indicate movement
+        towards the back.
 
         Setting the robot's forward velocity is always subject to :attr:`soar.robot.pioneer.PioneerRobot.FV_CAP`.
+        On a real robot, this is further limited by the hardware translational velocity cap.
         """
-        return self._fv
+        return self.__fv
 
     @fv.setter
     def fv(self, value):
-        self._fv = clip(value, -self.FV_CAP, self.FV_CAP)
+        self.__fv = clip(value, -self.FV_CAP, self.FV_CAP)
         if not self.simulated:  # For real robots, must send an ARCOS command
-            self.arcos.send_command(VEL, int(self._fv*1000))  # Convert m/s to mm/s
+            self.arcos.send_command(VEL, int(self.__fv*1000))  # Convert m/s to mm/s
 
     @property
     def rv(self):
-        """ Get or set the robot's current rotational velocity, in radians/second. Positive values indicate
-        counterclockwise rotation (when viewed from above) and negative values indicate clockwise rotation.
+        """ `float` The robot's current rotational velocity, in radians/second.
+
+        Positive values indicate counterclockwise rotation (when viewed from above) and negative values indicate
+        clockwise rotation.
 
         Setting the robot's forward velocity is always subject to :attr:`soar.robot.pioneer.PioneerRobot.RV_CAP`.
+        On a real robot, this is further limited by the hardware rotational velocity cap.
         """
-        return self._rv
+        return self.__rv
 
     @rv.setter
     def rv(self, value):
-        self._rv = clip(value, -self.RV_CAP, self.RV_CAP)
+        self.__rv = clip(value, -self.RV_CAP, self.RV_CAP)
         if not self.simulated:
-            self.arcos.send_command(RVEL, int(self._rv * 180 / pi))  # Convert radians/sec to degrees/sec
+            self.arcos.send_command(RVEL, int(self.__rv * 180 / pi))  # Convert radians/sec to degrees/sec
 
     @property
     def sonars(self):
-        """ Return the latest sonar readings as an array.
+        """ (`list` of `float`) The latest sonar readings as an array.
 
         The array contains the latest distance sensed by each sonar, in order, clockwise from the robot's far left to
         its far right. Readings are given in meters and are accurate to the millimeter. If no distance was sensed by a
-        sonar, its entry in the array will be ``None``.
+        sonar, its entry in the array will be `None`.
         """
         if self.simulated:  # If simulating, grab the data from the latest calculated sonars
-            if not self._sonars:  # If somehow this has been called before sonars are calculated, calculate them
+            if not self.__sonars:  # If somehow this has been called before sonars are calculated, calculate them
                 self.calc_sonars()
-            return [s if s < self.SONAR_MAX else None for s in self._sonars]
+            return [round(s, 3) if s < self.SONAR_MAX else None for s in self.__sonars]
         else:  # Otherwise grab the sonar data from the ARCOS Client
             return [s/1000.0 if s != 5000 else None for s in self.arcos.sonars[:8]]  # Convert mm to meters
 
@@ -140,35 +142,42 @@ class PioneerRobot(BaseRobot):
             raise SoarIOError('Cannot access the inputs of a simulated robot (yet)')  # TODO: CMax integration
         else:
             # Assume that the io information is relatively current
-            return tuple([a*10.0/1023.0 for a in self.arcos.io['ANALOGS']])
+            return tuple([round(a*10.0/1023.0, 3) for a in self.arcos.io['ANALOGS'][4:]])
+
+    def set_analog_voltage(self, v):
+        """ Sets the robot's analog output voltage.
+
+        Args:
+            v (float): The output voltage to set. This is limited to the range of 0-10V.
+        """
+        if self.simulated:
+            raise SoarIOError('Cannot set the analog output of a simulated robot (yet)')  # TODO: CMax integration
+        else:  # Sent the analog-digital output required to read it later
+            self.arcos.send_command(DIGOUT, int(clip(v, 0, 10)*25.5) | 0xff00)
 
     def calc_sonars(self):  # Calculate the actual sonar ranges. Called once per simulated timestep
-        self._sonars = [5.0]*len(self.sonar_poses)
+        self.__sonars = [5.0]*len(self.sonar_poses)
         for i in range(len(self.sonar_poses)):
             # We take each sonar and build a line as long as the world's max dimension, and check for collisions
-            temp = Pose(*self.sonar_poses[i])
-            temp = temp.transform(self.pos)
-            temp.rotate(self.polygon.center, self.pos[2])
-            x0, y0 = temp[0], temp[1]
-            x1, y1 = x0 + max(self.world.dimensions) * cos(temp[2]), y0 + max(self.world.dimensions) * sin(temp[2])
-            ray = Line((x0, y0), (x1, y1))
+            origin = Pose(*self.sonar_poses[i])
+            origin = origin.transform(self.pos)
+            origin.rotate(self.polygon.center, self.pos[2])
+            x0, y0, angle = origin
+            x1, y1 = x0 + max(self.world.dimensions) * cos(angle), y0 + max(self.world.dimensions) * sin(angle)
+            sonar_ray = Line((x0, y0), (x1, y1), dummy=True)  # Dummy lines for calculation
+            # Keep track of intersections with all objects
             intersects = []
             for obj in self.world:
                 if obj is not self:
-                    p = ray.collision(obj)
-                    if p:
-                        if type(p) == list:
-                            print('LIST')
-                            for q in p:
-                                q = Point(*q)
-                                intersects.append((q, q.distance(temp)))
-                        else:
-                            p = Point(*p)
-                            intersects.append((p, p.distance(temp)))
+                    # Find all intersections that occur with a single object
+                    obj_intersects = obj.collision(sonar_ray, eps=1e-3)  # Sonars are only accurate to the millimeter
+                    if obj_intersects:
+                        for p in obj_intersects:
+                            intersects.append((Point(*p), origin.distance(p)))
             intersects.sort(key=lambda t: t[1])  # Find the nearest collision
-            if len(intersects) > 0:
+            if len(intersects) > 0:  # This should always be True since the world has boundaries
                 p, distance = intersects[0]
-                self._sonars[i] = distance
+                self.__sonars[i] = distance
 
     def move(self, pose):
         x, y, t = pose
@@ -177,71 +186,71 @@ class PioneerRobot(BaseRobot):
         self.pos = Pose(x, y, t)
         self.polygon.recenter(self.pos)
 
-    def draw(self, canvas):  # Draw the robot's central polygon
+    def draw(self, canvas):  # Draw the robot
         self.polygon.draw(canvas)
         self.draw_sonars(canvas)
 
-    def draw_sonars(self, canvas):  # Draw the sonars
-        if not self._sonars:
+    def draw_sonars(self, canvas):  # Draw just the sonars
+        if not self.__sonars:
             self.calc_sonars()
-        for dist, pose in zip(self._sonars, self.sonar_poses):
-            temp = Pose(*pose)
-            temp = temp.transform((self.polygon.center[0], self.polygon.center[1], self.pos[2]))
-            temp.rotate(self.polygon.center, self.pos[2])
+        for dist, pose in zip(self.__sonars, self.sonar_poses):
+            origin = Pose(*pose)
+            origin = origin.transform((self.polygon.center[0], self.polygon.center[1], self.pos[2]))
+            origin.rotate(self.polygon.center, self.pos[2])
+            x0, y0, angle = origin
+            x1, y1 = x0+dist*cos(angle), y0+dist*sin(angle)
             if dist > self.SONAR_MAX:
-                temp.draw(canvas, dist, tags=self.tags + 'sonars', fill='red')
+                fill = 'red'
             else:
-                temp.draw(canvas, dist, tags=self.tags + 'sonars', fill='gray')
+                fill = 'gray'
+            sonar_ray = Line((x0, y0), (x1, y1), tags=self.tags + 'sonars', fill=fill, width=1)
+            sonar_ray.draw(canvas)
 
-    def collision(self, obj):   # Determine whether the robot collides with an object
-        if isinstance(obj, Line):
-            lines = []
-            for i in range(len(self.polygon)-1):
-                p1, p2 = self.polygon[i], self.polygon[i+1]
-                lines.append(Line(p1, p2))
-            lines.append(Line(self.polygon[len(self.polygon)-1], self.polygon[0]))
-            for line in lines:
-                intersect = line.collision(obj)
-                if intersect and line.has_point(intersect):
-                    return intersect
-            return None
+    def collision(self, other, eps=1e-8):   # Determine whether the robot collides with an object
+        if isinstance(other, PioneerRobot):
+            return self.polygon.collision(other.polygon, eps=eps)
+        elif isinstance(other, Polygon) or isinstance(other, Line):
+            return self.polygon.collision(other, eps=eps)
 
-    def check_if_collided(self):  # Check if the robot has collided, and set its collision flag
+    def check_if_collided(self):  # Check if the robot has collided, and set its collision flag accordingly
         if self.simulated:
             for obj in self.world:  # Check for collisions
                 if obj is not self:
-                    if self.collision(obj):
-                        self.collided = True
+                    if self.collision(obj):  # If any collision occurs
+                        self.__collided = True
                         self.polygon.options['fill'] = 'red'
                         return True
-            self.collided = False
+            self.__collided = False
             self.polygon.options['fill'] = 'black'
             return False
         else:
             return False
 
     def delete(self, canvas):
-        canvas.delete(self.tags, self.tags + 'sonars')
+        canvas.delete(self.tags, self.tags + 'sonars')  # Delete both the robot and sonar tags
 
     def on_load(self):
         if self.simulated:
             self.arcos = None
-            print('Connected to Pioneer p3dx-sh MIT_0042 \'Denny\' (12.0V) [Simulated]')  # Denny Easter egg
+            print('Connected to Pioneer p3dx-sh MIT_0042 \'Denny\' (12.0V) [Simulated]')  # Hi Denny Freeman!
         else:
             try:
                 self.arcos = ARCOSClient()
                 self.arcos.connect()
                 self.arcos.send_command(ENABLE, 0)  # We disable the motors so that the robot is easily movable
-                self.arcos.send_command(IOREQUEST, 2)  # Continuously request IOpacs
-                self.arcos.wait_for(self.arcos.io_event, 1.0, 'Could not access robot IO information')
+                # Continuously request IOpacs, and make sure we receive at least one
+                self.arcos.send_command(IOREQUEST, 2)
+                self.arcos.wait_or_timeout(self.arcos.io_event, 1.0, 'Could not access robot IO information')
+                # Request a CONFIGpac and make sure we receive one
                 self.arcos.send_command(CONFIG)
-                self.arcos.wait_for(self.arcos.config_event, 1.0, 'Could not access robot configuration')
+                self.arcos.wait_or_timeout(self.arcos.config_event, 1.0, 'Could not access robot configuration')
                 config = self.arcos.config
                 serial_num = config['SERNUM']
                 battery_volts = self.arcos.standard['BATTERY'] / 10.0
+                # Print the standard connection message and warn if the battery is low
                 print('Connected to ' + ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']])
                       + ' \'' + name_from_sernum(serial_num) + '\' (' + str(battery_volts) + ')')
-                if battery_volts < self.arcos.config['LOWBATTERY']/10.0:  # TODO: LOWBATTERY's value, around 11.5V?
+                if battery_volts < self.arcos.config['LOWBATTERY']/10.0:
                     printerr('WARNING: The robot\'s battery is low. Consider recharging or finding a new one.')
             except ARCOSError as e:  # If anything goes wrong, raise a SoarIOError
                 raise SoarIOError(str(e)) from e
@@ -250,13 +259,34 @@ class PioneerRobot(BaseRobot):
         if not self.simulated:
             self.arcos.send_command(ENABLE, 1)  # Re-enable the motors on start
 
-    def on_step(self, step_duration):
-        if self.simulated:  # Do the move update and sonar calculation
-            if not self.collided:
-                d_t = self.rv * step_duration
-                BaseRobot.on_step(self, step_duration)  # Change self.pos
-                self.polygon.rotate(self.polygon.center, d_t)  # Rotate the polygon
-                self.polygon.recenter(self.pos)  # Recenter the polygon
+    def on_step(self, duration):
+        if self.simulated:  # Do the move update (with collision preemption) and sonar calculation
+            if not self.__collided:  # The robot only moves if it hasn't collided
+                # Try and make sure that the robot can actually move to its new location
+                theta = self.pos[2]
+                d_x, d_y, d_t = self.fv*cos(theta)*duration, self.fv*sin(theta)*duration, self.rv*duration
+                new_pos = self.pos.transform((d_x, d_y, d_t))
+                self.polygon.recenter(new_pos)
+                # For now, build a line between the old and new position and check if it collides with anything
+                l = Line((self.pos[0], self.pos[1]), (new_pos[0], new_pos[1]), dummy=True)
+                intersects = []
+                for obj in self.world:
+                    if obj is not self:
+                        obj_intersects = obj.collision(l)
+                        if obj_intersects:
+                            for p in obj_intersects:
+                                intersects.append((Point(*p), self.pos.distance(p)))
+                if len(intersects) > 0:  # If there was a collision, prevent the robot from overshooting it
+                    intersects.sort(key=lambda t: t[1])
+                    safe_pos = Pose(*intersects[0][0], new_pos[2])
+                    offset = Point(0.21, 0.0)  # Robot radius is 0.22 meters
+                    offset.rotate((0, 0), new_pos[2])
+                    safe_pos.sub(offset)
+                    self.pos = safe_pos
+                    self.polygon.recenter(safe_pos)
+                else:  # Set the robot's position and move the polygon accordingly
+                    self.pos = new_pos
+                    self.polygon.rotate(self.polygon.center, d_t)
             self.check_if_collided()
             self.calc_sonars()  # Always calculate the internal sonars
         else:  # If working with a real robot, update the encoder information
@@ -267,29 +297,30 @@ class PioneerRobot(BaseRobot):
 
     def on_stop(self):
         if not self.simulated:
-            self.arcos.send_command(STOP)
+            self.arcos.send_command(STOP)  # Stop the robot from moving
             self.arcos.send_command(ENABLE, 0)  # Disable the motors after we've stopped
 
     def on_shutdown(self):
         if self.arcos:
             self.arcos.disconnect()
 
-    def on_press(self, event):
-        self._drag_data['x'] = event.x
-        self._drag_data['y'] = event.y
+    def on_press(self, event):  # Called when the robot is clicked (this method is bound by the canvas)
+        self.__drag_data['x'] = event.x
+        self.__drag_data['y'] = event.y
 
-    def on_release(self, event):
-        self._drag_data['x'] = 0
-        self._drag_data['y'] = 0
+    def on_release(self, event):  # Called when the robot is released (this method is bound by the canvas)
+        self.__drag_data['x'] = 0
+        self.__drag_data['y'] = 0
 
-    def on_motion(self, event):
-        delta_x = event.x - self._drag_data["x"]
-        delta_y = event.y - self._drag_data["y"]
+    def on_motion(self, event):  # Called when the robot is dragged to a new location (bound by the canvas)
+        delta_x = event.x - self.__drag_data["x"]
+        delta_y = event.y - self.__drag_data["y"]
         self.world.canvas.delete(self.tags + 'sonars')
-        self._drag_data["x"] = event.x
-        self._drag_data["y"] = event.y
+        self.__drag_data["x"] = event.x
+        self.__drag_data["y"] = event.y
         real_d_x = delta_x / self.world.canvas.pixels_per_meter
         real_d_y = -delta_y / self.world.canvas.pixels_per_meter
+        # Update the robot's real position, check for a collision, and redraw the sonars
         self.pos = self.pos.transform((real_d_x, real_d_y, 0))
         self.polygon.recenter(self.pos)
         if self.check_if_collided():

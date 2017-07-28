@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.soar_ui &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.gui.soar_ui &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.robot" href="soar.robot.html"/>
         <link rel="prev" title="soar.gui.plot_window" href="soar.gui.plot_window.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -178,7 +178,7 @@
             
   <div class="section" id="module-soar.gui.soar_ui">
 <span id="soar-gui-soar-ui"></span><h1>soar.gui.soar_ui<a class="headerlink" href="#module-soar.gui.soar_ui" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 Main GUI</p>
+<p>Soar Main GUI classes.</p>
 <p>Classes for building the main GUI, which allows the user to load brains &amp; worlds, start simulations, etc.</p>
 <dl class="class">
 <dt id="soar.gui.soar_ui.ButtonFrame">
@@ -245,7 +245,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>parent</strong> – The parent Tk widget or window.</li>
-<li><strong>value</strong> (<em>str</em>) – The initial value. Must be able to be cast to <code class="docutils literal"><span class="pre">int</span></code>.</li>
+<li><strong>value</strong> (<em>str</em>) – The initial value. Must be able to be cast to <code class="xref py py-obj docutils literal"><span class="pre">int</span></code>.</li>
 <li><strong>**kwargs</strong> – Arbitrary Tk keyword arguments.</li>
 </ul>
 </td>
@@ -276,7 +276,7 @@
 
 <dl class="class">
 <dt id="soar.gui.soar_ui.SoarUI">
-<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">SoarUI</code><span class="sig-paren">(</span><em>client_msg</em>, <em>client_mainloop</em>, <em>parent=None</em>, <em>title='SoaR v0.11.0'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">SoarUI</code><span class="sig-paren">(</span><em>client_msg</em>, <em>client_mainloop</em>, <em>parent=None</em>, <em>title='SoaR v1.0.0.dev0'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Tk</span></code></p>
 <p>The main GUI window.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -314,12 +314,12 @@
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.close_windows">
 <code class="descname">close_windows</code><span class="sig-paren">(</span><em>close_unlinked=False</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.close_windows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close windows, optionally unlinked ones, clear the draw queue, and set the simulator canvas to <code class="docutils literal"><span class="pre">None</span></code>.</p>
+<dd><p>Close windows, optionally unlinked ones, clear the draw queue, and set the simulator canvas to <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>close_unlinked</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, closes all windows. Otherwise, closes only the linked ones.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>close_unlinked</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, closes all windows. Otherwise, closes only the linked ones.</td>
 </tr>
 </tbody>
 </table>
@@ -431,11 +431,11 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>reload_controller</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, immediately reload whatever controller was in effect previously.</li>
-<li><strong>close_unlinked</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, close all windows, not just the linked ones.</li>
-<li><strong>clear_output</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, clears the output of the output frame.</li>
-<li><strong>silent</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, stops the client from printing ‘LOAD BRAIN’-like messages.</li>
-<li><strong>callback</strong> – The function to call after the reload has finished, or <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>reload_controller</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, immediately reload whatever controller was in effect previously.</li>
+<li><strong>close_unlinked</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, close all windows, not just the linked ones.</li>
+<li><strong>clear_output</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, clears the output of the output frame.</li>
+<li><strong>silent</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, stops the client from printing <code class="xref py py-obj docutils literal"><span class="pre">'LOAD</span> <span class="pre">BRAIN'</span></code>-like messages.</li>
+<li><strong>callback</strong> – The function to call after the reload has finished, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -452,10 +452,10 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>reload_controller</strong> (<em>bool</em>) – reload_controller (bool): If <code class="docutils literal"><span class="pre">True</span></code>, reload the previous controller.</li>
-<li><strong>sim_canvas</strong> – If not <code class="docutils literal"><span class="pre">None</span></code>, the controller to be reloaded is the simulator.</li>
-<li><strong>connected</strong> – If <code class="docutils literal"><span class="pre">True</span></code>, the controller to be reloaded is the real robot controller.</li>
-<li><strong>callback</strong> – A function to call once the reload has finished, or <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>reload_controller</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, reload the previous controller.</li>
+<li><strong>sim_canvas</strong> – If not <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, the controller to be reloaded is the simulator.</li>
+<li><strong>connected</strong> – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the controller to be reloaded is the real robot controller.</li>
+<li><strong>callback</strong> – A function to call once the reload has finished, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -477,7 +477,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clear_output</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, clear the contents of the output frame.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>clear_output</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, clear the contents of the output frame.</td>
 </tr>
 </tbody>
 </table>
@@ -539,7 +539,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linked</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, the window will be destroyed whenever the simulator window is destroyed.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linked</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the window will be destroyed whenever the simulator window is destroyed.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The new Toplevel window.</td>
 </tr>
@@ -625,7 +625,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

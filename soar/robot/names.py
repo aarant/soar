@@ -1,3 +1,7 @@
+""" Soar name generator, from serial numbers.
+
+TODO: Documentation?
+"""
 import random
 from math import sqrt, ceil
 
@@ -12,13 +16,9 @@ def is_prime(n):
 
 names = ['Ariel', 'Bailey', 'Casey', 'Dallas', 'Eli', 'Frankie', 'Gabriel', 'Harley', 'Jayden', 'Kai', 'Lee', 'Mickey',
          'Neo', 'Ocean', 'Parris', 'Quinn', 'Reagan', 'Shiloh', 'Taylor', 'Udo', 'Val', 'Winter', 'Xue', 'Yoshi',
-         'Zephyr']
-m = len(names)
-p = 1
-while not is_prime(p):
-    p = random.randint(m+1, 2*m)
-a = random.randint(2, p)
-b = random.randint(2, p)
+         'Zephyr', 'Narin', 'Ollie', 'Dakota', 'Marlie', 'Brooke', 'Shannon', 'Nour', 'Reese', 'Storm', 'Sydney',
+         'Omari', 'Ola', 'Ryley', 'Esmai', 'Leslie', 'Finley', 'Hildred', 'Lynn', 'Shelby', 'Sequoia', 'Tashi',
+         'Dominique', 'Garnet', 'Gray', 'Cameron']
 
 
 def name_from_sernum(sernum):
@@ -26,5 +26,37 @@ def name_from_sernum(sernum):
     x = 0
     for y in map(lambda c: int(c), filter(lambda c: c.isdigit(), sernum)):
         x = x*10+y
-    # Has them
+    # Hash them with a Linear congruential generator
     return names[((a*x+b) % p) % m]
+
+
+def test_collisions():
+    collisions = 0
+    for r in [range(i, i + 50) for i in range(2600, 2650 + 1)]:
+        chosen = set()
+        for i in r:
+            name = name_from_sernum(str(i))
+            if name in chosen:
+                collisions += 1
+            else:
+                chosen.add(name)
+    return collisions
+
+
+def has_all():  # Test whether a hash setting contains every name for the expected serial number range
+    return all([name in [name_from_sernum(str(i)) for i in range(2600, 2700)] for name in names])
+
+
+m = len(names)
+a = 74
+b = 99
+p = 149
+# while test_collisions() > 25 or not has_all() or name_from_sernum(str(2680)) != 'Ariel':
+#     p = 1
+#     while not is_prime(p):
+#         p = random.randint(m+1, 3*m)
+#     a = random.randint(2, p)
+#     b = random.randint(2, p)
+# print(a, b, p, test_collisions())
+# for i in range(2600, 2700):
+#     print(name_from_sernum(str(i)))

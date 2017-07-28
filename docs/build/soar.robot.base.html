@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.robot.base &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.robot.base &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar.robot" href="soar.robot.html"/>
         <link rel="next" title="soar.robot.names" href="soar.robot.names.html"/>
         <link rel="prev" title="soar.robot.arcos" href="soar.robot.arcos.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -178,11 +178,12 @@
             
   <div class="section" id="module-soar.robot.base">
 <span id="soar-robot-base"></span><h1>soar.robot.base<a class="headerlink" href="#module-soar.robot.base" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 BaseRobot</p>
-<p>Base robot class, intended to serve as a guideline and parent class for actually useful robots.</p>
+<p>Soar BaseRobot class, intended as a parent class for nontrivial/useful robots.</p>
+<p>All robots usable in Soar should either subclass from BaseRobot and re-implement its methods, or, if <code class="xref py py-obj docutils literal"><span class="pre">fv</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">rv</span></code>,
+etc are not needed, subclass from <a class="reference internal" href="soar.sim.world.html#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a> and re-implement BaseRobot’s methods.</p>
 <dl class="class">
 <dt id="soar.robot.base.BaseRobot">
-<em class="property">class </em><code class="descclassname">soar.robot.base.</code><code class="descname">BaseRobot</code><a class="headerlink" href="#soar.robot.base.BaseRobot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.robot.base.</code><code class="descname">BaseRobot</code><span class="sig-paren">(</span><em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.base.BaseRobot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="soar.sim.world.html#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a></p>
 <p>A base robot class, intended to be subclassed and overridden.</p>
 <p>Any robot usable in SoaR should implement all of this class’s methods, as well as any required additional behavior.</p>
@@ -195,34 +196,22 @@
 <dl class="attribute">
 <dt id="soar.robot.base.BaseRobot.world">
 <code class="descname">world</code><a class="headerlink" href="#soar.robot.base.BaseRobot.world" title="Permalink to this definition">¶</a></dt>
-<dd><p>An instance of <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> or a subclass of it, or <code class="docutils literal"><span class="pre">None</span></code>, if the robot is real.</p>
+<dd><p>The instance of <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> (or a subclass) in which the robot resides, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>,
+if the robot is real.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.robot.base.BaseRobot.simulated">
 <code class="descname">simulated</code><a class="headerlink" href="#soar.robot.base.BaseRobot.simulated" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – Any BaseRobot subclass should consider the robot to be simulated if this is <code class="docutils literal"><span class="pre">True</span></code>, and real
-otherwise.</p>
+<dd><p><em>bool</em> – Any BaseRobot subclass should consider the robot to be simulated if this is <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, and real
+otherwise. By default, it is <code class="xref py py-obj docutils literal"><span class="pre">False</span></code>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.robot.base.BaseRobot.pos">
 <code class="descname">pos</code><a class="headerlink" href="#soar.robot.base.BaseRobot.pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>An instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> representing the robot’s <code class="docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> position.
+<dd><p>An instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> representing the robot’s <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> position.
 In simulation, this is the actual position; on a real robot this may or may not be accurate.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="soar.robot.base.BaseRobot.fv">
-<code class="descname">fv</code><a class="headerlink" href="#soar.robot.base.BaseRobot.fv" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Represents the robot’s forward velocity in some units.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="soar.robot.base.BaseRobot.rv">
-<code class="descname">rv</code><a class="headerlink" href="#soar.robot.base.BaseRobot.rv" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> – Represents the robot’s rotational velocity in rad/s, where positive values correspond to
-counterclockwise.</p>
 </dd></dl>
 
 <dl class="method">
@@ -254,40 +243,34 @@ counterclockwise.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">fv</code></dt>
-<dd><p>Get or set the robot’s forward velocity in some units.</p>
+<dt id="soar.robot.base.BaseRobot.fv">
+<code class="descname">fv</code><a class="headerlink" href="#soar.robot.base.BaseRobot.fv" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-obj docutils literal"><span class="pre">float</span></code> The robot’s forward velocity.</p>
+<p>The units of this value may be anything, and should be interpreted by a subclass as it wishes.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.robot.base.BaseRobot.move">
 <code class="descname">move</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.base.BaseRobot.move" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move the robot to the specified x, y, theta position.</p>
+<dd><p>Move the robot to the specified <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> pose.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pose</strong> – An x, y, t Pose or 3-tuple-like object to move the robot to.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pose</strong> – An <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> or 3-tuple-like object to move the robot to.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.robot.base.BaseRobot.on_failure">
-<code class="descname">on_failure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.base.BaseRobot.on_failure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the controller of the robot fails for whatever reason.</p>
-<p>Typically, this method should merely call on_shutdown; however if additional work needs to be done on a failure
-then this may be overridden.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="soar.robot.base.BaseRobot.on_load">
 <code class="descname">on_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.base.BaseRobot.on_load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when the controller of the robot is loaded.</p>
-<p>The behavior of this method should differ depending on the value of <code class="docutils literal"><span class="pre">self.simulated</span></code>; if it is <code class="docutils literal"><span class="pre">False</span></code>, this
-method should be used to connect with the real robot. If a connection error occurs, a SoarIOError exception
-should be raised to notify the client that the error was not due to other causes.</p>
+<p>The behavior of this method should differ depending on the value of <a class="reference internal" href="#soar.robot.base.BaseRobot.simulated" title="soar.robot.base.BaseRobot.simulated"><code class="xref py py-obj docutils literal"><span class="pre">simulated</span></code></a>; if it is <code class="xref py py-obj docutils literal"><span class="pre">False</span></code>, this
+method should be used to connect with the real robot. If a connection error occurs, a
+<a class="reference internal" href="soar.errors.html#soar.errors.SoarIOError" title="soar.errors.SoarIOError"><code class="xref py py-class docutils literal"><span class="pre">soar.errors.SoarIOError</span></code></a> should be raised to notify the client that the error was not due to other
+causes.</p>
 </dd></dl>
 
 <dl class="method">
@@ -301,6 +284,7 @@ should be raised to notify the client that the error was not due to other causes
 <dt id="soar.robot.base.BaseRobot.on_start">
 <code class="descname">on_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.base.BaseRobot.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when the controller of the robot is started.</p>
+<p>This method is called exactly once per controller session–when the user first starts or steps the controller.</p>
 </dd></dl>
 
 <dl class="method">
@@ -308,7 +292,7 @@ should be raised to notify the client that the error was not due to other causes
 <code class="descname">on_step</code><span class="sig-paren">(</span><em>step_duration</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.base.BaseRobot.on_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when the controller of the robot undergoes a single step of a specified duration.</p>
 <p>For BaseRobot, this simply updates the robot’s position in the world if it is simulated. Subclasses will
-typically have more complex <code class="docutils literal"><span class="pre">on_step()</span></code> methods.</p>
+typically have more complex <a class="reference internal" href="#soar.robot.base.BaseRobot.on_step" title="soar.robot.base.BaseRobot.on_step"><code class="xref py py-obj docutils literal"><span class="pre">on_step()</span></code></a> methods.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -326,9 +310,9 @@ typically have more complex <code class="docutils literal"><span class="pre">on_
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">rv</code></dt>
-<dd><p>Get or set the robot’s rotational velocity in radians/second.</p>
+<dt id="soar.robot.base.BaseRobot.rv">
+<code class="descname">rv</code><a class="headerlink" href="#soar.robot.base.BaseRobot.rv" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-obj docutils literal"><span class="pre">float</span></code> The robot’s rotational velocity in radians/second.</p>
 </dd></dl>
 
 <dl class="method">
@@ -385,7 +369,7 @@ typically have more complex <code class="docutils literal"><span class="pre">on_
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

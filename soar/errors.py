@@ -1,9 +1,9 @@
-""" Soar v0.11.0 Error classes. """
+""" Soar error classes. """
 import sys
 
 
 def printerr(*args, **kwargs):
-    """ A wrapper around ``print()`` to print to ``sys.stderr``. """
+    """ A wrapper around `print` to print to `sys.stderr`. """
     print(*args, file=sys.stderr, **kwargs)
 
 

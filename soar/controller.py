@@ -1,7 +1,4 @@
-""" Soar v0.11.0 Controller
-
-Classes and functions for controlling robots, simulated or real.
-"""
+""" Soar controller classes and functions for controlling robots, simulated or real. """
 import json
 from io import StringIO
 from threading import Thread
@@ -28,7 +25,7 @@ def log(obj, logfile, mode='a'):
 
     Args:
         obj: The object to be serialized.
-        logfile: The path to the log file, or a file-like object that supports ``write()``.
+        logfile: The path to the log file, or a file-like object that has a `write()` method.
         mode: The mode in which the file is to be opened.
     """
     # Recast file errors as Soar errors
@@ -56,25 +53,23 @@ class Controller:
         stopped (bool): Indicates whether the controller has been stopped.
         step_count (int): The number of steps that have elapsed so far.
         elapsed (float): The number of seconds spent actually running. Unless a step takes longer than
-                         ``step_duration``, this will typically be the ``step_count`` multiplied by ``step_duration``.
-                         If any steps take longer, the additional time will also be counted here.
+            `step_duration`, this will typically be the `step_count` multiplied by `step_duration`. If any steps take
+            longer, the additional time will also be counted here.
 
     Args:
         client_msg: The function to call to send a message to the client.
-        gui (bool): If ``True``, worlds must be drawn on each step.
-        simulated (bool): If this is ``True``, the controller will simulate the robot. Otherwise it will treat the
-                          robot as real.
+        gui (bool): If `True`, worlds must be drawn on each step.
+        simulated (bool): If `True`, the controller will simulate the robot. Otherwise it will treat the robot as real.
         robot: An instance of :class:`soar.robot.base.BaseRobot` or a subclass.
-        brain: The currently loaded brain module, supporting the on_load(), on_start(), on_step(), on_stop(), and
-               on_shutdown() methods.
-        realtime (bool): If ``True``, stepping takes real time--that is, the controller will sleep for whatever time
-                         is not used running the step, until the step has taken at least ``step_duration`` seconds.
-                         Otherwise, no sleeping will occur; however the elapsed time will behave as if perfect sleeping
-                         occurs, and each step was always at least ``step_duration`` seconds long.
-        world: An instance of :class:`soar.sim.world.World` or one of its subclasses if one is loaded, or ``None``.
+        brain: The currently loaded brain module, supporting the `on_load()`, `on_start()`, `on_step()`, `on_stop()`,
+            and `on_shutdown()` methods.
+        realtime (bool): If `True`, stepping takes real time--that is, the controller will sleep for whatever time is
+            not used running the step, until the step has taken at least `step_duration` seconds. Otherwise, no
+            sleeping will occur; however the elapsed time will behave as if each step was at least `step_duration` long.
+        world: An instance of :class:`soar.sim.world.World` or one of its subclasses if one is loaded, or `None`.
         step_duration (float): The duration of a single step, in seconds.
-        log: A callable that accepts a ``dict``-like object as an argument to log to a file, or ``None``, if no logging
-             is to take place.
+        log: A callable that accepts a `dict`-like object as an argument to log to a file, or `None`, if no logging
+        is to take place.
     """
     def __init__(self, client_msg, robot, brain, simulated, gui, step_duration=0.1, realtime=True, world=None,
                  log=None):
@@ -148,8 +143,8 @@ class Controller:
         """ Runs the controller, starting it if necessary, for one or many steps, or without stopping.
 
         Args:
-            n: If ``None``, run forever, at least until stopped. If 0, start the controller, if it has not already been.
-               Otherwise, for ``n > 0``, run for that many steps.
+            n: If `None`, run forever, at least until stopped. If 0, start the controller, if it has not yet been
+                started. Otherwise, for `n > 0`, run for that many steps.
         """
         if not self.started:
             self.robot.on_start()
@@ -191,7 +186,7 @@ class Controller:
         return timer()-start
 
     def on_stop(self):
-        """ Called when the controller is stopped """
+        """ Called when the controller is stopped. """
         self.stop_thread()
         self.brain.on_stop()
         self.robot.on_stop()
@@ -199,13 +194,13 @@ class Controller:
         self.stopped = True
 
     def on_shutdown(self):
-        """ Called when the controller is shut down """
+        """ Called when the controller is shut down. """
         self.stop_thread()
         self.brain.on_shutdown()
         self.robot.on_shutdown()
 
     def on_failure(self):
-        """ Called when the controller fails """
+        """ Called when the controller fails. """
         self.stop_thread()
         self.started = False
         self.stopped = True

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.sim.world &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.sim.world &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar.sim" href="soar.sim.html"/>
         <link rel="prev" title="soar.sim.geometry" href="soar.sim.geometry.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -175,11 +175,10 @@
             
   <div class="section" id="module-soar.sim.world">
 <span id="soar-sim-world"></span><h1>soar.sim.world<a class="headerlink" href="#module-soar.sim.world" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 world classes</p>
-<p>World and basic WorldObject classes/subclasses, for simulating and drawing worlds.</p>
+<p>Soar World and WorldObject classes/subclasses, for simulating and drawing worlds.</p>
 <dl class="class">
 <dt id="soar.sim.world.Line">
-<em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Line</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Line</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>eps=1e-08</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a></p>
 <p>A line segment with Tk options and collision detection.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -187,9 +186,9 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p1</strong> – An x, y tuple or an instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the first endpoint of the line segment</li>
-<li><strong>p1</strong> – An x, y tuple or an instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the second endpoint of the line segment</li>
-<li><strong>**options</strong> – Tk options</li>
+<li><strong>p1</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or a <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the first endpoint of the line segment.</li>
+<li><strong>p1</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or a <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the second endpoint of the line segment.</li>
+<li><strong>**options</strong> – Tkinter options.</li>
 </ul>
 </td>
 </tr>
@@ -197,15 +196,20 @@
 </table>
 <dl class="method">
 <dt id="soar.sim.world.Line.collision">
-<code class="descname">collision</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.collision" title="Permalink to this definition">¶</a></dt>
+<code class="descname">collision</code><span class="sig-paren">(</span><em>other</em>, <em>eps=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.collision" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether two Line segments intersect.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An instance of Line or supported <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a> subclass</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>other</strong> – A <a class="reference internal" href="#soar.sim.world.Line" title="soar.sim.world.Line"><code class="xref py py-obj docutils literal"><span class="pre">Line</span></code></a>.</li>
+<li><strong>eps</strong> (<em>float</em>) – The epsilon within which to consider two parallel lines the same line.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An x, y tuple representing the intersection point, or <cite>None</cite> if there is none</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuples consisting of the intersection(s), or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code> if the segments do not intersect.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -214,19 +218,34 @@
 <dl class="method">
 <dt id="soar.sim.world.Line.draw">
 <code class="descname">draw</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.draw" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.sim.world.Line.has_point">
-<code class="descname">has_point</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.has_point" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines if a point lies on the line segment.</p>
+<dd><p>Draw the object on a canvas.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> – An (x, y) tuple or an instance of <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the point to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically a <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, on which the
+object will be drawn.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the point is on the line segment, and false otherwise.</td>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.sim.world.Line.has_point">
+<code class="descname">has_point</code><span class="sig-paren">(</span><em>p</em>, <em>eps=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Line.has_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if a point lies on the line segment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or a <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the point to check.</li>
+<li><strong>eps</strong> (<em>float</em>) – The largest absolute distance from the line the point can be, to be considered on the line.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code> if the point is on the line segment, and <code class="xref py py-obj docutils literal"><span class="pre">False</span></code> otherwise.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -238,23 +257,103 @@
 <dt id="soar.sim.world.Polygon">
 <em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Polygon</code><span class="sig-paren">(</span><em>points</em>, <em>center=None</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Polygon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.PointCollection" title="soar.sim.geometry.PointCollection"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.PointCollection</span></code></a>, <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.WorldObject</span></code></a></p>
-<p>A movable polygon with Tk options.</p>
+<p>A movable polygon with Tkinter options.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>points</strong> – A list of x, y tuples or Points</li>
-<li><strong>center</strong> – An x, y tuple or Point as the pivot or center of the collection</li>
-<li><strong>**options</strong> – Tk options</li>
+<li><strong>points</strong> – A list of <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuples or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a>.</li>
+<li><strong>center</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the pivot or center of the collection.</li>
+<li><strong>**options</strong> – Tkinter options.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
+<dt id="soar.sim.world.Polygon.collision">
+<code class="descname">collision</code><span class="sig-paren">(</span><em>other</em>, <em>eps=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Polygon.collision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether the polygon intersects with another <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>other</strong> – Either a <a class="reference internal" href="#soar.sim.world.Polygon" title="soar.sim.world.Polygon"><code class="xref py py-obj docutils literal"><span class="pre">Polygon</span></code></a> or a <a class="reference internal" href="#soar.sim.world.Line" title="soar.sim.world.Line"><code class="xref py py-obj docutils literal"><span class="pre">Line</span></code></a> as the other object.</li>
+<li><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – The epsilon within which to consider a collision to have occurred.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="soar.sim.world.Polygon.draw">
 <code class="descname">draw</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Polygon.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the object on a canvas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically a <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, on which the
+object will be drawn.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.sim.world.Polygon.lines">
+<code class="descname">lines</code><a class="headerlink" href="#soar.sim.world.Polygon.lines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="soar.sim.world.Wall">
+<em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Wall</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>thickness=0.002</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Wall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#soar.sim.world.Polygon" title="soar.sim.world.Polygon"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.Polygon</span></code></a></p>
+<p>An arbitrarily thick wall centered on a <a class="reference internal" href="#soar.sim.world.Line" title="soar.sim.world.Line"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.Line</span></code></a>.</p>
+<p>Useful when infinitely-thin lines are causing issues with collision detection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>p1</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the first endpoint of the line segment.</li>
+<li><strong>p1</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> as the second endpoint of the line segment.</li>
+<li><strong>thickness</strong> (<em>float</em>) – The thickness of the wall to expand out from the line on which it is centered.</li>
+<li><strong>**options</strong> – Tkinter options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="soar.sim.world.Wall.collision">
+<code class="descname">collision</code><span class="sig-paren">(</span><em>other</em>, <em>eps=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Wall.collision" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="soar.sim.world.Wall.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Wall.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the object on a canvas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically a <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, on which the
+object will be drawn.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.sim.world.Wall.lines">
+<code class="descname">lines</code><a class="headerlink" href="#soar.sim.world.Wall.lines" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -268,31 +367,32 @@
 <dl class="attribute">
 <dt id="soar.sim.world.World.dimensions">
 <code class="descname">dimensions</code><a class="headerlink" href="#soar.sim.world.World.dimensions" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> – An x, y tuple representing the worlds length and height</p>
+<dd><p><em>tuple</em> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple representing the worlds length and height.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.sim.world.World.initial_position">
 <code class="descname">initial_position</code><a class="headerlink" href="#soar.sim.world.World.initial_position" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Pose or an x, y, theta tuple representing the robot’s initial position in the world</p>
+<dd><p>An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> representing the robot’s
+initial position in the world.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.sim.world.World.objects">
 <code class="descname">objects</code><a class="headerlink" href="#soar.sim.world.World.objects" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – A list of (WorldObject, layer) tuples containing all of the world’s objects</p>
+<dd><p><em>list</em> – A list of (<a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a>, layer) tuples containing all of the world’s objects.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.sim.world.World.layer_max">
 <code class="descname">layer_max</code><a class="headerlink" href="#soar.sim.world.World.layer_max" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – The highest layer currently allocated to an object in the world</p>
+<dd><p><em>int</em> – The highest layer currently allocated to an object in the world.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.sim.world.World.canvas">
 <code class="descname">canvas</code><a class="headerlink" href="#soar.sim.world.World.canvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>An instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, if the world is being drawn, otherwise <code class="docutils literal"><span class="pre">None</span></code>.</p>
+<dd><p>An instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, if the world is being drawn, otherwise <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>.</p>
 </dd></dl>
 
 <table class="docutils field-list" frame="void" rules="none">
@@ -300,10 +400,10 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dimensions</strong> (<em>tuple</em>) – An x, y tuple representing the worlds length and height</li>
-<li><strong>initial_position</strong> – A <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> or an x, y, theta tuple representing the robot’s initial</li>
-<li><strong>in the world.</strong> (<em>position</em>) – </li>
-<li><strong>objects</strong> (<em>list</em>) – The initial WorldObject(s) to add to the world</li>
+<li><strong>dimensions</strong> (<em>tuple</em>) – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple representing the worlds length and height.</li>
+<li><strong>initial_position</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> representing the robot’s
+initial position in the world.</li>
+<li><strong>objects</strong> (<em>list</em>) – The initial <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> (s) to add to the world</li>
 </ul>
 </td>
 </tr>
@@ -312,16 +412,16 @@
 <dl class="method">
 <dt id="soar.sim.world.World.add">
 <code class="descname">add</code><span class="sig-paren">(</span><em>obj</em>, <em>layer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add an object to the world, with an optional layer specification</p>
+<dd><p>Add an object to the world, with an optional layer specification.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>obj</strong> – An instance of WorldObject or a subclass</li>
+<li><strong>obj</strong> – A <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> (or a subclass instance).</li>
 <li><strong>layer</strong> (<em>int</em>) – The layer on which the object is to be drawn. Objects are drawn in order from smallest to
-largest layer. If this argument is None, the object’s layer will be set to one higher than the
-highest layer in the objects list</li>
+largest layer. If this argument is <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, the object’s layer will be set to one higher than the
+highest layer in the objects list.</li>
 </ul>
 </td>
 </tr>
@@ -332,12 +432,12 @@ highest layer in the objects list</li>
 <dl class="method">
 <dt id="soar.sim.world.World.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the world from a canvas, by deleting each object at a time</p>
+<dd><p>Delete the world from a canvas, by deleting each object at a time.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> (<em>Canvas</em>) – The <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a> from which to delete.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – The <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a> from which to delete.</td>
 </tr>
 </tbody>
 </table>
@@ -346,14 +446,14 @@ highest layer in the objects list</li>
 <dl class="method">
 <dt id="soar.sim.world.World.draw">
 <code class="descname">draw</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World.draw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draws the world on a canvas</p>
-<p>Objects are drawn in order from the lowest to highest layer if their do_draw attribute is True.</p>
+<dd><p>Draw the world on a canvas.</p>
+<p>Objects are drawn in order from the lowest to highest layer if their <code class="xref py py-obj docutils literal"><span class="pre">do_draw</span></code> attribute is True.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> (<em>Canvas</em>) – The <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a> on which to draw the world.
-How each object is drawn is up to the object</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>canvas</strong> – The <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a> on which to draw the world. How each object is drawn is up
+to the object.</td>
 </tr>
 </tbody>
 </table>
@@ -362,7 +462,7 @@ How each object is drawn is up to the object</td>
 <dl class="method">
 <dt id="soar.sim.world.World.on_step">
 <code class="descname">on_step</code><span class="sig-paren">(</span><em>step_duration</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World.on_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs a single step on the world’s objects</p>
+<dd><p>Perform a single step on the world’s objects.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -377,7 +477,7 @@ How each object is drawn is up to the object</td>
 
 <dl class="class">
 <dt id="soar.sim.world.WorldObject">
-<em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">WorldObject</code><span class="sig-paren">(</span><em>do_draw</em>, <em>do_step</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">WorldObject</code><span class="sig-paren">(</span><em>do_draw</em>, <em>do_step</em>, <em>dummy=False</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>An object that can be simulated and drawn in a <a class="reference internal" href="#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> on a
 <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>.</p>
@@ -386,13 +486,13 @@ and attributes to be considered valid.</p>
 <dl class="attribute">
 <dt id="soar.sim.world.WorldObject.do_draw">
 <code class="descname">do_draw</code><a class="headerlink" href="#soar.sim.world.WorldObject.do_draw" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – Used by a World instance to decide whether to draw the object on a canvas.</p>
+<dd><p><em>bool</em> – Used by a <a class="reference internal" href="#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-obj docutils literal"><span class="pre">World</span></code></a> to decide whether to draw the object on a canvas.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.sim.world.WorldObject.do_step">
 <code class="descname">do_step</code><a class="headerlink" href="#soar.sim.world.WorldObject.do_step" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> – Used by a World instance to decide whether to step the object in simulation.</p>
+<dd><p><em>bool</em> – Used by a <a class="reference internal" href="#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-obj docutils literal"><span class="pre">World</span></code></a> to decide whether to step the object in simulation.</p>
 </dd></dl>
 
 <table class="docutils field-list" frame="void" rules="none">
@@ -400,8 +500,10 @@ and attributes to be considered valid.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>do_draw</strong> (<em>bool</em>) – Sets the value of the do_draw attribute.</li>
-<li><strong>do_step</strong> (<em>bool</em>) – Sets the value of the do_step attribute.</li>
+<li><strong>do_draw</strong> (<em>bool</em>) – Sets the value of the <a class="reference internal" href="#soar.sim.world.WorldObject.do_draw" title="soar.sim.world.WorldObject.do_draw"><code class="xref py py-obj docutils literal"><span class="pre">do_draw</span></code></a> attribute.</li>
+<li><strong>do_step</strong> (<em>bool</em>) – Sets the value of the <a class="reference internal" href="#soar.sim.world.WorldObject.do_step" title="soar.sim.world.WorldObject.do_step"><code class="xref py py-obj docutils literal"><span class="pre">do_step</span></code></a> attribute.</li>
+<li><strong>dummy</strong> (<em>bool</em>) – Whether the object is a dummy–that is, not intended to be drawn or stepped, but used for</li>
+<li><strong>calculation.</strong> – </li>
 <li><strong>**options</strong> – Tkinter options.</li>
 </ul>
 </td>
@@ -409,16 +511,44 @@ and attributes to be considered valid.</p>
 </tbody>
 </table>
 <dl class="method">
+<dt id="soar.sim.world.WorldObject.collision">
+<code class="descname">collision</code><span class="sig-paren">(</span><em>other</em>, <em>eps=1e-08</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject.collision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether two <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> (s) collide.</p>
+<p>Objects that subclass <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> should implement collision detection, if applicable, for every applicable
+class from which they inherit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>other</strong> – A supported <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> subclass with which this object could potentially collide.</li>
+<li><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – The epsilon within which to consider a collision to have occurred, different for
+each subclass.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuples consisting of all the collisions with <code class="xref py py-obj docutils literal"><span class="pre">other</span></code>, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>
+if there weren’t any.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="soar.sim.world.WorldObject.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the object from a canvas</p>
+<dd><p>Delete the object from a canvas.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically an instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>,</li>
-<li><strong>which the object will be drawn.</strong> (<em>on</em>) – </li>
+<li><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically a <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>, from which the</li>
+<li><strong>will be deleted.</strong> (<em>object</em>) – </li>
 </ul>
 </td>
 </tr>
@@ -435,7 +565,7 @@ and attributes to be considered valid.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically an instance of <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>,</li>
+<li><strong>canvas</strong> – A Tkinter Canvas or a subclass, typically a <a class="reference internal" href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.canvas.SoarCanvas</span></code></a>,</li>
 <li><strong>which the object will be drawn.</strong> (<em>on</em>) – </li>
 </ul>
 </td>
@@ -447,12 +577,12 @@ and attributes to be considered valid.</p>
 <dl class="method">
 <dt id="soar.sim.world.WorldObject.on_step">
 <code class="descname">on_step</code><span class="sig-paren">(</span><em>step_duration</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.WorldObject.on_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate the object for a step of a specified duration</p>
+<dd><p>Simulate the object for a step of a specified duration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step_duration</strong> – The duration of the step, in seconds</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step_duration</strong> – The duration of the step, in seconds.</td>
 </tr>
 </tbody>
 </table>
@@ -504,7 +634,7 @@ and attributes to be considered valid.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

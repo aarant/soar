@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.sim.geometry &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.sim.geometry &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar.sim" href="soar.sim.html"/>
         <link rel="next" title="soar.sim.world" href="soar.sim.world.html"/>
         <link rel="prev" title="soar.sim" href="soar.sim.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -176,14 +176,13 @@
             
   <div class="section" id="module-soar.sim.geometry">
 <span id="soar-sim-geometry"></span><h1>soar.sim.geometry<a class="headerlink" href="#module-soar.sim.geometry" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 Geometry classes, for manipulating points and collections of points.</p>
+<p>Soar geometry classes, for manipulating points and collections of points.</p>
 <dl class="class">
 <dt id="soar.sim.geometry.Point">
 <em class="property">class </em><code class="descclassname">soar.sim.geometry.</code><code class="descname">Point</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Represents a point in the x, y plane.</p>
-<blockquote>
-<div>Points can be interpreted and treated as x, y tuples in most cases.</div></blockquote>
+<p>Points can be interpreted and treated as x, y tuples in most cases.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -204,10 +203,16 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or an instance of <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="soar.sim.geometry.Point.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -218,9 +223,11 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or an instance of <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A float representing the distance between the points.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The distance between the points.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
 </tbody>
 </table>
@@ -229,14 +236,14 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.midpoint">
 <code class="descname">midpoint</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.midpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new Point that is the midpoint of self and other.</p>
+<dd><p>Returns a new <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a> that is the midpoint of self and other.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or an instance of <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Point that is the midpoint of self and other.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a> that is the midpoint of self and other.</td>
 </tr>
 </tbody>
 </table>
@@ -251,7 +258,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>other</strong> – An x, y tuple or an instance of Point.</li>
+<li><strong>other</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or an instance of <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</li>
 <li><strong>theta</strong> (<em>float</em>) – The number of radians to rotate counterclockwise.</li>
 </ul>
 </td>
@@ -270,7 +277,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>value</strong> (<em>float</em>) – The value to scale by.</li>
-<li><strong>other</strong> – An x, y tuple or an instance of Point as the origin to scale from.</li>
+<li><strong>other</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or a  <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a> as the origin to scale from.</li>
 </ul>
 </td>
 </tr>
@@ -286,7 +293,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An x, y tuple or an instance of Point.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or an instance of <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -295,7 +302,7 @@
 <dl class="method">
 <dt id="soar.sim.geometry.Point.xy_tuple">
 <code class="descname">xy_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Point.xy_tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: An x, y tuple representing the point.</p>
+<dd><p>Returns: An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple representing the point.</p>
 </dd></dl>
 
 </dd></dl>
@@ -304,15 +311,15 @@
 <dt id="soar.sim.geometry.PointCollection">
 <em class="property">class </em><code class="descclassname">soar.sim.geometry.</code><code class="descname">PointCollection</code><span class="sig-paren">(</span><em>points</em>, <em>center=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.PointCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>A movable collection of Points.</p>
-<p>Can be iterated over like a list of Points.</p>
+<p>A movable collection of points.</p>
+<p>Can be iterated over like a list of <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>points</strong> – A list of (x, y) tuples or Points.</li>
-<li><strong>center</strong> – An (x, y) tuple or Point as the pivot or center of the collection.</li>
+<li><strong>points</strong> – A list of <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuples or <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</li>
+<li><strong>center</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a> as the pivot or center of the collection.</li>
 </ul>
 </td>
 </tr>
@@ -326,7 +333,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_center</strong> – An x, y tuple or Point that will be the collection’s new center.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_center</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a> that will be the collection’s new center.</td>
 </tr>
 </tbody>
 </table>
@@ -341,7 +348,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pivot</strong> – An x, y tuple or an instance of Point.</li>
+<li><strong>pivot</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or a <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>.</li>
 <li><strong>theta</strong> (<em>float</em>) – The number of radians to rotate counterclockwise.</li>
 </ul>
 </td>
@@ -360,7 +367,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>value</strong> (<em>float</em>) – The scale amount.</li>
-<li><strong>origin</strong> – An x, y tuple or Point from which the collection’s points will move away/towards.</li>
+<li><strong>origin</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a> from which the collection’s points will move away/towards.</li>
 </ul>
 </td>
 </tr>
@@ -376,7 +383,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> – An x, y tuple or Point, treated as a vector and added to each point in the collection.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuple or <a class="reference internal" href="#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-obj docutils literal"><span class="pre">Point</span></code></a>, treated as a vector and added to each point in the collection.</td>
 </tr>
 </tbody>
 </table>
@@ -404,6 +411,12 @@
 </tbody>
 </table>
 <dl class="method">
+<dt id="soar.sim.geometry.Pose.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the Pose.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="soar.sim.geometry.Pose.transform">
 <code class="descname">transform</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new pose that has been transformed (translated and rotated).</p>
@@ -411,20 +424,19 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – A <code class="docutils literal"><span class="pre">Pose</span></code> or 3-tuple-like object, by which to translate and rotate.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – A <a class="reference internal" href="#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-obj docutils literal"><span class="pre">Pose</span></code></a> or 3-tuple-like object, by which to translate and rotate.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A new <a class="reference internal" href="#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-obj docutils literal"><span class="pre">Pose</span></code></a> equivalent to translating <code class="xref py py-obj docutils literal"><span class="pre">self</span></code> by <code class="xref py py-obj docutils literal"><span class="pre">(other[0],</span> <span class="pre">other[1])</span></code> and rotating by
+<code class="xref py py-obj docutils literal"><span class="pre">other[2]</span></code>.</td>
 </tr>
 </tbody>
 </table>
-<dl class="docutils">
-<dt>Returns: A new <code class="docutils literal"><span class="pre">Pose</span></code> equivalent to translating <code class="docutils literal"><span class="pre">self</span></code> by <code class="docutils literal"><span class="pre">(other[0],</span> <span class="pre">other[1])</span></code> and rotating by</dt>
-<dd><code class="docutils literal"><span class="pre">other[2]</span></code>.</dd>
-</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.sim.geometry.Pose.xyt_tuple">
 <code class="descname">xyt_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.geometry.Pose.xyt_tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: An (x, y, t) tuple representing the pose.</p>
+<dd><p>Returns: An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">t)</span></code> tuple representing the pose.</p>
 </dd></dl>
 
 </dd></dl>
@@ -475,7 +487,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -4,7 +4,8 @@ __pycache__/
 .idea/
 .directory
 wip/
+601labs/
 MANIFEST
 update.sh
 ideas
-SoaR.egg-info/
+Soar.egg-info/

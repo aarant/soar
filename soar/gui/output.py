@@ -1,4 +1,4 @@
-""" Soar v0.1.0 Output classes.
+""" Soar output classes.
 
 Tk widgets allowing the capture and display of text output in the GUI.
 
@@ -53,15 +53,15 @@ class OutputFrame(Frame):
         self.text_field.bind("<1>", lambda event: self.text_field.focus_set())
         self.text_field.pack(expand=True, fill='both')
         self.scroll.config(command=self.text_field.yview)
-        self.output('SoaR v0.11.0: Snakes on a robot: Output will appear in this window\n\n')
+        self.output('SoaR v1.0.0.dev0: Snakes on a robot: Output will appear in this window\n\n')
 
     def insert(self, text, *tags):
         """ Insert text at the end of the text field.
 
         Args:
             text (str): The text to insert.
-            *tags: Variable length ``str`` list of tags to attach to the text. The 'output' tag signifies normal output,
-                   and the 'error' take signifies that the text will be red.
+            *tags: Variable length `str` list of tags to attach to the text. The `'output'` tag signifies normal output,
+                   and the `'error'` tag signifies that the text will be red.
         """
         self.text_field.config(state=NORMAL)
         self.text_field.insert(END, text, *tags)

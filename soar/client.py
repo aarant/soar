@@ -1,7 +1,7 @@
-""" Soar v0.11.0 client entrypoint.
+""" Soar client entrypoint.
 
 Classes and functions for interacting with Soar in general. This module serves as the main entrypoint to the package.
-Projects desiring to invoke a Soar instance should import this module and call :func:`soar.client.main.main`.
+Projects desiring to invoke a Soar instance should import this module and call :func:`soar.client.main`.
 
 Examples:
     This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0.
@@ -29,8 +29,10 @@ Examples:
 import importlib.util
 import os
 import traceback as tb
+import atexit
 from queue import Queue
 
+from soar import __version__
 from soar.common import *
 from soar.controller import Controller
 from soar.controller import log
@@ -96,7 +98,7 @@ def message(msg, *args, **kwargs):
     Note that if an exception or controller failure occurs, the message may never be read as the queue will be purged.
 
     Args:
-        msg: The message to send, defined in :mod:`soar.client.common`.
+        msg: The message to send, defined in :mod:`soar.common`.
         *args: The variable length arguments to pass to the function.
         **kwargs: The keyword arguments to pass to the function.
     """
@@ -197,7 +199,7 @@ def gui_load_world(path, *args, **kwargs):  # Simulates loading a world through 
 def make_controller(*args, simulated=True, callback=None, **kwargs):  # Makes the controller and loads it
     global robot, brain, brain_path, world, world_path, controller, gui, logfile, step_duration, realtime
     if logfile:  # Write initial meta information to file
-        wrapped_log({'type': 'meta', 'simulated': simulated, 'version': '0.11.0', 'brain': os.path.abspath(brain_path),
+        wrapped_log({'type': 'meta', 'simulated': simulated, 'version': '1.0.0.dev0', 'brain': os.path.abspath(brain_path),
                      'world': os.path.abspath(world_path)}, mode='w')
         controller_log = wrapped_log
     else:
@@ -205,6 +207,8 @@ def make_controller(*args, simulated=True, callback=None, **kwargs):  # Makes th
     controller = Controller(client_msg=message, robot=robot, brain=brain, world=world, simulated=simulated, gui=gui,
                             step_duration=step_duration, realtime=realtime, log=controller_log)
     wrap_attrs(controller, ['step_timer', 'on_load', 'run', 'on_stop', 'on_shutdown'])
+    if not simulated:  # If working with a real robot, register its shutdown to be called at exit
+        atexit.register(shutdown_robot, robot)
     if controller.on_load() == EXCEPTION:
         return
     if callback:
@@ -268,6 +272,7 @@ def shutdown_controller(*args, **kwargs):
     global controller
     if controller:
         controller.on_shutdown()
+        atexit.unregister(shutdown_robot)  # No need to shut down the robot at exit anymore
     controller = None
 
 
@@ -300,6 +305,7 @@ def controller_failure(*args, **kwargs):  # The controller has failed in an unan
         controller.on_failure()
     if gui:
         gui.controller_failure()
+        atexit.unregister(shutdown_robot)  # No need to shut down the robot at exit anymore
     else:
         raise SoarError('Unable to handle controller failures in headless mode')
 
@@ -320,6 +326,14 @@ def controller_complete(*args, **kwargs):  # Called when the simulation has comp
             wrapped_log({'type': 'meta', 'completed': controller.elapsed})
         if not gui:  # Prepare to quit out of the mainloop if no gui
             return True
+
+
+def shutdown_robot(robot):  # Called by the mainloop and at exit to ensure the robot is shutdown
+    print('Shutting down robot')  # TODO: Remove after debug
+    try:
+        robot.on_shutdown()
+    except Exception:  # Ignore errors
+        pass
 
 
 msg_map = {MAKE_GUI: make_gui,
@@ -369,10 +383,10 @@ def main(brain_path=None, world_path=None, headless=False, logfile=None, step_du
     Args:
         brain_path (optional): The path to the initial brain to load. Required if headless, otherwise not required.
         world_path (optional): The path to the initial world to load. Required if headless, otherwise not required.
-        headless (bool): If ``True``, run Soar in headless mode, immediately running a simulation.
+        headless (bool): If `True`, run Soar in headless mode, immediately running a simulation.
         logfile (optional): The path to the log file, or a file-like object to log data to.
         step_duration (float): The duration of a controller step, in seconds.
-        realtime (bool): If ``True``, the controller will never sleep to make a step last the proper length. Instead,
+        realtime (bool): If `True`, the controller will never sleep to make a step last the proper length. Instead,
         it will run as fast as possible.
 
     Returns:
@@ -399,10 +413,6 @@ def main(brain_path=None, world_path=None, headless=False, logfile=None, step_du
             message(GUI_LOAD_WORLD, world_path)
 
     return_val = mainloop()
-    if robot:  # Make sure the robot is properly shutdown
-        print('Shutting down robot')  # TODO: Remove this
-        robot.on_shutdown()
+    shutdown_robot(robot)
+    atexit.unregister(shutdown_robot)  # No need to shut down the robot at exit anymore
     return return_val
-
-
-

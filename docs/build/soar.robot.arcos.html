@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.robot.arcos &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.robot.arcos &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar.robot" href="soar.robot.html"/>
         <link rel="next" title="soar.robot.base" href="soar.robot.base.html"/>
         <link rel="prev" title="soar.robot" href="soar.robot.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -178,9 +178,10 @@
             
   <div class="section" id="module-soar.robot.arcos">
 <span id="soar-robot-arcos"></span><h1>soar.robot.arcos<a class="headerlink" href="#module-soar.robot.arcos" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 ARCOS (Advanced Robot Control and Operations Software) Client</p>
+<p>ARCOS (Advanced Robot Control and Operations Software) Client</p>
 <p>Classes and functions for communicating with an ARCOS server running on an Adept MobileRobot platform
 (typically Pioneer 2 and 3).</p>
+<p>TODO: ARCOS Command ordering</p>
 <dl class="class">
 <dt id="soar.robot.arcos.ARCOSClient">
 <em class="property">class </em><code class="descclassname">soar.robot.arcos.</code><code class="descname">ARCOSClient</code><span class="sig-paren">(</span><em>timeout=1.0</em>, <em>write_timeout=1.0</em>, <em>allowed_timeouts=2</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient" title="Permalink to this definition">¶</a></dt>
@@ -193,7 +194,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>timeout</strong> (<em>float</em>) – The time to wait while receiving data before a timeout occurs, in seconds.</li>
 <li><strong>write_timeout</strong> (<em>float</em>) – The time to wait while sending data before a timeout occurs, in seconds.</li>
-<li><strong>allowed_timeouts</strong> (<em>int</em>) – The number of timeouts to tolerate before the update coroutine closes the port</li>
+<li><strong>allowed_timeouts</strong> (<em>int</em>) – The number of timeouts to tolerate before the update coroutine closes the port.</li>
 </ul>
 </td>
 </tr>
@@ -202,20 +203,30 @@
 <dl class="attribute">
 <dt id="soar.robot.arcos.ARCOSClient.standard">
 <code class="descname">standard</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.standard" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – The last standard Server Information Packet (SIP) received. If no packet of this type has been
-received, this will be None.</p>
+<dd><p><em>dict</em> – The last standard Server Information Packet (SIP) received, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, if one hasn’t been</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">received yet.</code></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="soar.robot.arcos.ARCOSClient.config">
 <code class="descname">config</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.config" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – The last CONFIGpac SIP received. If no packet of this type has been received, this will be None.</p>
+<dd><p><em>dict</em> – The last CONFIGpac SIP received, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, if one hasn’t been received yet.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="soar.robot.arcos.ARCOSClient.encoder">
 <code class="descname">encoder</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.encoder" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – The last ENCODERpac SIP received. If no packet of this type has been received, this will be None.</p>
+<dd><p><em>dict</em> – The last ENCODERpac SIP received, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, if one hasn’t been received yet.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="soar.robot.arcos.ARCOSClient.io">
+<code class="descname">io</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.io" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – The last IOpac SIP received, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, if one hasn’t been received yet.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -243,12 +254,6 @@ received, this will be None.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="soar.robot.arcos.ARCOSClient.io">
-<code class="descname">io</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.io" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> – The last IOpac SIP received. If no packet of this type has been received, this will be None.</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="soar.robot.arcos.ARCOSClient.sonars">
 <code class="descname">sonars</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.sonars" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list</em> – A list of the latest Sonar array values, updated whenever a standard SIP is received.</p>
@@ -263,7 +268,7 @@ received, this will be None.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.ARCOSError" title="soar.robot.arcos.ARCOSError"><code class="xref py py-exc docutils literal"><span class="pre">ARCOSError</span></code></a> – If unable to connect to any available ports</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.ARCOSError" title="soar.robot.arcos.ARCOSError"><code class="xref py py-obj docutils literal"><span class="pre">ARCOSError</span></code></a> – If unable to connect to any available ports.</td>
 </tr>
 </tbody>
 </table>
@@ -278,7 +283,7 @@ received, this will be None.</p>
 <dl class="method">
 <dt id="soar.robot.arcos.ARCOSClient.pulse">
 <code class="descname">pulse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.pulse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Continually send the PULSE command so that the robot knows the client is alive</p>
+<dd><p>Continually send the PULSE command so that the robot knows the client is alive.</p>
 </dd></dl>
 
 <dl class="method">
@@ -296,8 +301,8 @@ received, this will be None.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference internal" href="#soar.robot.arcos.Timeout" title="soar.robot.arcos.Timeout"><code class="xref py py-exc docutils literal"><span class="pre">Timeout</span></code></a> – If at any point a timeout occurs and fewer bytes than expected are read.</li>
-<li><a class="reference internal" href="#soar.robot.arcos.InvalidPacket" title="soar.robot.arcos.InvalidPacket"><code class="xref py py-exc docutils literal"><span class="pre">InvalidPacket</span></code></a> – If the packet header, checksum, or packet length are invalid.</li>
+<li><a class="reference internal" href="#soar.robot.arcos.Timeout" title="soar.robot.arcos.Timeout"><code class="xref py py-obj docutils literal"><span class="pre">Timeout</span></code></a> – If at any point a timeout occurs and fewer bytes than expected are read.</li>
+<li><a class="reference internal" href="#soar.robot.arcos.InvalidPacket" title="soar.robot.arcos.InvalidPacket"><code class="xref py py-obj docutils literal"><span class="pre">InvalidPacket</span></code></a> – If the packet header, checksum, or packet length are invalid.</li>
 </ul>
 </td>
 </tr>
@@ -314,8 +319,8 @@ received, this will be None.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>code</strong> – The command code. Must be in <code class="xref py py-data docutils literal"><span class="pre">soar.robot.arcos.command_types</span></code></li>
-<li><strong>data</strong> (<em>optional</em>) – The associated command argument, assumed to be of the correct type</li>
+<li><strong>code</strong> – The command code. Must be in <code class="xref py py-data docutils literal"><span class="pre">soar.robot.arcos.command_types</span></code>.</li>
+<li><strong>data</strong> (<em>optional</em>) – The associated command argument, assumed to be of the correct type.</li>
 </ul>
 </td>
 </tr>
@@ -356,7 +361,7 @@ received, this will be None.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tries</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of failures to tolerate before timing out.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.Timeout" title="soar.robot.arcos.Timeout"><code class="xref py py-exc docutils literal"><span class="pre">Timeout</span></code></a> – If the number of tries is exhausted and syncing was not completed</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.Timeout" title="soar.robot.arcos.Timeout"><code class="xref py py-obj docutils literal"><span class="pre">Timeout</span></code></a> – If the number of tries is exhausted and syncing was not completed.</td>
 </tr>
 </tbody>
 </table>
@@ -365,13 +370,13 @@ received, this will be None.</p>
 <dl class="method">
 <dt id="soar.robot.arcos.ARCOSClient.update">
 <code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Continually receive and decode packets, storing them as attributes and triggering events</p>
+<dd><p>Continually receive and decode packets, storing them as attributes and triggering events.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.robot.arcos.ARCOSClient.wait_for">
-<code class="descname">wait_for</code><span class="sig-paren">(</span><em>event</em>, <em>timeout=1.0</em>, <em>message=''</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.wait_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>Waits for an event to occur, with an optional timeout.</p>
+<dt id="soar.robot.arcos.ARCOSClient.wait_or_timeout">
+<code class="descname">wait_or_timeout</code><span class="sig-paren">(</span><em>event</em>, <em>timeout=1.0</em>, <em>timeout_msg=''</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.wait_or_timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for an event to occur, with an optional timeout and message.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -379,11 +384,11 @@ received, this will be None.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>event</strong> (<em>Event</em>) – The event to wait for. Expected to be one of the attribute events of this class.</li>
 <li><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – How long to wait for the event before timing out.</li>
-<li><strong>message</strong> (<em>str</em>) – The message to pass if a timeout occurs.</li>
+<li><strong>timeout_msg</strong> (<em>str</em>) – The message to pass if a timeout occurs.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#soar.robot.arcos.Timeout" title="soar.robot.arcos.Timeout"><code class="xref py py-exc docutils literal"><span class="pre">Timeout</span></code></a> – If the event has not occurred by the specified time.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#soar.robot.arcos.Timeout" title="soar.robot.arcos.Timeout"><code class="xref py py-obj docutils literal"><span class="pre">Timeout</span></code></a> – If the event has not occurred by the specified time.</p>
 </td>
 </tr>
 </tbody>
@@ -396,37 +401,49 @@ received, this will be None.</p>
 <dt id="soar.robot.arcos.ARCOSError">
 <em class="property">exception </em><code class="descclassname">soar.robot.arcos.</code><code class="descname">ARCOSError</code><a class="headerlink" href="#soar.robot.arcos.ARCOSError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="soar.errors.html#soar.errors.SoarError" title="soar.errors.SoarError"><code class="xref py py-class docutils literal"><span class="pre">soar.errors.SoarError</span></code></a></p>
-<p>Umbrella class for ARCOS-related exceptions</p>
+<p>Umbrella class for ARCOS-related exceptions.</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="soar.robot.arcos.InvalidPacket">
 <em class="property">exception </em><code class="descclassname">soar.robot.arcos.</code><code class="descname">InvalidPacket</code><a class="headerlink" href="#soar.robot.arcos.InvalidPacket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#soar.robot.arcos.ARCOSError" title="soar.robot.arcos.ARCOSError"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.arcos.ARCOSError</span></code></a></p>
-<p>Raised when a packet’s checksum is incorrect</p>
+<p>Raised when a packet’s checksum is incorrect.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="soar.robot.arcos.OPEN">
+<code class="descclassname">soar.robot.arcos.</code><code class="descname">OPEN</code><em class="property"> = 1</em><a class="headerlink" href="#soar.robot.arcos.OPEN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the ARCOS servers.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="soar.robot.arcos.PULSE">
+<code class="descclassname">soar.robot.arcos.</code><code class="descname">PULSE</code><em class="property"> = 0</em><a class="headerlink" href="#soar.robot.arcos.PULSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset server watchdog (typically sent every second so that the robot knows the client is alive.</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="soar.robot.arcos.Timeout">
 <em class="property">exception </em><code class="descclassname">soar.robot.arcos.</code><code class="descname">Timeout</code><a class="headerlink" href="#soar.robot.arcos.Timeout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#soar.robot.arcos.ARCOSError" title="soar.robot.arcos.ARCOSError"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.arcos.ARCOSError</span></code></a></p>
-<p>Raised when no packet is read after a certain interval</p>
+<p>Raised when no packet is read after a certain interval.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="soar.robot.arcos.decode_packet">
 <code class="descclassname">soar.robot.arcos.</code><code class="descname">decode_packet</code><span class="sig-paren">(</span><em>packet</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.decode_packet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decodes a packet into a field-indexable dictionary</p>
+<dd><p>Decode a SIP (Server Information Packet) into a field-indexable dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary with field names as keys and values as corresponding numbers. The ‘TYPE’ key holds a value of
-‘STANDARD’, ‘CONFIG’, or ‘ENCODER’, corresponding to the packet type</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary with field names as keys and values as corresponding numbers. The <code class="xref py py-obj docutils literal"><span class="pre">'TYPE'</span></code> key holds a value
+of <code class="xref py py-obj docutils literal"><span class="pre">'STANDARD'</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">'CONFIG'</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">'ENCODER'</span></code>, or <code class="xref py py-obj docutils literal"><span class="pre">'IO'</span></code>, corresponding to the packet type.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.InvalidPacket" title="soar.robot.arcos.InvalidPacket"><code class="xref py py-exc docutils literal"><span class="pre">InvalidPacket</span></code></a> – If a packet’s fields could not be decoded</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.InvalidPacket" title="soar.robot.arcos.InvalidPacket"><code class="xref py py-obj docutils literal"><span class="pre">InvalidPacket</span></code></a> – If a packet’s fields could not be decoded.</td>
 </tr>
 </tbody>
 </table>
@@ -435,14 +452,14 @@ received, this will be None.</p>
 <dl class="function">
 <dt id="soar.robot.arcos.packet_checksum">
 <code class="descclassname">soar.robot.arcos.</code><code class="descname">packet_checksum</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.packet_checksum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates and returns the ARCOS packet checksum of a packet which does not have one</p>
+<dd><p>Calculate and returns the ARCOS packet checksum of a packet which does not have one.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list</em>) – A list of data bytes</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list</em>) – A list of data bytes.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The packet checksum</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The packet checksum.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
@@ -496,7 +513,7 @@ received, this will be None.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

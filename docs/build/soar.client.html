@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.client &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.client &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar" href="soar.html"/>
         <link rel="next" title="soar.common" href="soar.common.html"/>
         <link rel="prev" title="soar" href="soar.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -170,9 +170,9 @@
             
   <div class="section" id="module-soar.client">
 <span id="soar-client"></span><h1>soar.client<a class="headerlink" href="#module-soar.client" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 client entrypoint.</p>
+<p>Soar client entrypoint.</p>
 <p>Classes and functions for interacting with Soar in general. This module serves as the main entrypoint to the package.
-Projects desiring to invoke a Soar instance should import this module and call <code class="xref py py-func docutils literal"><span class="pre">soar.client.main.main()</span></code>.</p>
+Projects desiring to invoke a Soar instance should import this module and call <a class="reference internal" href="#soar.client.main" title="soar.client.main"><code class="xref py py-func docutils literal"><span class="pre">soar.client.main()</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <p>This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
@@ -206,10 +206,10 @@ Projects desiring to invoke a Soar instance should import this module and call <
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>brain_path</strong> (<em>optional</em>) – The path to the initial brain to load. Required if headless, otherwise not required.</li>
 <li><strong>world_path</strong> (<em>optional</em>) – The path to the initial world to load. Required if headless, otherwise not required.</li>
-<li><strong>headless</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, run Soar in headless mode, immediately running a simulation.</li>
+<li><strong>headless</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, run Soar in headless mode, immediately running a simulation.</li>
 <li><strong>logfile</strong> (<em>optional</em>) – The path to the log file, or a file-like object to log data to.</li>
 <li><strong>step_duration</strong> (<em>float</em>) – The duration of a controller step, in seconds.</li>
-<li><strong>realtime</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, the controller will never sleep to make a step last the proper length. Instead,</li>
+<li><strong>realtime</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the controller will never sleep to make a step last the proper length. Instead,</li>
 <li><strong>will run as fast as possible.</strong> (<em>it</em>) – </li>
 </ul>
 </td>
@@ -231,7 +231,7 @@ Projects desiring to invoke a Soar instance should import this module and call <
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>msg</strong> – The message to send, defined in <code class="xref py py-mod docutils literal"><span class="pre">soar.client.common</span></code>.</li>
+<li><strong>msg</strong> – The message to send, defined in <a class="reference internal" href="soar.common.html#module-soar.common" title="soar.common"><code class="xref py py-mod docutils literal"><span class="pre">soar.common</span></code></a>.</li>
 <li><strong>*args</strong> – The variable length arguments to pass to the function.</li>
 <li><strong>**kwargs</strong> – The keyword arguments to pass to the function.</li>
 </ul>
@@ -287,7 +287,7 @@ Projects desiring to invoke a Soar instance should import this module and call <
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

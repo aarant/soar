@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.controller &mdash; Soar 0.11.0 documentation</title>
+  <title>soar.controller &mdash; Soar 1.0.0.dev0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 0.11.0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
         <link rel="up" title="soar" href="soar.html"/>
         <link rel="next" title="soar.errors" href="soar.errors.html"/>
         <link rel="prev" title="soar.common" href="soar.common.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11.0
+                1.0.0.dev0
               </div>
             
           
@@ -170,8 +170,7 @@
             
   <div class="section" id="module-soar.controller">
 <span id="soar-controller"></span><h1>soar.controller<a class="headerlink" href="#module-soar.controller" title="Permalink to this headline">¶</a></h1>
-<p>Soar v0.11.0 Controller</p>
-<p>Classes and functions for controlling robots, simulated or real.</p>
+<p>Soar controller classes and functions for controlling robots, simulated or real.</p>
 <dl class="class">
 <dt id="soar.controller.Controller">
 <em class="property">class </em><code class="descclassname">soar.controller.</code><code class="descname">Controller</code><span class="sig-paren">(</span><em>client_msg</em>, <em>robot</em>, <em>brain</em>, <em>simulated</em>, <em>gui</em>, <em>step_duration=0.1</em>, <em>realtime=True</em>, <em>world=None</em>, <em>log=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller" title="Permalink to this definition">¶</a></dt>
@@ -206,8 +205,8 @@
 <dt id="soar.controller.Controller.elapsed">
 <code class="descname">elapsed</code><a class="headerlink" href="#soar.controller.Controller.elapsed" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>float</em> – The number of seconds spent actually running. Unless a step takes longer than
-<code class="docutils literal"><span class="pre">step_duration</span></code>, this will typically be the <code class="docutils literal"><span class="pre">step_count</span></code> multiplied by <code class="docutils literal"><span class="pre">step_duration</span></code>.
-If any steps take longer, the additional time will also be counted here.</p>
+<code class="xref py py-obj docutils literal"><span class="pre">step_duration</span></code>, this will typically be the <a class="reference internal" href="#soar.controller.Controller.step_count" title="soar.controller.Controller.step_count"><code class="xref py py-obj docutils literal"><span class="pre">step_count</span></code></a> multiplied by <code class="xref py py-obj docutils literal"><span class="pre">step_duration</span></code>. If any steps take
+longer, the additional time will also be counted here.</p>
 </dd></dl>
 
 <table class="docutils field-list" frame="void" rules="none">
@@ -216,20 +215,18 @@ If any steps take longer, the additional time will also be counted here.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>client_msg</strong> – The function to call to send a message to the client.</li>
-<li><strong>gui</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, worlds must be drawn on each step.</li>
-<li><strong>simulated</strong> (<em>bool</em>) – If this is <code class="docutils literal"><span class="pre">True</span></code>, the controller will simulate the robot. Otherwise it will treat the
-robot as real.</li>
+<li><strong>gui</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, worlds must be drawn on each step.</li>
+<li><strong>simulated</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the controller will simulate the robot. Otherwise it will treat the robot as real.</li>
 <li><strong>robot</strong> – An instance of <a class="reference internal" href="soar.robot.base.html#soar.robot.base.BaseRobot" title="soar.robot.base.BaseRobot"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.base.BaseRobot</span></code></a> or a subclass.</li>
-<li><strong>brain</strong> – The currently loaded brain module, supporting the on_load(), on_start(), on_step(), on_stop(), and
-on_shutdown() methods.</li>
-<li><strong>realtime</strong> (<em>bool</em>) – If <code class="docutils literal"><span class="pre">True</span></code>, stepping takes real time–that is, the controller will sleep for whatever time
-is not used running the step, until the step has taken at least <code class="docutils literal"><span class="pre">step_duration</span></code> seconds.
-Otherwise, no sleeping will occur; however the elapsed time will behave as if perfect sleeping
-occurs, and each step was always at least <code class="docutils literal"><span class="pre">step_duration</span></code> seconds long.</li>
-<li><strong>world</strong> – An instance of <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> or one of its subclasses if one is loaded, or <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>brain</strong> – The currently loaded brain module, supporting the <a class="reference internal" href="#soar.controller.Controller.on_load" title="soar.controller.Controller.on_load"><code class="xref py py-obj docutils literal"><span class="pre">on_load()</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">on_start()</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">on_step()</span></code>, <a class="reference internal" href="#soar.controller.Controller.on_stop" title="soar.controller.Controller.on_stop"><code class="xref py py-obj docutils literal"><span class="pre">on_stop()</span></code></a>,
+and <a class="reference internal" href="#soar.controller.Controller.on_shutdown" title="soar.controller.Controller.on_shutdown"><code class="xref py py-obj docutils literal"><span class="pre">on_shutdown()</span></code></a> methods.</li>
+<li><strong>realtime</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, stepping takes real time–that is, the controller will sleep for whatever time is
+not used running the step, until the step has taken at least <code class="xref py py-obj docutils literal"><span class="pre">step_duration</span></code> seconds. Otherwise, no
+sleeping will occur; however the elapsed time will behave as if each step was at least <code class="xref py py-obj docutils literal"><span class="pre">step_duration</span></code> long.</li>
+<li><strong>world</strong> – An instance of <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a> or one of its subclasses if one is loaded, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>.</li>
 <li><strong>step_duration</strong> (<em>float</em>) – The duration of a single step, in seconds.</li>
-<li><strong>log</strong> – A callable that accepts a <code class="docutils literal"><span class="pre">dict</span></code>-like object as an argument to log to a file, or <code class="docutils literal"><span class="pre">None</span></code>, if no logging
-is to take place.</li>
+<li><strong>log</strong> – A callable that accepts a <code class="xref py py-obj docutils literal"><span class="pre">dict</span></code>-like object as an argument to log to a file, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, if no logging</li>
+<li><strong>to take place.</strong> (<em>is</em>) – </li>
 </ul>
 </td>
 </tr>
@@ -238,7 +235,7 @@ is to take place.</li>
 <dl class="method">
 <dt id="soar.controller.Controller.on_failure">
 <code class="descname">on_failure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_failure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the controller fails</p>
+<dd><p>Called when the controller fails.</p>
 </dd></dl>
 
 <dl class="method">
@@ -250,13 +247,13 @@ is to take place.</li>
 <dl class="method">
 <dt id="soar.controller.Controller.on_shutdown">
 <code class="descname">on_shutdown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_shutdown" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the controller is shut down</p>
+<dd><p>Called when the controller is shut down.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.controller.Controller.on_stop">
 <code class="descname">on_stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the controller is stopped</p>
+<dd><p>Called when the controller is stopped.</p>
 </dd></dl>
 
 <dl class="method">
@@ -267,27 +264,12 @@ is to take place.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – If <code class="docutils literal"><span class="pre">None</span></code>, run forever, at least until stopped. If 0, start the controller, if it has not already been.
-Otherwise, for <code class="docutils literal"><span class="pre">n</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, run for that many steps.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – If <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>, run forever, at least until stopped. If 0, start the controller, if it has not yet been
+started. Otherwise, for <code class="xref py py-obj docutils literal"><span class="pre">n</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, run for that many steps.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
-
-<dl class="method">
-<dt id="soar.controller.Controller.single_step">
-<code class="descname">single_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.single_step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.controller.Controller.step_timer">
-<code class="descname">step_timer</code><span class="sig-paren">(</span><em>n=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.step_timer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="soar.controller.Controller.stop_thread">
-<code class="descname">stop_thread</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.stop_thread" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -301,7 +283,7 @@ Otherwise, for <code class="docutils literal"><span class="pre">n</span> <span c
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>obj</strong> – The object to be serialized.</li>
-<li><strong>logfile</strong> – The path to the log file, or a file-like object that supports <code class="docutils literal"><span class="pre">write()</span></code>.</li>
+<li><strong>logfile</strong> – The path to the log file, or a file-like object that has a <code class="xref py py-obj docutils literal"><span class="pre">write()</span></code> method.</li>
 <li><strong>mode</strong> – The mode in which the file is to be opened.</li>
 </ul>
 </td>
@@ -371,7 +353,7 @@ Otherwise, for <code class="docutils literal"><span class="pre">n</span> <span c
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.0',
+            VERSION:'1.0.0.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -1,9 +1,11 @@
-""" Soar v0.11.0 common constants
+""" Soar common constants.
 
 Contains named constants for sending messages to the client and determining the type of a controller.
+
+TODO: Finish defining constants
 """
 # Client messages
-MAKE_GUI = 0  #: No arguments. Builds the main Tkinter-based GUI and enters its event loop
+MAKE_GUI = 0  #: No arguments. Build the main Tkinter-based GUI and enter its event loop
 LOAD_BRAIN = 1
 LOAD_WORLD = 2
 MAKE_CONTROLLER = 3

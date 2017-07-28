@@ -1,11 +1,11 @@
-""" Soar v0.11.0 Geometry classes, for manipulating points and collections of points. """
+""" Soar geometry classes, for manipulating points and collections of points. """
 from math import sin, cos, pi, sqrt
 
 
 class Point:
     """ Represents a point in the x, y plane.
 
-     Points can be interpreted and treated as x, y tuples in most cases.
+    Points can be interpreted and treated as x, y tuples in most cases.
 
     Args:
         x (float): The x coordinate of the point.
@@ -27,7 +27,7 @@ class Point:
             raise IndexError('tuple index out of range')
 
     def xy_tuple(self):
-        """ Returns: An x, y tuple representing the point. """
+        """ Returns: An `(x, y)` tuple representing the point. """
         return self.x, self.y
 
     def scale(self, value, other=(0, 0)):
@@ -35,7 +35,7 @@ class Point:
 
         Args:
             value (float): The value to scale by.
-            other: An x, y tuple or an instance of Point as the origin to scale from.
+            other: An `(x, y)` tuple or a  `Point` as the origin to scale from.
         """
         d_x, d_y = self.x-other[0], self.y-other[1]
         self.x, self.y = d_x*value+other[0], d_y*value+other[1]
@@ -44,7 +44,7 @@ class Point:
         """ Vector addition; adds other to self.
 
         Args:
-            other: An x, y tuple or an instance of Point.
+            other: An `(x, y)` tuple or an instance of `Point`.
         """
         self.x, self.y = self.x+other[0], self.y+other[1]
 
@@ -52,7 +52,7 @@ class Point:
         """ Vector subtraction; subtracts other from self.
 
         Args:
-            other: An x, y tuple or an instance of Point.
+            other: An `(x, y)` tuple or an instance of `Point`.
         """
         self.x, self.y = self.x-other[0], self.y-other[1]
 
@@ -60,7 +60,7 @@ class Point:
         """ Rotate about other by theta radians (positive values are counterclockwise).
 
         Args:
-            other: An x, y tuple or an instance of Point.
+            other: An `(x, y)` tuple or an instance of `Point`.
             theta (float): The number of radians to rotate counterclockwise.
         """
         x, y = self.x, self.y
@@ -69,13 +69,13 @@ class Point:
         self.x, self.y = (x-p_x)*c-(y-p_y)*s+p_x, (x-p_x)*s+(y-p_y)*c+p_y
 
     def midpoint(self, other):
-        """ Returns a new Point that is the midpoint of self and other.
+        """ Returns a new `Point` that is the midpoint of self and other.
 
         Args:
-            other: An x, y tuple or an instance of Point.
+            other: An `(x, y)` tuple or an instance of `Point`.
 
         Returns:
-            A Point that is the midpoint of self and other.
+            A `Point` that is the midpoint of self and other.
         """
         return Point((self.x+other[0])/2.0, (self.y+other[1])/2.0)
 
@@ -83,12 +83,16 @@ class Point:
         """ Calculates the distance between two points.
 
         Args:
-            other: An x, y tuple or an instance of Point.
+            other: An `(x, y)` tuple or an instance of `Point`.
 
         Returns:
-            A float representing the distance between the points.
+            float: The distance between the points.
         """
         return sqrt(abs(self[0]-other[0])**2+abs(self[1]-other[1])**2)
+
+    def copy(self):
+        """ Returns a copy of the `Point`. """
+        return Point(*self)
 
 
 class Pose(Point):
@@ -120,33 +124,34 @@ class Pose(Point):
             raise IndexError('tuple index out of range')
 
     def xyt_tuple(self):
-        """ Returns: An (x, y, t) tuple representing the pose. """
+        """ Returns: An `(x, y, t)` tuple representing the pose. """
         return self.x, self.y, self.t
 
     def transform(self, other):
         """ Return a new pose that has been transformed (translated and rotated).
 
          Args:
-             other: A ``Pose`` or 3-tuple-like object, by which to translate and rotate.
+             other: A `Pose` or 3-tuple-like object, by which to translate and rotate.
 
-         Returns: A new ``Pose`` equivalent to translating ``self`` by ``(other[0], other[1])`` and rotating by
-                  ``other[2]``.
+         Returns:
+             A new `Pose` equivalent to translating `self` by `(other[0], other[1])` and rotating by
+             `other[2]`.
          """
         return Pose(self.x+other[0], self.y+other[1], (self.t+other[2]) % (2.0*pi))
 
-    def draw(self, canvas, length, **options):  # TODO: Move this into a WorldObject subclass?
-        x1, y1 = length*cos(self.t)+self.x, length*sin(self.t)+self.y
-        canvas.create_line(self.x, self.y, x1, y1, **options)
+    def copy(self):
+        """ Returns a copy of the Pose. """
+        return Pose(*self)
 
 
 class PointCollection:
-    """ A movable collection of Points.
+    """ A movable collection of points.
 
-    Can be iterated over like a list of Points.
+    Can be iterated over like a list of `Point`.
 
     Args:
-        points: A list of (x, y) tuples or Points.
-        center: An (x, y) tuple or Point as the pivot or center of the collection.
+        points: A list of `(x, y)` tuples or `Point`.
+        center: An `(x, y)` tuple or `Point` as the pivot or center of the collection.
     """
     def __init__(self, points, center=None):
         self.points = []
@@ -175,7 +180,7 @@ class PointCollection:
 
         Args:
             value (float): The scale amount.
-            origin: An x, y tuple or Point from which the collection's points will move away/towards.
+            origin: An `(x, y)` tuple or `Point` from which the collection's points will move away/towards.
         """
         for p in self.points:
             p.scale(value, origin)
@@ -185,7 +190,7 @@ class PointCollection:
         """ Translate the collection by the vector delta.
 
         Args:
-            delta: An x, y tuple or Point, treated as a vector and added to each point in the collection.
+            delta: An `(x, y)` tuple or `Point`, treated as a vector and added to each point in the collection.
         """
         for p in self.points:
             p.add(delta)
@@ -195,7 +200,7 @@ class PointCollection:
         """ Rotate about other by theta radians (positive values are counterclockwise).
 
         Args:
-            pivot: An x, y tuple or an instance of Point.
+            pivot: An `(x, y)` tuple or a `Point`.
             theta (float): The number of radians to rotate counterclockwise.
         """
         for p in self.points:
@@ -206,7 +211,7 @@ class PointCollection:
         """ Re-center the collection.
 
         Args:
-            new_center: An x, y tuple or Point that will be the collection's new center.
+            new_center: An `(x, y)` tuple or `Point` that will be the collection's new center.
         """
         diff = Point(new_center[0], new_center[1])
         diff.sub(self.center)

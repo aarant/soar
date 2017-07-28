@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-""" Soar v0.11.0 command line entrypoint.
+""" Soar v1.0.0.dev0 command line entrypoint.
 
-Allows use of Soar from the command line by passing arguments to :func:`soar.client.main.main`.
+Allows use of Soar from the command line by passing arguments to :func:`soar.client.main`.
 """
+import sys
 from argparse import ArgumentParser
-from sys import exit
 
-from soar.client import main as invoke_client
+from soar import __version__
+import soar.client as client
 
 
 def main():
-    parser = ArgumentParser(prog='soar', description='SoaR v0.11.0\nSnakes on a Robot: An extensible Python framework '
+    parser = ArgumentParser(prog='soar', description='SoaR v1.0.0.dev0\nSnakes on a Robot: An extensible Python framework '
                                                      'for simulating and interacting with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')
     parser.add_argument('--quicktime', action='store_true', help='Run quickly, without sleeping between steps',
@@ -23,9 +24,9 @@ def main():
     parser.add_argument('-w', '-world', metavar='world', type=str, help='Path to the world file', required=False,
                         dest='world_path')
     args = parser.parse_args()
-    return_val = invoke_client(brain_path=args.brain_path, world_path=args.world_path, headless=args.headless,
-                               logfile=args.logfile, step_duration=args.step_duration, realtime=not args.quicktime)
-    exit(return_val)
+    return_val = client.main(brain_path=args.brain_path, world_path=args.world_path, headless=args.headless,
+                             logfile=args.logfile, step_duration=args.step_duration, realtime=not args.quicktime)
+    sys.exit(return_val)
 
 if __name__ == '__main__':
     main()

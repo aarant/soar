@@ -1,4 +1,4 @@
-""" Soar v0.11.0 Main GUI
+""" Soar Main GUI classes.
 
 Classes for building the main GUI, which allows the user to load brains & worlds, start simulations, etc.
 """
@@ -66,7 +66,7 @@ class IntegerEntry(Entry):
 
     Args:
         parent: The parent Tk widget or window.
-        value (str): The initial value. Must be able to be cast to ``int``.
+        value (str): The initial value. Must be able to be cast to `int`.
         **kwargs: Arbitrary Tk keyword arguments.
     """
     def __init__(self, parent, value='', **kwargs):
@@ -134,7 +134,7 @@ class SoarUI(Tk):
     world_dir = os.path.join(image_dir, '../worlds/')
     brain_dir = os.path.join(image_dir, '../brains/')
 
-    def __init__(self, client_msg, client_mainloop, parent=None, title='SoaR v0.11.0'):
+    def __init__(self, client_msg, client_mainloop, parent=None, title='SoaR v1.0.0.dev0'):
         Tk.__init__(self, parent)
         self.brain_path = None
         self.world_path = None
@@ -208,7 +208,7 @@ class SoarUI(Tk):
         """ Reset all of the button states to what they are at initialization, before any files are loaded.
 
         Args:
-            clear_output (bool, optional): If ``True``, clear the contents of the output frame.
+            clear_output (bool, optional): If `True`, clear the contents of the output frame.
         """
         self.play.config(image=self.play_image, text='Play', command=self.play_cmd, state=DISABLED)
         self.step.config(image=self.step_image, text='Step', command=self.step_cmd, state=DISABLED)
@@ -244,7 +244,7 @@ class SoarUI(Tk):
         """ Add a new window to the UI's internal list, and return a new Toplevel window, optionally linked.
 
         Args:
-            linked (bool): If ``True``, the window will be destroyed whenever the simulator window is destroyed.
+            linked (bool): If `True`, the window will be destroyed whenever the simulator window is destroyed.
 
         Returns:
             The new Toplevel window.
@@ -254,10 +254,10 @@ class SoarUI(Tk):
         return t
 
     def close_windows(self, close_unlinked=False):
-        """ Close windows, optionally unlinked ones, clear the draw queue, and set the simulator canvas to ``None``.
+        """ Close windows, optionally unlinked ones, clear the draw queue, and set the simulator canvas to `None`.
 
         Args:
-            close_unlinked (bool): If ``True``, closes all windows. Otherwise, closes only the linked ones.
+            close_unlinked (bool): If `True`, closes all windows. Otherwise, closes only the linked ones.
         """
         while not self.draw_queue.empty():
             _ = self.draw_queue.get()
@@ -385,11 +385,11 @@ class SoarUI(Tk):
         """ Kill the controller, close windows, and reload the brain and world.
 
         Args:
-            reload_controller (bool): If ``True``, immediately reload whatever controller was in effect previously.
-            close_unlinked (bool): If ``True``, close all windows, not just the linked ones.
-            clear_output (bool): If ``True``, clears the output of the output frame.
-            silent (bool): If ``True``, stops the client from printing 'LOAD BRAIN'-like messages.
-            callback: The function to call after the reload has finished, or ``None``.
+            reload_controller (bool): If `True`, immediately reload whatever controller was in effect previously.
+            close_unlinked (bool): If `True`, close all windows, not just the linked ones.
+            clear_output (bool): If `True`, clears the output of the output frame.
+            silent (bool): If `True`, stops the client from printing `'LOAD BRAIN'`-like messages.
+            callback: The function to call after the reload has finished, or `None`.
         """
         sim_canvas, connected = self.sim_canvas, self.connected
         self.reset(clear_output=clear_output)
@@ -409,10 +409,10 @@ class SoarUI(Tk):
         """ Called after the client has finished reloading.
 
         Args:
-            reload_controller (bool): reload_controller (bool): If ``True``, reload the previous controller.
-            sim_canvas: If not ``None``, the controller to be reloaded is the simulator.
-            connected: If ``True``, the controller to be reloaded is the real robot controller.
-            callback: A function to call once the reload has finished, or ``None``.
+            reload_controller (bool): If `True`, reload the previous controller.
+            sim_canvas: If not `None`, the controller to be reloaded is the simulator.
+            connected: If `True`, the controller to be reloaded is the real robot controller.
+            callback: A function to call once the reload has finished, or `None`.
         """
         if self.brain_path:
             self.brain_ready()
