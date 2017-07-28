@@ -9,6 +9,7 @@ from threading import Thread
 from tkinter import *
 from tkinter import filedialog
 
+from soar import __version__
 from soar.common import *
 from soar.gui.canvas import canvas_from_world
 from soar.gui.output import OutputFrame, SoarIO
@@ -134,7 +135,7 @@ class SoarUI(Tk):
     world_dir = os.path.join(image_dir, '../worlds/')
     brain_dir = os.path.join(image_dir, '../brains/')
 
-    def __init__(self, client_msg, client_mainloop, parent=None, title='SoaR v1.0.0.dev0'):
+    def __init__(self, client_msg, client_mainloop, parent=None, title='Soar ' + __version__):
         Tk.__init__(self, parent)
         self.brain_path = None
         self.world_path = None

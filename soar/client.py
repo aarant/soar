@@ -199,8 +199,8 @@ def gui_load_world(path, *args, **kwargs):  # Simulates loading a world through 
 def make_controller(*args, simulated=True, callback=None, **kwargs):  # Makes the controller and loads it
     global robot, brain, brain_path, world, world_path, controller, gui, logfile, step_duration, realtime
     if logfile:  # Write initial meta information to file
-        wrapped_log({'type': 'meta', 'simulated': simulated, 'version': '1.0.0.dev0', 'brain': os.path.abspath(brain_path),
-                     'world': os.path.abspath(world_path)}, mode='w')
+        wrapped_log({'type': 'meta', 'simulated': simulated, 'version': __version__,
+                     'brain': os.path.abspath(brain_path), 'world': os.path.abspath(world_path)}, mode='w')
         controller_log = wrapped_log
     else:
         controller_log = None

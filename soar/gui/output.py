@@ -8,6 +8,8 @@ from io import StringIO
 
 from tkinter import *
 
+from soar import __version__
+
 
 class SoarIO(StringIO):
     def __init__(self, write_func):
@@ -53,7 +55,7 @@ class OutputFrame(Frame):
         self.text_field.bind("<1>", lambda event: self.text_field.focus_set())
         self.text_field.pack(expand=True, fill='both')
         self.scroll.config(command=self.text_field.yview)
-        self.output('SoaR v1.0.0.dev0: Snakes on a robot: Output will appear in this window\n\n')
+        self.output('Soar ' + __version__ + ' Snakes on a robot: Output will appear in this window\n\n')
 
     def insert(self, text, *tags):
         """ Insert text at the end of the text field.

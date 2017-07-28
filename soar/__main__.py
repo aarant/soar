@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Soar v1.0.0.dev0 command line entrypoint.
+""" Soar command line entrypoint.
 
 Allows use of Soar from the command line by passing arguments to :func:`soar.client.main`.
 """
@@ -11,8 +11,9 @@ import soar.client as client
 
 
 def main():
-    parser = ArgumentParser(prog='soar', description='SoaR v1.0.0.dev0\nSnakes on a Robot: An extensible Python framework '
-                                                     'for simulating and interacting with robots')
+    parser = ArgumentParser(prog='soar', description='Soar ' + __version__ + '\nSnakes on a Robot: An extensible Python '
+                                                                             'framework for simulating and interacting '
+                                                                             'with robots')
     parser.add_argument('--headless', action='store_true', help='Run in headless mode')
     parser.add_argument('--quicktime', action='store_true', help='Run quickly, without sleeping between steps',
                         dest='quicktime')
