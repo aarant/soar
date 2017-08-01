@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.sim.world &mdash; Soar 1.0.0.dev0 documentation</title>
+  <title>soar.sim.world &mdash; Soar 1.0.0.dev2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
         <link rel="up" title="soar.sim" href="soar.sim.html"/>
         <link rel="prev" title="soar.sim.geometry" href="soar.sim.geometry.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0.0.dev0
+                1.0.0.dev2
               </div>
             
           
@@ -312,6 +312,26 @@ object will be drawn.</td>
 </dd></dl>
 
 <dl class="class">
+<dt id="soar.sim.world.Ray">
+<em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Ray</code><span class="sig-paren">(</span><em>pose</em>, <em>length</em>, <em>eps=1e-08</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Ray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#soar.sim.world.Line" title="soar.sim.world.Line"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.Line</span></code></a></p>
+<p>A ray of a specified length, created from a pose.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pose</strong> – An <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">theta)</span></code> tuple or <a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Pose" title="soar.sim.geometry.Pose"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Pose</span></code></a> as the origin of the ray.</li>
+<li><strong>length</strong> (<em>float</em>) – The length of the ray.</li>
+<li><strong>**options</strong> – Tkinter options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
 <dt id="soar.sim.world.Wall">
 <em class="property">class </em><code class="descclassname">soar.sim.world.</code><code class="descname">Wall</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>thickness=0.002</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.Wall" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#soar.sim.world.Polygon" title="soar.sim.world.Polygon"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.Polygon</span></code></a></p>
@@ -460,6 +480,35 @@ to the object.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="soar.sim.world.World.find_all_collisions">
+<code class="descname">find_all_collisions</code><span class="sig-paren">(</span><em>obj</em>, <em>eps=1e-08</em>, <em>condition=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World.find_all_collisions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all the collisions of a <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> subclass with objects in the world.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> – A <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> or subclass instance. Objects in the world must know how to collide with it.</li>
+<li><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – An optional epsilon within which to consider a collision to have occurred. What that
+means differs between <a class="reference internal" href="#soar.sim.world.WorldObject" title="soar.sim.world.WorldObject"><code class="xref py py-obj docutils literal"><span class="pre">WorldObject</span></code></a> subclasses.</li>
+<li><strong>condition</strong> (<em>optional</em>) – A function to apply to each object in the world that must be <code class="xref py py-obj docutils literal"><span class="pre">True</span></code> in order for it
+to be considered.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of <code class="xref py py-obj docutils literal"><span class="pre">(world_obj,</span> <span class="pre">p)</span></code> tuples, where <code class="xref py py-obj docutils literal"><span class="pre">world_obj</span></code> is the object that collided and <code class="xref py py-obj docutils literal"><span class="pre">p</span></code> is the
+<a class="reference internal" href="soar.sim.geometry.html#soar.sim.geometry.Point" title="soar.sim.geometry.Point"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.geometry.Point</span></code></a> at which the collision occurred. If multiple collision points occurred with
+the same object, each will be listed separately.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="soar.sim.world.World.on_step">
 <code class="descname">on_step</code><span class="sig-paren">(</span><em>step_duration</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.sim.world.World.on_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a single step on the world’s objects.</p>
@@ -527,7 +576,7 @@ each subclass.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuples consisting of all the collisions with <code class="xref py py-obj docutils literal"><span class="pre">other</span></code>, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of <code class="xref py py-obj docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></code> tuples consisting of all the collision points with <code class="xref py py-obj docutils literal"><span class="pre">other</span></code>, or <code class="xref py py-obj docutils literal"><span class="pre">None</span></code>
 if there weren’t any.</p>
 </td>
 </tr>
@@ -634,7 +683,7 @@ if there weren’t any.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev0',
+            VERSION:'1.0.0.dev2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

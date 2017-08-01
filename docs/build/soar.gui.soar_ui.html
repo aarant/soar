@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.soar_ui &mdash; Soar 1.0.0.dev0 documentation</title>
+  <title>soar.gui.soar_ui &mdash; Soar 1.0.0.dev2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.robot" href="soar.robot.html"/>
         <link rel="prev" title="soar.gui.plot_window" href="soar.gui.plot_window.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev0
+                1.0.0.dev2
               </div>
             
           
@@ -276,7 +276,7 @@
 
 <dl class="class">
 <dt id="soar.gui.soar_ui.SoarUI">
-<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">SoarUI</code><span class="sig-paren">(</span><em>client_msg</em>, <em>client_mainloop</em>, <em>parent=None</em>, <em>title='SoaR v1.0.0.dev0'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.gui.soar_ui.</code><code class="descname">SoarUI</code><span class="sig-paren">(</span><em>client_future</em>, <em>client_mainloop</em>, <em>parent=None</em>, <em>title='Soar 1.0.0.dev2'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Tk</span></code></p>
 <p>The main GUI window.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -284,7 +284,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>client_msg</strong> – The function to call to send a message to the client.</li>
+<li><strong>client_future</strong> – The function to call to schedule a future with the client.</li>
 <li><strong>client_mainloop</strong> – The client’s mainloop function, restarted after the main thread switches to Tk execution.</li>
 <li><strong>parent</strong> (<em>optional</em>) – The parent window. It is almost always unnecessary to change this from the default.</li>
 <li><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – The main window title.</li>
@@ -293,6 +293,20 @@
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.attach_window">
+<code class="descname">attach_window</code><span class="sig-paren">(</span><em>w</em>, <em>linked=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.attach_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach an existing window to the SoarUI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linked</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the window will be destroyed whenever the simulator window is destroyed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.brain_cmd">
 <code class="descname">brain_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.brain_cmd" title="Permalink to this definition">¶</a></dt>
@@ -344,6 +358,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="soar.gui.soar_ui.SoarUI.future">
+<code class="descname">future</code><span class="sig-paren">(</span><em>msg</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.future" title="Permalink to this definition">¶</a></dt>
+<dd><p>Schedules a future to be executed by the GUI’s tick loop.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="soar.gui.soar_ui.SoarUI.gui_error">
 <code class="descname">gui_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.gui_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when a GUI error occurs, such as an error while drawing a world or window.</p>
@@ -366,12 +386,6 @@
 <code class="descname">mainloop</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.mainloop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enter the Tk event loop, and restart the client as a new thread.</p>
 <p>Redirect stdout and stderr to the GUI’s output frame.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="soar.gui.soar_ui.SoarUI.message">
-<code class="descname">message</code><span class="sig-paren">(</span><em>msg</em>, <em>*data</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.SoarUI.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sends a message to the GUI’s tick loop.</p>
 </dd></dl>
 
 <dl class="method">
@@ -579,6 +593,22 @@
 
 </dd></dl>
 
+<dl class="function">
+<dt id="soar.gui.soar_ui.attach_to_soar">
+<code class="descclassname">soar.gui.soar_ui.</code><code class="descname">attach_to_soar</code><span class="sig-paren">(</span><em>w</em>, <em>linked=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.soar_ui.attach_to_soar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach an existing window to the SoarUI.</p>
+<p>This function is re-defined to refer to the <a class="reference internal" href="#soar.gui.soar_ui.SoarUI" title="soar.gui.soar_ui.SoarUI"><code class="xref py py-obj docutils literal"><span class="pre">SoarUI</span></code></a>’s <code class="xref py py-obj docutils literal"><span class="pre">attach_window</span></code> method whenever this function is imported
+by a brain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linked</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the window will be destroyed whenever the simulator window is destroyed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -625,7 +655,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev0',
+            VERSION:'1.0.0.dev2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

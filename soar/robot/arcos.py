@@ -222,7 +222,7 @@ class ARCOSClient:
         config_event (:class:`threading.Event`): Set whenever a CONFIGpac SIP is received.
         encoder_event (:class:`threading.Event`): Set whenever an ENCODERpac SIP is received.
         io_event (:class:`threading.Event`): Set whenever an IOpac is received.
-        sonars (list): A list of the latest Sonar array values, updated whenever a standard SIP is received.
+        sonars (list): A list of the latest sonar array values, updated whenever a standard SIP is received.
     """
     def __init__(self, timeout=1.0, write_timeout=1.0, allowed_timeouts=2):
         self.timeout = timeout  # Timeout values, in seconds
@@ -318,15 +318,22 @@ class ARCOSClient:
             arg_type = 0x2b
             self.send_packet(code, arg_type, *b)
             
-    def connect(self):
+    def connect(self, forced_ports=None):
         """ Attempt to connect and sync with an ARCOS server over a serial port.
 
         Returns if successful.
 
+        Args:
+            forced_ports (list, optional): If provided, a list of serial ports to try connecting to. Otherwise, the
+                client will try all available ports.
+
         Raises:
             `ARCOSError`: If unable to connect to any available ports.
         """
-        ports = [port_info.device for port_info in comports()]  # Try every available port until we find a robot
+        if forced_ports is not None:
+            ports = forced_ports
+        else:
+            ports = [port_info.device for port_info in comports()]  # Try every available port until we find a robot
         for port in ports:
             def connect_with_baudrate(baudrate):
                 return Serial(port=port, baudrate=baudrate, timeout=self.timeout, writeTimeout=self.write_timeout)

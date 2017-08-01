@@ -4,7 +4,7 @@ Contains named constants for sending messages to the client and determining the 
 
 TODO: Finish defining constants
 """
-# Client messages
+# Client futures
 MAKE_GUI = 0  #: No arguments. Build the main Tkinter-based GUI and enter its event loop
 LOAD_BRAIN = 1
 LOAD_WORLD = 2

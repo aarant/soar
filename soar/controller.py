@@ -1,4 +1,7 @@
-""" Soar controller classes and functions for controlling robots, simulated or real. """
+""" Soar controller classes and functions for controlling robots, simulated or real.
+
+TODO: Log world information before the first step.
+"""
 import json
 from io import StringIO
 from threading import Thread
@@ -12,10 +15,21 @@ from soar.errors import LoggingError
 def sim_completed(obj=None):
     """ Called by the brain to signal that the simulation has completed.
 
-    This is set by the controller before the brain is loaded.
+    This is set by the client when the brain file is loaded.
 
     Args:
         obj (optional): Optionally, an object to log to the logfile after the simulation has completed.
+    """
+    pass
+
+
+def elapsed_time():
+    """ Get the time that has elapsed since running the controller.
+
+    This is set by the controller when it loads the brain.
+
+    Returns:
+        float: The elapsed time in seconds, as defined in :attr:`soar.controller.Controller.elapsed`.
     """
     pass
 
@@ -57,7 +71,7 @@ class Controller:
             longer, the additional time will also be counted here.
 
     Args:
-        client_msg: The function to call to send a message to the client.
+        client_future: The function to call to schedule a future for the client to execute.
         gui (bool): If `True`, worlds must be drawn on each step.
         simulated (bool): If `True`, the controller will simulate the robot. Otherwise it will treat the robot as real.
         robot: An instance of :class:`soar.robot.base.BaseRobot` or a subclass.
@@ -71,9 +85,9 @@ class Controller:
         log: A callable that accepts a `dict`-like object as an argument to log to a file, or `None`, if no logging
         is to take place.
     """
-    def __init__(self, client_msg, robot, brain, simulated, gui, step_duration=0.1, realtime=True, world=None,
+    def __init__(self, client_future, robot, brain, simulated, gui, step_duration=0.1, realtime=True, world=None,
                  log=None):
-        self.client_msg = client_msg
+        self.client_future = client_future
         self.robot = robot
         self.brain = brain
         self.step_duration = step_duration
@@ -111,7 +125,7 @@ class Controller:
                 self._avg_offset = 0.75 * self._avg_offset + 0.25 * offset  # Exponentially weighted moving average
         if self.running:  # If the timer finished naturally, without being stopped, notify the client
             self.running = False
-            self.client_msg(STEP_FINISHED)
+            self.client_future(STEP_FINISHED)
 
     def stop_thread(self):  # Stops the currently running step thread, if it exists
         self.running = False
@@ -128,16 +142,24 @@ class Controller:
         else:
             def brain_print(*args, **kwargs):
                 print('>>>', *args, **kwargs)
-        setattr(self.brain, 'print', brain_print)
+        self.brain['print'] = brain_print
+        self.brain['elapsed_time'] = lambda: self.elapsed  # Give brain read-only access to the elapsed time
         self.robot.simulated = self.simulated
         if self.simulated:  # If we are simulating, we have to initialize the world
             self.robot.move(self.world.initial_position)
             self.world.add(self.robot)
-            if self.gui:  # If a GUI exists, we have to tell it to draw the world
-                self.client_msg(MAKE_WORLD_CANVAS, self.world)
+            if self.gui:  # If a GUI exists, we tell the client to draw the world before we finish loading
+                self.client_future(MAKE_WORLD_CANVAS, self.world, callback=self.finish_load)
+            else:
+                self.finish_load()
+        else:
+            self.finish_load()
+
+    def finish_load(self):
+        """ Called to finish loading, after the canvas has been drawn, if necessary. """
         # The robot is loaded first so that any setup required for the brain's operation is done beforehand.
         self.robot.on_load()
-        self.brain.on_load()
+        self.brain['on_load']()
 
     def run(self, n=None):
         """ Runs the controller, starting it if necessary, for one or many steps, or without stopping.
@@ -148,7 +170,7 @@ class Controller:
         """
         if not self.started:
             self.robot.on_start()
-            self.brain.on_start()
+            self.brain['on_start']()
             self.started = True
         if n == 0:  # Don't do any steps
             return
@@ -158,7 +180,7 @@ class Controller:
                 self.elapsed += self.step_duration
             else:  # If the step took longer than it should have, add its length to self.elapsed
                 self.elapsed += step_time
-            self.client_msg(STEP_FINISHED)
+            self.client_future(STEP_FINISHED)
         else:  # Otherwise let the step timer run the steps
             self._step_thread = Thread(target=lambda: self.step_timer(n=n), daemon=True)
             self._step_thread.start()
@@ -166,11 +188,11 @@ class Controller:
     def single_step(self):  # Undergoes a single step, returns the number of seconds the step took
         start = timer()
         # First step the brain
-        self.brain.on_step(self.step_duration)
+        self.brain['on_step'](self.step_duration)
         if self.world:  # If simulating, the world will handle the robot's step
             self.world.on_step(self.step_duration)
             if self.gui:
-                self.client_msg(DRAW, self.world)
+                self.client_future(DRAW, self.world)
         else:  # Otherwise step the robot on its own
             self.robot.on_step(self.step_duration)
         if self.log:  # Log information about the step to the log file
@@ -182,13 +204,13 @@ class Controller:
             self.log(log_object)
         self.step_count += 1
         if self.step_count > 10000:  # So that no simulation runs forever TODO: Maybe this could be better?
-            self.client_msg(CONTROLLER_COMPLETE)
+            self.client_future(CONTROLLER_COMPLETE)
         return timer()-start
 
     def on_stop(self):
         """ Called when the controller is stopped. """
         self.stop_thread()
-        self.brain.on_stop()
+        self.brain['on_stop']()
         self.robot.on_stop()
         self.started = False
         self.stopped = True
@@ -196,7 +218,7 @@ class Controller:
     def on_shutdown(self):
         """ Called when the controller is shut down. """
         self.stop_thread()
-        self.brain.on_shutdown()
+        self.brain['on_shutdown']()
         self.robot.on_shutdown()
 
     def on_failure(self):

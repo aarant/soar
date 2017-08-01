@@ -27,6 +27,7 @@ Examples:
         return_value = main(logfile=open('path/to/logfile', 'r+'))
     """
 import importlib.util
+import sys
 import os
 import traceback as tb
 import atexit
@@ -42,14 +43,17 @@ from soar.gui.soar_ui import SoarUI
 
 brain = None
 brain_path = None
+__brain_modules = []
 world = None
 world_path = None
+__world_modules = []
 robot = None
 controller = None
 gui = None
 logfile = None
 step_duration = 0.1
 realtime = True
+options = None
 queue = Queue()
 
 
@@ -66,19 +70,19 @@ def exception_decorator(func):  # Catches exceptions and notifies the client
             val = func(*args, **kwargs)
         except LoggingError as e:
             printerr('LoggingError: ' + str(e))
-            message(LOGGING_ERROR)
+            future(LOGGING_ERROR)
             return EXCEPTION
         except SoarIOError as e:
             printerr('SoarIOError: ' + str(e))
-            message(CONTROLLER_IO_ERROR)
+            future(CONTROLLER_IO_ERROR)
             return EXCEPTION
         except GUIError as e:
             tb.print_exc()
-            message(GUI_ERROR)
+            future(GUI_ERROR)
             return EXCEPTION
         except Exception:  # Any other exception (likely occurring in the brain) signifies controller failure
             tb.print_exc()
-            message(CONTROLLER_FAILURE)
+            future(CONTROLLER_FAILURE)
             return EXCEPTION
         else:  # Otherwise return the function's return value
             return val
@@ -87,45 +91,58 @@ def exception_decorator(func):  # Catches exceptions and notifies the client
 
 
 @exception_decorator
-def wrapped_log(obj, mode='a'):
+def wrapped_log(obj, mode='a'):  # Logging that doesn't explode if something goes wrong
     global logfile
     log(obj, logfile, mode)
 
 
-def message(msg, *args, **kwargs):
-    """ Sends a message with data for the client to execute in the future, by putting it on the client's internal queue.
+def future(name, *args, **kwargs):
+    """ Adds a function with data for the client to execute in the future, by putting it on the client's internal queue.
 
-    Note that if an exception or controller failure occurs, the message may never be read as the queue will be purged.
+    Note that if an exception or controller failure occurs, the future may never be executed as the client's queue will
+    be purged.
+
+    Certain futures accept an optional callback parameter.
 
     Args:
-        msg: The message to send, defined in :mod:`soar.common`.
+        name: The future to execute, defined in :mod:`soar.common`. and contained in `future_map`.
         *args: The variable length arguments to pass to the function.
         **kwargs: The keyword arguments to pass to the function.
     """
     global queue
-    queue.put((msg, args, kwargs))
+    queue.put((name, args, kwargs))
 
 
-def load_module(path):  # Loads a module from a path and returns it as an object
-    cd = os.getcwd()  # Get the current directory so we can restore it later
+# Loads a module from a path and returns it as an object, as well as any modules it loaded, as a list
+def load_module(path, namespace=None):
+    if namespace is None:
+        namespace = {}
     path = os.path.abspath(path)  # Load from absolute paths
-    try:  # Try to load the module in its own directory
-        os.chdir(os.path.dirname(path))
-        spec = importlib.util.spec_from_file_location(os.path.splitext(path)[0], path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-    finally:  # Restore the current directory
-        os.chdir(cd)
-    return module
+    namespace['__name__'] = os.path.splitext(os.path.basename(path))[0]  # Name of the module
+    cd = os.getcwd()  # Get the current directory so we can restore it later
+    before_load = sys.modules.copy()  # Make a copy of sys.modules to compare to later
+    try:
+        os.chdir(os.path.dirname(path))  # Try to load the module in its own directory
+        code_object = compile(open(path, 'r').read(), path, 'exec')
+        exec(code_object, namespace)  # Execute the module in a fresh, isolated namespace
+    finally:
+        os.chdir(cd)  # Restore the current directory
+        loaded = [modname for modname in sys.modules if modname not in before_load]  # List the modules that were loaded
+    return namespace, loaded
+    # Below is the old way of importing
+    # spec = importlib.util.spec_from_file_location(os.path.splitext(path)[0], path)
+    # module = importlib.util.module_from_spec(spec)
+    # spec.loader.exec_module(module)
 
 
 def set_brain_attrs():  # Set attributes for the brain
     global brain, gui, logfile
     # Ensure that if the brain has not defined any required functions that they exist as NOPs
     for attr in ['on_load', 'on_start', 'on_step', 'on_stop', 'on_shutdown']:
-        if not (hasattr(brain, attr) and callable(getattr(brain, attr))):
-            setattr(brain, attr, lambda *args, **kwargs: None)
-    if hasattr(brain, 'PlotWindow'):  # Ensure that PlotWindow() calls are properly wrapped
+        if not (attr in brain and callable(brain[attr])):
+            brain[attr] = lambda *args, **kwargs: None
+    # Wrap calls to PlotWindow()
+    if 'PlotWindow' in brain:
         if logfile:
             plot_log = wrapped_log
         else:
@@ -137,9 +154,16 @@ def set_brain_attrs():  # Set attributes for the brain
 
             def plot_window_wrap(title='Plotting Window', visible=True, linked=True):
                 return PlotWindow(title, visible=False, log=plot_log, linked=linked)
-        setattr(brain, 'PlotWindow', plot_window_wrap)
-    # Finally, ensure the brain has access to sim_completed
-    setattr(brain, 'sim_completed', lambda obj=None: message(CONTROLLER_COMPLETE, obj))
+        brain['PlotWindow'] = plot_window_wrap
+    # Make sure the brain has access to sim_completed
+    if 'sim_completed' in brain:
+        brain['sim_completed'] = lambda obj=None: future(CONTROLLER_COMPLETE, obj)
+    # Make sure the brain can attach windows to soar, if necessary
+    if 'attach_to_soar' in brain:
+        if gui:
+            brain['attach_to_soar'] = gui.attach_window
+        else:
+            brain['attach_to_soar'] = lambda *args, **kwargs: None
 
 
 def wrap_attrs(obj, names):  # Wrap object callables in the client exception decorator
@@ -155,16 +179,20 @@ def nop(*args, callback=None, **kwargs):  # A NOP, typically used for callbacks
 
 def make_gui(*args, **kwargs):  # Creates the GUI and enters the main UI loop
     global gui
-    gui = SoarUI(client_msg=message, client_mainloop=mainloop)
+    gui = SoarUI(client_future=future, client_mainloop=mainloop)
     gui.mainloop()
     return True  # Exit client mainloop after GUI closes
 
 
 def load_brain(path, *args, callback=None, silent=False, **kwargs):  # Loads a brain file, optionally calling a callback
-    global brain, brain_path, robot, gui
+    global brain, brain_path, robot, gui, __brain_modules, options
     brain_path = path
-    brain = load_module(brain_path)
-    robot = brain.robot
+    for modname in __brain_modules:  # Try and delete previously loaded modules
+        del sys.modules[modname]
+    brain, __brain_modules = load_module(brain_path)
+    robot = brain['robot']
+    if options is not None:
+        robot.set_robot_options(**options)  # Set the robot options
     set_brain_attrs()
     if not silent:
         print('LOAD BRAIN:', path)
@@ -173,9 +201,13 @@ def load_brain(path, *args, callback=None, silent=False, **kwargs):  # Loads a b
 
 
 def load_world(path, *args, callback=None, silent=False, **kwargs):  # Loads a world file, optionally calling a callback
-    global world, world_path
+    global world, world_path, __world_modules
     world_path = path
-    world = load_module(world_path).world
+    for modname in __world_modules:  # Try and delete previously loaded modules
+        del sys.modules[modname]
+    current_modules = sys.modules.copy()
+    world, __world_modules = load_module(world_path)
+    world = world['world']  # We grab the actual world object, not the module
     if not silent:
         print('LOAD WORLD:', path)
     if callback:
@@ -204,7 +236,7 @@ def make_controller(*args, simulated=True, callback=None, **kwargs):  # Makes th
         controller_log = wrapped_log
     else:
         controller_log = None
-    controller = Controller(client_msg=message, robot=robot, brain=brain, world=world, simulated=simulated, gui=gui,
+    controller = Controller(client_future=future, robot=robot, brain=brain, world=world, simulated=simulated, gui=gui,
                             step_duration=step_duration, realtime=realtime, log=controller_log)
     wrap_attrs(controller, ['step_timer', 'on_load', 'run', 'on_stop', 'on_shutdown'])
     if not simulated:  # If working with a real robot, register its shutdown to be called at exit
@@ -215,16 +247,16 @@ def make_controller(*args, simulated=True, callback=None, **kwargs):  # Makes th
         callback()
 
 
-def make_world_canvas(world, *args, **kwargs):  # Builds the canvas in the gui
+def make_world_canvas(world, *args, callback=None, **kwargs):  # Builds the canvas in the gui
     global gui
     if gui:
-        gui.message(MAKE_WORLD_CANVAS, world)
+        gui.future(MAKE_WORLD_CANVAS, world, callback=callback)
 
 
 def draw(*args, **kwargs):  # Draws one or more objects by placing them on the UI's draw queue
     global gui
     for obj in args:
-        gui.message(DRAW, obj)
+        gui.future(DRAW, obj)
 
 
 def start_controller(*args, callback=None, **kwargs):
@@ -336,34 +368,35 @@ def shutdown_robot(robot):  # Called by the mainloop and at exit to ensure the r
         pass
 
 
-msg_map = {MAKE_GUI: make_gui,
-           LOAD_BRAIN: load_brain,
-           LOAD_WORLD: load_world,
-           MAKE_CONTROLLER: make_controller,
-           DRAW: draw,
-           START_CONTROLLER: start_controller,
-           PAUSE_CONTROLLER: pause_controller,
-           STEP_CONTROLLER: step_controller,
-           STOP_CONTROLLER: stop_controller,
-           SHUTDOWN_CONTROLLER: shutdown_controller,
-           CONTROLLER_COMPLETE: controller_complete,
-           CONTROLLER_IO_ERROR: controller_io_error,
-           CONTROLLER_FAILURE: controller_failure,
-           STEP_FINISHED: step_finished,
-           MAKE_WORLD_CANVAS: make_world_canvas,
-           GUI_LOAD_BRAIN: gui_load_brain,
-           GUI_LOAD_WORLD: gui_load_world,
-           NOP: nop,
-           LOGGING_ERROR: logging_error,
-           GUI_ERROR: gui_error,}
+future_map = {MAKE_GUI: make_gui,
+              LOAD_BRAIN: load_brain,
+              LOAD_WORLD: load_world,
+              MAKE_CONTROLLER: make_controller,
+              DRAW: draw,
+              START_CONTROLLER: start_controller,
+              PAUSE_CONTROLLER: pause_controller,
+              STEP_CONTROLLER: step_controller,
+              STOP_CONTROLLER: stop_controller,
+              SHUTDOWN_CONTROLLER: shutdown_controller,
+              CONTROLLER_COMPLETE: controller_complete,
+              CONTROLLER_IO_ERROR: controller_io_error,
+              CONTROLLER_FAILURE: controller_failure,
+              STEP_FINISHED: step_finished,
+              MAKE_WORLD_CANVAS: make_world_canvas,
+              GUI_LOAD_BRAIN: gui_load_brain,
+              GUI_LOAD_WORLD: gui_load_world,
+              NOP: nop,
+              LOGGING_ERROR: logging_error,
+              GUI_ERROR: gui_error,}
 
 
 def mainloop():
     global gui
     while True:
-        msg, args, kwargs = queue.get()
+        name, args, kwargs = queue.get()
+        #print(future_map[name])  # TODO: Remove after debugging
         try:
-            quit_loop = msg_map[msg](*args, **kwargs)
+            quit_loop = future_map[name](*args, **kwargs)
         except Exception as e:  # Catch any unhandled exceptions
             tb.print_exc()
             if gui:  # If there is a GUI, treat the exception as non-fatal and signal a controller failure
@@ -377,7 +410,8 @@ def mainloop():
             queue.task_done()
 
 
-def main(brain_path=None, world_path=None, headless=False, logfile=None, step_duration=0.1, realtime=True):
+def main(brain_path=None, world_path=None, headless=False, logfile=None, step_duration=0.1, realtime=True,
+         options=None):
     """ Main entrypoint, for use from the command line or other packages. Starts a Soar instance.
 
     Args:
@@ -388,6 +422,7 @@ def main(brain_path=None, world_path=None, headless=False, logfile=None, step_du
         step_duration (float): The duration of a controller step, in seconds.
         realtime (bool): If `True`, the controller will never sleep to make a step last the proper length. Instead,
         it will run as fast as possible.
+        options (dict): The keyword arguments to pass to the robot whenever it is loaded.
 
     Returns:
         0 if Soar's execution successfully completed, 1 otherwise.
@@ -396,23 +431,23 @@ def main(brain_path=None, world_path=None, headless=False, logfile=None, step_du
     globals()['logfile'] = logfile
     globals()['step_duration'] = step_duration
     globals()['realtime'] = realtime
+    globals()['options'] = options
     if headless:
         if brain_path and world_path:
-            message(LOAD_BRAIN, brain_path)
-            message(LOAD_WORLD, world_path)
+            future(LOAD_BRAIN, brain_path)
+            future(LOAD_WORLD, world_path)
         else:
             printerr('Brain and world files required while running in headless mode.')
             return 1
-        message(MAKE_CONTROLLER, simulated=True)
-        message(START_CONTROLLER)
+        future(MAKE_CONTROLLER, simulated=True)
+        future(START_CONTROLLER)
     else:
-        message(MAKE_GUI)
+        future(MAKE_GUI)
         if brain_path:
-            message(GUI_LOAD_BRAIN, brain_path)
+            future(GUI_LOAD_BRAIN, brain_path)
         if world_path:
-            message(GUI_LOAD_WORLD, world_path)
-
+            future(GUI_LOAD_WORLD, world_path)
     return_val = mainloop()
     shutdown_robot(robot)
-    atexit.unregister(shutdown_robot)  # No need to shut down the robot at exit anymore
+    atexit.unregister(shutdown_robot)  # No need to shut down the robot at exit anymore, since we're returning
     return return_val

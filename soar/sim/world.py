@@ -1,6 +1,6 @@
 """ Soar World and WorldObject classes/subclasses, for simulating and drawing worlds. """
 import uuid
-from math import pi
+from math import sin, cos, pi
 
 from soar.sim.geometry import Point, PointCollection
 
@@ -73,7 +73,7 @@ class WorldObject:
                 each subclass.
 
         Returns:
-            list: A list of `(x, y)` tuples consisting of all the collisions with `other`, or `None`
+            list: A list of `(x, y)` tuples consisting of all the collision points with `other`, or `None`
             if there weren't any.
         """
         pass
@@ -183,6 +183,21 @@ class Line(WorldObject):
             max_x, max_y = max(self.p1[0], self.p2[0]), max(self.p1[1], self.p2[1])
             return min_x <= x <= max_x and min_y <= y <= max_y
         return False
+
+
+class Ray(Line):
+    """ A ray of a specified length, created from a pose.
+
+    Args:
+        pose: An `(x, y, theta)` tuple or :class:`soar.sim.geometry.Pose` as the origin of the ray.
+        length (float): The length of the ray.
+        **options: Tkinter options.
+    """
+    def __init__(self, pose, length, eps=1e-8, **options):
+        x0, y0, theta = pose
+        x1, y1 = x0+cos(theta)*length, y0+sin(theta)*length
+        Line.__init__(self, (x0, y0), (x1, y1), eps=eps, **options)
+        self.length = length
 
 
 class Polygon(PointCollection, WorldObject):
@@ -352,6 +367,7 @@ class World:
             canvas: The :class:`soar.gui.canvas.SoarCanvas` on which to draw the world. How each object is drawn is up
                 to the object.
         """
+        self.canvas = canvas
         for obj, layer in self.objects:  # The list of objects is already sorted by layer
             if obj.do_draw:
                 obj.draw(canvas)
@@ -375,3 +391,28 @@ class World:
         for obj, layer in self.objects:
             if obj.do_step:
                 obj.on_step(step_duration)
+
+    def find_all_collisions(self, obj, eps=1e-8, condition=None):
+        """ Finds all the collisions of a `WorldObject` subclass with objects in the world.
+
+        Args:
+            obj: A `WorldObject` or subclass instance. Objects in the world must know how to collide with it.
+            eps (float, optional): An optional epsilon within which to consider a collision to have occurred. What that
+                means differs between `WorldObject` subclasses.
+            condition (optional): A function to apply to each object in the world that must be `True` in order for it
+                to be considered.
+
+        Returns:
+            list: A list of `(world_obj, p)` tuples, where `world_obj` is the object that collided and `p` is the
+            :class:`soar.sim.geometry.Point` at which the collision occurred. If multiple collision points occurred with
+            the same object, each will be listed separately.
+        """
+        collisions = []
+        for world_obj in self:
+            if condition is None or condition(world_obj):  # True if no condition or if the object matches
+                obj_collisions = world_obj.collision(obj, eps)
+                if obj_collisions:
+                    for single_collision in obj_collisions:
+                        collisions.append((world_obj, single_collision))
+        return collisions if len(collisions) > 0 else None
+

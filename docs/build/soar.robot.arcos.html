@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.robot.arcos &mdash; Soar 1.0.0.dev0 documentation</title>
+  <title>soar.robot.arcos &mdash; Soar 1.0.0.dev2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
         <link rel="up" title="soar.robot" href="soar.robot.html"/>
         <link rel="next" title="soar.robot.base" href="soar.robot.base.html"/>
         <link rel="prev" title="soar.robot" href="soar.robot.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev0
+                1.0.0.dev2
               </div>
             
           
@@ -256,19 +256,22 @@
 <dl class="attribute">
 <dt id="soar.robot.arcos.ARCOSClient.sonars">
 <code class="descname">sonars</code><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.sonars" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – A list of the latest Sonar array values, updated whenever a standard SIP is received.</p>
+<dd><p><em>list</em> – A list of the latest sonar array values, updated whenever a standard SIP is received.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.robot.arcos.ARCOSClient.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.connect" title="Permalink to this definition">¶</a></dt>
+<code class="descname">connect</code><span class="sig-paren">(</span><em>forced_ports=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.robot.arcos.ARCOSClient.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to connect and sync with an ARCOS server over a serial port.</p>
 <p>Returns if successful.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.ARCOSError" title="soar.robot.arcos.ARCOSError"><code class="xref py py-obj docutils literal"><span class="pre">ARCOSError</span></code></a> – If unable to connect to any available ports.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>forced_ports</strong> (<em>list</em><em>, </em><em>optional</em>) – If provided, a list of serial ports to try connecting to. Otherwise, the
+client will try all available ports.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#soar.robot.arcos.ARCOSError" title="soar.robot.arcos.ARCOSError"><code class="xref py py-obj docutils literal"><span class="pre">ARCOSError</span></code></a> – If unable to connect to any available ports.</td>
 </tr>
 </tbody>
 </table>
@@ -513,7 +516,7 @@ of <code class="xref py py-obj docutils literal"><span class="pre">'STANDARD'</s
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev0',
+            VERSION:'1.0.0.dev2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -22,7 +22,11 @@ class BaseRobot(WorldObject):
         simulated (bool): Any BaseRobot subclass should consider the robot to be simulated if this is `True`, and real
                           otherwise. By default, it is `False`.
         pos: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
-             In simulation, this is the actual position; on a real robot this may or may not be accurate.
+             In simulation, this is the actual position; on a real robot this may be determined through other means.
+
+    Args:
+        **options: Arbitrary keyword arguments. This may include Tkinter keywords passed to the `WorldObject`
+            constructor, or robot options also supported as arguments to `set_robot_options`.
     """
 
     def __init__(self, **options):
@@ -33,6 +37,14 @@ class BaseRobot(WorldObject):
         self.pos = Pose(0, 0, 0)
         self.__fv = 0.0
         self.__rv = 0.0
+
+    def set_robot_options(self, **options):
+        """ Set one or many keyworded, robot-specific options. Document these options here.
+
+        Args:
+            **options: `BaseRobot` does not support any robot options.
+        """
+        pass
 
     @property
     def fv(self):

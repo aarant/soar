@@ -4,6 +4,7 @@
 Allows use of Soar from the command line by passing arguments to :func:`soar.client.main`.
 """
 import sys
+import json
 from argparse import ArgumentParser
 
 from soar import __version__
@@ -24,9 +25,15 @@ def main():
                         dest='brain_path')
     parser.add_argument('-w', '-world', metavar='world', type=str, help='Path to the world file', required=False,
                         dest='world_path')
+    parser.add_argument('--options', type=str, help='Options to pass to the robot, as a JSON deserializable dictionary',
+                        required=False)
     args = parser.parse_args()
+    if args.options is not None:
+        args.options = json.loads(args.options)
+        assert(type(args.options) is dict)  # Make sure the options are valid
     return_val = client.main(brain_path=args.brain_path, world_path=args.world_path, headless=args.headless,
-                             logfile=args.logfile, step_duration=args.step_duration, realtime=not args.quicktime)
+                             logfile=args.logfile, step_duration=args.step_duration, realtime=not args.quicktime,
+                             options=args.options)
     sys.exit(return_val)
 
 if __name__ == '__main__':

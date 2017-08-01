@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.controller &mdash; Soar 1.0.0.dev0 documentation</title>
+  <title>soar.controller &mdash; Soar 1.0.0.dev2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev0 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
         <link rel="up" title="soar" href="soar.html"/>
         <link rel="next" title="soar.errors" href="soar.errors.html"/>
         <link rel="prev" title="soar.common" href="soar.common.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev0
+                1.0.0.dev2
               </div>
             
           
@@ -171,9 +171,10 @@
   <div class="section" id="module-soar.controller">
 <span id="soar-controller"></span><h1>soar.controller<a class="headerlink" href="#module-soar.controller" title="Permalink to this headline">¶</a></h1>
 <p>Soar controller classes and functions for controlling robots, simulated or real.</p>
+<p>TODO: Log world information before the first step.</p>
 <dl class="class">
 <dt id="soar.controller.Controller">
-<em class="property">class </em><code class="descclassname">soar.controller.</code><code class="descname">Controller</code><span class="sig-paren">(</span><em>client_msg</em>, <em>robot</em>, <em>brain</em>, <em>simulated</em>, <em>gui</em>, <em>step_duration=0.1</em>, <em>realtime=True</em>, <em>world=None</em>, <em>log=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.controller.</code><code class="descname">Controller</code><span class="sig-paren">(</span><em>client_future</em>, <em>robot</em>, <em>brain</em>, <em>simulated</em>, <em>gui</em>, <em>step_duration=0.1</em>, <em>realtime=True</em>, <em>world=None</em>, <em>log=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>A class for interacting with simulated or real robots.</p>
 <p>Initialized by the client and used to call the user defined methods of the robot and brain.</p>
@@ -214,7 +215,7 @@ longer, the additional time will also be counted here.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>client_msg</strong> – The function to call to send a message to the client.</li>
+<li><strong>client_future</strong> – The function to call to schedule a future for the client to execute.</li>
 <li><strong>gui</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, worlds must be drawn on each step.</li>
 <li><strong>simulated</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the controller will simulate the robot. Otherwise it will treat the robot as real.</li>
 <li><strong>robot</strong> – An instance of <a class="reference internal" href="soar.robot.base.html#soar.robot.base.BaseRobot" title="soar.robot.base.BaseRobot"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.base.BaseRobot</span></code></a> or a subclass.</li>
@@ -232,6 +233,12 @@ sleeping will occur; however the elapsed time will behave as if each step was at
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="soar.controller.Controller.finish_load">
+<code class="descname">finish_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.finish_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called to finish loading, after the canvas has been drawn, if necessary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="soar.controller.Controller.on_failure">
 <code class="descname">on_failure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.Controller.on_failure" title="Permalink to this definition">¶</a></dt>
@@ -274,6 +281,23 @@ started. Otherwise, for <code class="xref py py-obj docutils literal"><span clas
 </dd></dl>
 
 <dl class="function">
+<dt id="soar.controller.elapsed_time">
+<code class="descclassname">soar.controller.</code><code class="descname">elapsed_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.elapsed_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the time that has elapsed since running the controller.</p>
+<p>This is set by the controller when it loads the brain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The elapsed time in seconds, as defined in <a class="reference internal" href="#soar.controller.Controller.elapsed" title="soar.controller.Controller.elapsed"><code class="xref py py-attr docutils literal"><span class="pre">soar.controller.Controller.elapsed</span></code></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="soar.controller.log">
 <code class="descclassname">soar.controller.</code><code class="descname">log</code><span class="sig-paren">(</span><em>obj</em>, <em>logfile</em>, <em>mode='a'</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Log a serialized JSON object to a path or file-like object, adding a newline after.</p>
@@ -296,7 +320,7 @@ started. Otherwise, for <code class="xref py py-obj docutils literal"><span clas
 <dt id="soar.controller.sim_completed">
 <code class="descclassname">soar.controller.</code><code class="descname">sim_completed</code><span class="sig-paren">(</span><em>obj=None</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.controller.sim_completed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by the brain to signal that the simulation has completed.</p>
-<p>This is set by the controller before the brain is loaded.</p>
+<p>This is set by the client when the brain file is loaded.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -353,7 +377,7 @@ started. Otherwise, for <code class="xref py py-obj docutils literal"><span clas
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev0',
+            VERSION:'1.0.0.dev2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

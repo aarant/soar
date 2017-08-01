@@ -1,5 +1,5 @@
 from soar.gui.plot_window import PlotWindow
-from soar.controller import sim_completed
+from soar.controller import sim_completed, elapsed_time
 from soar.robot.pioneer import PioneerRobot
 
 from math import pi, inf
@@ -16,13 +16,13 @@ def on_load():
 def on_start():
     print('Brain on_start() called.')
     robot.readings = []
-    #robot.FV_CAP = inf
 
 
 #  This function is called every step_duration seconds. By default, it is called 10 times/second
 def on_step(step_duration):
-    print(robot.pos[2])
-    robot.rv = -2*pi
+    robot.fv = 1.0
+    print(robot.sonars)
+    print(elapsed_time())
 
 
 
