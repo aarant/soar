@@ -26,7 +26,7 @@ The software is designed to be the following:
   
 * **multiplatform**: Soar uses no platform specific features, and uses Python's standard GUI package, Tkinter_,
   for its GUI. Soar should thus work on any platform with a standard Python interpreter of version 3.5 or 
-  later.
+  later. Soar has been tested on Fedora 25 GNU/Linux, and Windows 8. If an issue arises running Soar on your platform, open an issue_ on GitHub.
   
 * **open source**: Soar is licensed under the LGPLv3_, and may be used as a library by projects with other licenses.
 
@@ -63,6 +63,7 @@ Clone or download the `git repo`_, navigate to the directory, then run::
    cd dist
    pip install Soar-<version>.tar.gz
 
+.. _issue: https://github.com/arantonitis/soar/issues
 .. _brain: http://snakes-on-a-robot.readthedocs.io/en/latest/brain_docs.html
 .. _Tkinter: https://docs.python.org/3.5/library/tkinter.html
 .. _LGPLv3: https://www.gnu.org/licenses/lgpl-3.0.en.html
