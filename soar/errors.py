@@ -1,3 +1,7 @@
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/errors.py
 """ Soar error classes. """
 import sys
 
@@ -32,3 +36,4 @@ class SoarIOError(SoarError):
 
 class GUIError(SoarError):
     """ Raised when an error occurs while drawing the world or one of its objects. """
+    pass

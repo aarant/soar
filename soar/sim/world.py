@@ -1,8 +1,13 @@
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/sim/world.py
 """ Soar World and WorldObject classes/subclasses, for simulating and drawing worlds. """
-import uuid
+import random
+from string import ascii_letters
 from math import sin, cos, pi
 
-from soar.sim.geometry import Point, PointCollection
+from soar.sim.geometry import Point, LineSegment, PointCollection
 
 
 class WorldObject:
@@ -33,7 +38,7 @@ class WorldObject:
         elif 'tags' in options:
             self.tags = options['tags']
         else:  # If tags are not specified, make sure this object has a unique tag
-            self.tags = uuid.uuid4().hex
+            self.tags = ''.join([random.choice(ascii_letters) for i in range(6)])
 
     def draw(self, canvas):
         """ Draw the object on a canvas.
@@ -51,7 +56,8 @@ class WorldObject:
             canvas: A Tkinter Canvas or a subclass, typically a :class:`soar.gui.canvas.SoarCanvas`, from which the
             object will be deleted.
         """
-        canvas.delete(self.tags)
+        if not self.dummy:
+            canvas.delete(self.tags)
 
     def on_step(self, step_duration):
         """ Simulate the object for a step of a specified duration.
@@ -64,8 +70,8 @@ class WorldObject:
     def collision(self, other, eps=1e-8):
         """ Determine whether two `WorldObject` (s) collide.
 
-        Objects that subclass `WorldObject` should implement collision detection, if applicable, for every applicable
-        class from which they inherit.
+        Objects that subclass `WorldObject` should implement collision detection for every applicable class from which
+        they inherit.
 
         Args:
             other: A supported `WorldObject` subclass with which this object could potentially collide.
@@ -79,38 +85,22 @@ class WorldObject:
         pass
 
 
-class Line(WorldObject):
-    """ A line segment with Tk options and collision detection.
+class Wall(WorldObject, LineSegment):
+    """ A straight wall with Tk options and collision detection.
+
+    Note that these walls are infinitely thin, so on-edge collision cannot occur.
 
     Args:
-        p1: An `(x, y)` tuple or a :class:`soar.sim.geometry.Point` as the first endpoint of the line segment.
-        p1: An `(x, y)` tuple or a :class:`soar.sim.geometry.Point` as the second endpoint of the line segment.
+        p1: An `(x, y)` tuple or a :class:`soar.sim.geometry.Point` as the first endpoint of the wall.
+        p1: An `(x, y)` tuple or a :class:`soar.sim.geometry.Point` as the second endpoint of the wall.
+        eps (float): The epsilon within which to consider a wall vertical or horizontal.
         **options: Tkinter options.
     """
     def __init__(self, p1, p2, eps=1e-8, **options):
         WorldObject.__init__(self, do_draw=True, do_step=False, **options)
-        self.p1 = p1
-        self.p2 = p2
+        LineSegment.__init__(self, p1, p2, eps)
         if 'width' not in options:
-            self.options.update({'width': 2.0})
-        x0, y0 = p1
-        x1, y1 = p2
-        if abs(x1-x0) < eps:
-            self.a = 1.0
-            self.b = 0.0
-            self.c = x0
-        elif abs(y1-y0) < eps:
-            self.a = 0.0
-            self.b = 1.0
-            self.c = y0
-        else:
-            m = (y1-y0)/float(x1-x0)
-            self.a = -m
-            self.b = 1.0
-            self.c = y1-m*x1
-
-    def __str__(self):
-        return '(' + str(round(self.p1[0], 3)) + ',' + str(round(self.p1[1], 3)) + '),(' + str(round(self.p2[0], 3)) + ',' + str(round(self.p2[1], 3)) + ')'  # TODO remove
+            self.options['width'] = 2.0  # By default walls are 2 pixels wide
 
     def draw(self, canvas):
         """ Draw the object on a canvas.
@@ -124,69 +114,22 @@ class Line(WorldObject):
             self.do_draw = False  # For a line drawn each frame, subclass this class
 
     def collision(self, other, eps=1e-8):
-        """ Determine whether two Line segments intersect.
+        """ Determine whether two walls intersect.
 
         Args:
-            other: A `Line`.
+            other: A `Wall`, or other `LineSegment` subclass.
             eps (float): The epsilon within which to consider two parallel lines the same line.
 
         Returns:
             A list of `(x, y)` tuples consisting of the intersection(s), or `None` if the segments do not intersect.
         """
-        if isinstance(other, Line):
-            # First solve for the intersections of the infinite length lines
-            a1, b1, c1, a2, b2, c2 = self.a, self.b, self.c, other.a, other.b, other.c
-            if abs(c1 - c2) < eps and abs(abs(a1)-abs(a2)) < eps and abs(b1-b2) < eps:  # The lines are the same
-                intersects = [self.p1, self.p2, other.p1, other.p2]
-            elif b1 == 0 and b2 == 0:  # Both are distinct vertical lines
-                return None
-            elif b1 == 0:  # self is a vertical line and other is not
-                x = c1/a1
-                y = -a2*x+c2
-                intersects = [(x, y)]
-            elif b2 == 0:  # other is a vertical line and self is not
-                x = c2/a2
-                y = -a1*x+c1
-                intersects = [(x, y)]
-            elif a1 == 0 and a2 == 0:  # Both are distinct horizontal lines
-                return None
-            elif a1 == 0:  # self is a horizontal line and other is not
-                y = c1
-                x = (c2-y)/a2
-                intersects = [(x, y)]
-            elif a2 == 0:  # other is a horizontal line and self is not
-                y = c2
-                x = (c1-y)/a1
-                intersects = [(x, y)]
-            else:  # Both lines are distinctly non-vertical and non-horizontal
-                x = (c2-c1)/(a2-a1)
-                y = -a1*x+c1
-                intersects = [(x, y)]
-            intersects = list(set(filter(lambda p: self.has_point(p, eps=eps) and other.has_point(p, eps=eps),
-                                         intersects)))
-            return intersects if len(intersects) > 0 else None
-
-    def has_point(self, p, eps=1e-8):
-        """ Determine if a point lies on the line segment.
-
-        Args:
-            p: An `(x, y)` tuple or a :class:`soar.sim.geometry.Point` as the point to check.
-            eps (float): The largest absolute distance from the line the point can be, to be considered on the line.
-
-        Returns:
-            `True` if the point is on the line segment, and `False` otherwise.
-        """
-        x, y = p[0], p[1]
-        a, b, c = self.a, self.b, self.c
-        if abs(c-(a*x+b*y)) < eps:
-            min_x, min_y = min(self.p1[0], self.p2[0]), min(self.p1[1], self.p2[1])
-            max_x, max_y = max(self.p1[0], self.p2[0]), max(self.p1[1], self.p2[1])
-            return min_x <= x <= max_x and min_y <= y <= max_y
-        return False
+        if isinstance(other, LineSegment):
+            foo = LineSegment.intersection(self, other, eps)
+            return foo
 
 
-class Ray(Line):
-    """ A ray of a specified length, created from a pose.
+class Ray(Wall):
+    """ A solid ray of a specified length, created from a pose.
 
     Args:
         pose: An `(x, y, theta)` tuple or :class:`soar.sim.geometry.Pose` as the origin of the ray.
@@ -196,7 +139,7 @@ class Ray(Line):
     def __init__(self, pose, length, eps=1e-8, **options):
         x0, y0, theta = pose
         x1, y1 = x0+cos(theta)*length, y0+sin(theta)*length
-        Line.__init__(self, (x0, y0), (x1, y1), eps=eps, **options)
+        Wall.__init__(self, (x0, y0), (x1, y1), eps=eps, **options)
         self.length = length
 
 
@@ -213,8 +156,8 @@ class Polygon(PointCollection, WorldObject):
         WorldObject.__init__(self, do_draw=True, do_step=False, **options)
 
     @property
-    def lines(self):  # Build perimeter lines for collision detection
-        return [Line(self.points[i-1], self.points[i], dummy=True) for i in range(len(self.points))]
+    def borders(self):  # Build perimeter lines for collision detection
+        return [LineSegment(self.points[i-1], self.points[i]) for i in range(len(self.points))]
 
     def draw(self, canvas):
         """ Draw the object on a canvas.
@@ -224,9 +167,7 @@ class Polygon(PointCollection, WorldObject):
                 object will be drawn.
         """
         if not self.dummy:
-            flat_points = []
-            for p in self.points:
-                flat_points.extend([p.x, p.y])
+            flat_points = [p for pair in self.points for p in pair]
             canvas.create_polygon(*flat_points, **self.options)
             self.do_draw = False
 
@@ -234,59 +175,57 @@ class Polygon(PointCollection, WorldObject):
         """ Determine whether the polygon intersects with another `WorldObject`.
 
         Args:
-            other: Either a `Polygon` or a `Line` as the other object.
+            other: Either a `Polygon` or a `Wall` as the other object.
             eps (float, optional): The epsilon within which to consider a collision to have occurred.
         """
-        if isinstance(other, Polygon):
+        if isinstance(other, Polygon):  # Might be able to do this better I suppose
             intersects = []
-            for i in self.lines:
-                for j in other.lines:
-                    line_intersects = i.collision(j, eps=eps)
+            for i in self.borders:
+                for j in other.borders:
+                    line_intersects = i.intersection(j, eps=eps)
                     if line_intersects:
                         intersects.extend(line_intersects)
             return intersects if len(intersects) > 0 else None
-        elif isinstance(other, Line):
+        elif isinstance(other, Wall):
             intersects = []
-            for i in self.lines:
-                line_intersects = i.collision(other, eps=eps)
+            for i in self.borders:
+                line_intersects = i.intersection(other, eps=eps)
                 if line_intersects:
                     intersects.extend(line_intersects)
             return intersects if len(intersects) > 0 else None
 
 
-class Wall(Polygon):
-    """ An arbitrarily thick wall centered on a :class:`soar.sim.world.Line`.
+class Block(Polygon):
+    """ An arbitrarily thick wall centered on a line.
 
     Useful when infinitely-thin lines are causing issues with collision detection.
 
     Args:
         p1: An `(x, y)` tuple or :class:`soar.sim.geometry.Point` as the first endpoint of the line segment.
         p1: An `(x, y)` tuple or :class:`soar.sim.geometry.Point` as the second endpoint of the line segment.
-        thickness (float): The thickness of the wall to expand out from the line on which it is centered.
+        thickness (float): The thickness of the block to expand out from the line on which it is centered.
         **options: Tkinter options.
     """
     def __init__(self, p1, p2, thickness=0.002, **options):
         self.thickness = thickness
-        # First build the perimeter of the wall as points
+        # Build the perimeter of the wall as points
         p1 = Point(*p1)
         p2 = Point(*p2)
         mid = p1.midpoint(p2)
         points = []
         for endpoint in [p1, p2]:
-            temp = endpoint.copy()
-            temp.scale(1.0+thickness/endpoint.distance(mid), mid)
+            temp = endpoint.scale(1.0+thickness/endpoint.distance(mid), mid)
             pivot = temp.midpoint(endpoint)
-            temp2 = temp.copy()
-            temp.rotate(pivot, pi/2)
-            temp2.rotate(pivot, -pi/2)
+            temp2 = temp.rotate(pivot, -pi / 2)
+            temp = temp.rotate(pivot, pi/2)
             points.extend([temp, temp2])
         Polygon.__init__(self, points, center=None, **options)
         if 'fill' not in options:
             options.update({'fill': 'black'})
 
     @property
-    def lines(self):  # Build perimeter lines dynamically
-        return [Line(self.points[i-1], self.points[i], **self.options) for i in range(len(self.points))]
+    def borders(self):  # Build perimeter lines dynamically
+        return [Wall(self.points[i-1], self.points[i], **self.options) for i in range(len(self.points))]
 
     def draw(self, canvas):
         """ Draw the object on a canvas.
@@ -296,12 +235,9 @@ class Wall(Polygon):
                 object will be drawn.
         """
         if not self.dummy:
-            for line in self.lines:
-                line.draw(canvas)
+            for wall in self.borders:
+                wall.draw(canvas)
             self.do_draw = False
-
-    def collision(self, other, eps=1e-8):
-        return Polygon.collision(self, other, eps=eps)
 
 
 class World:
@@ -333,7 +269,7 @@ class World:
                 self.add(obj)
         # Build boundary walls
         x, y = self.dimensions
-        for wall in [Line((0, 0), (x, 0)), Line((x, 0), (x, y)), Line((x, y), (0, y)), Line((0, y), (0, 0))]:
+        for wall in [Wall((0, 0), (x, 0)), Wall((x, 0), (x, y)), Wall((x, y), (0, y)), Wall((0, y), (0, 0))]:
             self.add(wall)
 
     def __getitem__(self, item):
@@ -405,7 +341,7 @@ class World:
         Returns:
             list: A list of `(world_obj, p)` tuples, where `world_obj` is the object that collided and `p` is the
             :class:`soar.sim.geometry.Point` at which the collision occurred. If multiple collision points occurred with
-            the same object, each will be listed separately.
+            the same object, each will be listed separately. If no collisions occurred, returns `None`.
         """
         collisions = []
         for world_obj in self:

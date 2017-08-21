@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Soar 1.0.0.dev2 documentation</title>
+  <title>Index &mdash; Soar 1.0.0.dev8 documentation</title>
   
 
   
@@ -36,7 +36,7 @@
         <link rel="index" title="Index"
               href="#"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/> 
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.0.0.dev2
+                1.0.0.dev8
               </div>
             
           
@@ -91,7 +91,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="soar.html">soar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brain_docs.html">Brains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="soar.html">Module Documentation</a></li>
 </ul>
 
             
@@ -175,8 +179,10 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
  
 </div>
 <h2 id="A">A</h2>
@@ -188,17 +194,19 @@
         <li><a href="soar.sim.world.html#soar.sim.world.World.add">(soar.sim.world.World method)</a>
 </li>
       </ul></li>
-      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.analogs">analogs (soar.robot.pioneer.PioneerRobot attribute)</a>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.ADSEL">ADSEL (in module soar.robot.arcos)</a>
 </li>
-      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.arcos">arcos (soar.robot.pioneer.PioneerRobot attribute)</a>
+      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.analogs">analogs (soar.robot.pioneer.PioneerRobot attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.angle_to">angle_to() (soar.sim.geometry.Point method)</a>
+</li>
+      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.arcos">arcos (soar.robot.pioneer.PioneerRobot attribute)</a>
+</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient">ARCOSClient (class in soar.robot.arcos)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSError">ARCOSError</a>
-</li>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.attach_to_soar">attach_to_soar() (in module soar.gui.soar_ui)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.attach_window">attach_window() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
@@ -210,11 +218,21 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot">BaseRobot (class in soar.robot.base)</a>
 </li>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.brain_cmd">brain_cmd() (soar.gui.soar_ui.SoarUI method)</a>
+      <li><a href="soar.sim.world.html#soar.sim.world.Block">Block (class in soar.sim.world)</a>
 </li>
+      <li><a href="soar.sim.world.html#soar.sim.world.Block.borders">borders (soar.sim.world.Block attribute)</a>
+
+      <ul>
+        <li><a href="soar.sim.world.html#soar.sim.world.Polygon.borders">(soar.sim.world.Polygon attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.brain_cmd">brain_cmd() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.brain_ready">brain_ready() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.BUMPSTALL">BUMPSTALL (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.ButtonFrame.button">button (soar.gui.soar_ui.ButtonFrame attribute)</a>
 </li>
@@ -232,15 +250,21 @@
 </li>
       <li><a href="soar.gui.canvas.html#soar.gui.canvas.canvas_from_world">canvas_from_world() (in module soar.gui.canvas)</a>
 </li>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.ccw">ccw() (in module soar.sim.geometry)</a>
+</li>
       <li><a href="soar.gui.output.html#soar.gui.output.OutputFrame.clear">clear() (soar.gui.output.OutputFrame method)</a>
 
       <ul>
         <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.clear">(soar.gui.plot_window.PlotWindow method)</a>
 </li>
       </ul></li>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.clip">clip() (in module soar.sim.geometry)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.CLOSE">CLOSE (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.close_windows">close_windows() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
-      <li><a href="soar.sim.world.html#soar.sim.world.Line.collision">collision() (soar.sim.world.Line method)</a>
+      <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.collision">collision() (soar.robot.base.BaseRobot method)</a>
 
       <ul>
         <li><a href="soar.sim.world.html#soar.sim.world.Polygon.collision">(soar.sim.world.Polygon method)</a>
@@ -250,8 +274,10 @@
         <li><a href="soar.sim.world.html#soar.sim.world.WorldObject.collision">(soar.sim.world.WorldObject method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.command_types">command_types (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.CONFIG">CONFIG (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.config">config (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.ButtonFrame.config">config() (soar.gui.soar_ui.ButtonFrame method)</a>
@@ -260,9 +286,23 @@
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.connect">connect() (soar.robot.arcos.ARCOSClient method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.connect_cmd">connect_cmd() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.connect_load">connect_load() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.connect_ready">connect_ready() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
       <li><a href="soar.controller.html#soar.controller.Controller">Controller (class in soar.controller)</a>
 </li>
+      <li><a href="soar.common.html#soar.common.CONTROLLER_COMPLETE">CONTROLLER_COMPLETE (in module soar.common)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.CONTROLLER_FAILURE">CONTROLLER_FAILURE (in module soar.common)</a>
+</li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.controller_failure">controller_failure() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.CONTROLLER_IO_ERROR">CONTROLLER_IO_ERROR (in module soar.common)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.controller_io_error">controller_io_error() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
@@ -272,9 +312,21 @@
         <li><a href="soar.sim.geometry.html#soar.sim.geometry.Pose.copy">(soar.sim.geometry.Pose method)</a>
 </li>
       </ul></li>
+      <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_arc">create_arc() (soar.gui.canvas.SoarCanvas method)</a>
+</li>
+      <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_bitmap">create_bitmap() (soar.gui.canvas.SoarCanvas method)</a>
+</li>
+      <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_image">create_image() (soar.gui.canvas.SoarCanvas method)</a>
+</li>
       <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_line">create_line() (soar.gui.canvas.SoarCanvas method)</a>
 </li>
+      <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_oval">create_oval() (soar.gui.canvas.SoarCanvas method)</a>
+</li>
       <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_polygon">create_polygon() (soar.gui.canvas.SoarCanvas method)</a>
+</li>
+      <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_rectangle">create_rectangle() (soar.gui.canvas.SoarCanvas method)</a>
+</li>
+      <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.create_text">create_text() (soar.gui.canvas.SoarCanvas method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -282,6 +334,8 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.DCHEAD">DCHEAD (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.decode_packet">decode_packet() (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.delete">delete() (soar.robot.base.BaseRobot method)</a>
@@ -294,6 +348,10 @@
       </ul></li>
       <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.destroy">destroy() (soar.gui.plot_window.PlotWindow method)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.DHEAD">DHEAD (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.DIGOUT">DIGOUT (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.sim.world.html#soar.sim.world.World.dimensions">dimensions (soar.sim.world.World attribute)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.disconnect">disconnect() (soar.robot.arcos.ARCOSClient method)</a>
@@ -302,16 +360,20 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Line.distance_from_line">distance_from_line() (soar.sim.geometry.Line method)</a>
+</li>
       <li><a href="soar.sim.world.html#soar.sim.world.WorldObject.do_draw">do_draw (soar.sim.world.WorldObject attribute)</a>
 </li>
       <li><a href="soar.sim.world.html#soar.sim.world.WorldObject.do_step">do_step (soar.sim.world.WorldObject attribute)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.done_loading">done_loading() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
+      <li><a href="soar.common.html#soar.common.DRAW">DRAW (in module soar.common)</a>
+</li>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.draw">draw() (soar.robot.base.BaseRobot method)</a>
 
       <ul>
-        <li><a href="soar.sim.world.html#soar.sim.world.Line.draw">(soar.sim.world.Line method)</a>
+        <li><a href="soar.sim.world.html#soar.sim.world.Block.draw">(soar.sim.world.Block method)</a>
 </li>
         <li><a href="soar.sim.world.html#soar.sim.world.Polygon.draw">(soar.sim.world.Polygon method)</a>
 </li>
@@ -328,17 +390,25 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.E_STOP">E_STOP (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.controller.html#soar.controller.Controller.elapsed">elapsed (soar.controller.Controller attribute)</a>
 </li>
-      <li><a href="soar.controller.html#soar.controller.elapsed_time">elapsed_time() (in module soar.controller)</a>
+      <li><a href="soar.hooks.html#soar.hooks.elapsed">elapsed() (in module soar.hooks)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.ENABLE">ENABLE (in module soar.robot.arcos)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.ENCODER">ENCODER (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.encoder">encoder (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.encoder_event">encoder_event (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
       <li><a href="soar.gui.output.html#soar.gui.output.OutputFrame.error">error() (soar.gui.output.OutputFrame method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.EXCEPTION">EXCEPTION (in module soar.common)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -346,9 +416,9 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.sim.world.html#soar.sim.world.World.find_all_collisions">find_all_collisions() (soar.sim.world.World method)</a>
+      <li><a href="soar.controller.html#soar.controller.Controller.failure">failure() (soar.controller.Controller method)</a>
 </li>
-      <li><a href="soar.controller.html#soar.controller.Controller.finish_load">finish_load() (soar.controller.Controller method)</a>
+      <li><a href="soar.sim.world.html#soar.sim.world.World.find_all_collisions">find_all_collisions() (soar.sim.world.World method)</a>
 </li>
       <li><a href="soar.client.html#soar.client.future">future() (in module soar.client)</a>
 
@@ -358,6 +428,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.client.html#soar.client.future_map">future_map (in module soar.client)</a>
+</li>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.fv">fv (soar.robot.base.BaseRobot attribute)</a>
 
       <ul>
@@ -372,10 +444,24 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.gui_error">gui_error() (soar.gui.soar_ui.SoarUI method)</a>
+      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.get_distance_left">get_distance_left() (soar.robot.pioneer.PioneerRobot method)</a>
+</li>
+      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.get_distance_left_and_angle">get_distance_left_and_angle() (soar.robot.pioneer.PioneerRobot method)</a>
+</li>
+      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.get_distance_right">get_distance_right() (soar.robot.pioneer.PioneerRobot method)</a>
+</li>
+      <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.get_distance_right_and_angle">get_distance_right_and_angle() (soar.robot.pioneer.PioneerRobot method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.common.html#soar.common.GUI_ERROR">GUI_ERROR (in module soar.common)</a>
+</li>
+      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.gui_error">gui_error() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.GUI_LOAD_BRAIN">GUI_LOAD_BRAIN (in module soar.common)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.GUI_LOAD_WORLD">GUI_LOAD_WORLD (in module soar.common)</a>
+</li>
       <li><a href="soar.errors.html#soar.errors.GUIError">GUIError</a>
 </li>
   </ul></td>
@@ -386,9 +472,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.names.html#soar.robot.names.has_all">has_all() (in module soar.robot.names)</a>
 </li>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.LineSegment.has_intersect">has_intersect() (soar.sim.geometry.LineSegment method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.sim.world.html#soar.sim.world.Line.has_point">has_point() (soar.sim.world.Line method)</a>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Line.has_point">has_point() (soar.sim.geometry.Line method)</a>
+
+      <ul>
+        <li><a href="soar.sim.geometry.html#soar.sim.geometry.LineSegment.has_point">(soar.sim.geometry.LineSegment method)</a>
+</li>
+      </ul></li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.HEAD">HEAD (in module soar.robot.arcos)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -404,14 +498,30 @@
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.IntegerEntry">IntegerEntry (class in soar.gui.soar_ui)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Line.intersection">intersection() (soar.sim.geometry.Line method)</a>
+
+      <ul>
+        <li><a href="soar.sim.geometry.html#soar.sim.geometry.LineSegment.intersection">(soar.sim.geometry.LineSegment method)</a>
+</li>
+      </ul></li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.InvalidPacket">InvalidPacket</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.io">io (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.io_event">io_event (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.IOREQUEST">IOREQUEST (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.hooks.html#soar.hooks.is_gui">is_gui() (in module soar.hooks)</a>
+</li>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.is_near">is_near() (soar.sim.geometry.Point method)</a>
+
+      <ul>
+        <li><a href="soar.sim.geometry.html#soar.sim.geometry.Pose.is_near">(soar.sim.geometry.Pose method)</a>
+</li>
+      </ul></li>
       <li><a href="soar.robot.names.html#soar.robot.names.is_prime">is_prime() (in module soar.robot.names)</a>
 </li>
   </ul></td>
@@ -426,21 +536,25 @@
 </li>
       <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.legend">legend() (soar.gui.plot_window.PlotWindow method)</a>
 </li>
-      <li><a href="soar.sim.world.html#soar.sim.world.Line">Line (class in soar.sim.world)</a>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Line">Line (class in soar.sim.geometry)</a>
 </li>
-      <li><a href="soar.sim.world.html#soar.sim.world.Polygon.lines">lines (soar.sim.world.Polygon attribute)</a>
-
-      <ul>
-        <li><a href="soar.sim.world.html#soar.sim.world.Wall.lines">(soar.sim.world.Wall attribute)</a>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.LineSegment">LineSegment (class in soar.sim.geometry)</a>
 </li>
-      </ul></li>
+      <li><a href="soar.controller.html#soar.controller.Controller.load">load() (soar.controller.Controller method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.common.html#soar.common.LOAD_BRAIN">LOAD_BRAIN (in module soar.common)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.LOAD_WORLD">LOAD_WORLD (in module soar.common)</a>
+</li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.loading">loading() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.LoadingIcon">LoadingIcon (class in soar.gui.soar_ui)</a>
 </li>
-      <li><a href="soar.controller.html#soar.controller.log">log() (in module soar.controller)</a>
+      <li><a href="soar.controller.html#soar.controller.Controller.log_step_info">log_step_info() (soar.controller.Controller method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.LOGGING_ERROR">LOGGING_ERROR (in module soar.common)</a>
 </li>
       <li><a href="soar.errors.html#soar.errors.LoggingError">LoggingError</a>
 </li>
@@ -450,17 +564,25 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.magnitude">magnitude() (soar.sim.geometry.Point method)</a>
+</li>
       <li><a href="soar.client.html#soar.client.main">main() (in module soar.client)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.mainloop">mainloop() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.MAKE_CONTROLLER">MAKE_CONTROLLER (in module soar.common)</a>
 </li>
       <li><a href="soar.common.html#soar.common.MAKE_GUI">MAKE_GUI (in module soar.common)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.makeWindow">makeWindow() (soar.gui.plot_window.PlotWindow method)</a>
+      <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.make_window">make_window() (soar.gui.plot_window.PlotWindow method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.MAKE_WORLD_CANVAS">MAKE_WORLD_CANVAS (in module soar.common)</a>
 </li>
       <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.midpoint">midpoint() (soar.sim.geometry.Point method)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.MOVE">MOVE (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.move">move() (soar.robot.base.BaseRobot method)</a>
 </li>
@@ -472,6 +594,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.names.html#soar.robot.names.name_from_sernum">name_from_sernum() (in module soar.robot.names)</a>
 </li>
+      <li><a href="soar.common.html#soar.common.NOP">NOP (in module soar.common)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.normalize_angle_180">normalize_angle_180() (in module soar.sim.geometry)</a>
+</li>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.normalize_angle_360">normalize_angle_360() (in module soar.sim.geometry)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -482,26 +612,18 @@
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.on_close">on_close() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
-      <li><a href="soar.controller.html#soar.controller.Controller.on_failure">on_failure() (soar.controller.Controller method)</a>
+      <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_load">on_load() (soar.robot.base.BaseRobot method)</a>
 </li>
-      <li><a href="soar.controller.html#soar.controller.Controller.on_load">on_load() (soar.controller.Controller method)</a>
-
-      <ul>
-        <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_load">(soar.robot.base.BaseRobot method)</a>
+      <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_pause">on_pause() (soar.robot.base.BaseRobot method)</a>
 </li>
-      </ul></li>
       <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.on_resize">on_resize() (soar.gui.canvas.SoarCanvas method)</a>
 
       <ul>
         <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvasFrame.on_resize">(soar.gui.canvas.SoarCanvasFrame method)</a>
 </li>
       </ul></li>
-      <li><a href="soar.controller.html#soar.controller.Controller.on_shutdown">on_shutdown() (soar.controller.Controller method)</a>
-
-      <ul>
-        <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_shutdown">(soar.robot.base.BaseRobot method)</a>
+      <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_shutdown">on_shutdown() (soar.robot.base.BaseRobot method)</a>
 </li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_start">on_start() (soar.robot.base.BaseRobot method)</a>
@@ -514,19 +636,13 @@
         <li><a href="soar.sim.world.html#soar.sim.world.WorldObject.on_step">(soar.sim.world.WorldObject method)</a>
 </li>
       </ul></li>
-      <li><a href="soar.controller.html#soar.controller.Controller.on_stop">on_stop() (soar.controller.Controller method)</a>
-
-      <ul>
-        <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_stop">(soar.robot.base.BaseRobot method)</a>
+      <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.on_stop">on_stop() (soar.robot.base.BaseRobot method)</a>
 </li>
-      </ul></li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.OPEN">OPEN (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.gui.output.html#soar.gui.output.OutputFrame.output">output() (soar.gui.output.OutputFrame method)</a>
 </li>
       <li><a href="soar.gui.output.html#soar.gui.output.OutputFrame">OutputFrame (class in soar.gui.output)</a>
-</li>
-      <li><a href="soar.gui.output.html#soar.gui.output.OutputRedirect">OutputRedirect (class in soar.gui.output)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -537,6 +653,8 @@
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.packet_checksum">packet_checksum() (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.pause_cmd">pause_cmd() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.PAUSE_CONTROLLER">PAUSE_CONTROLLER (in module soar.common)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.pause_ready">pause_ready() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
@@ -550,13 +668,19 @@
 </li>
       <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow">PlotWindow (class in soar.gui.plot_window)</a>
 </li>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point">Point (class in soar.sim.geometry)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point">Point (class in soar.sim.geometry)</a>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Pose.point">point() (soar.sim.geometry.Pose method)</a>
 </li>
       <li><a href="soar.sim.geometry.html#soar.sim.geometry.PointCollection">PointCollection (class in soar.sim.geometry)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.POLLING">POLLING (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.sim.world.html#soar.sim.world.Polygon">Polygon (class in soar.sim.world)</a>
+</li>
+      <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.polygon">polygon (soar.robot.base.BaseRobot attribute)</a>
 </li>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.pos">pos (soar.robot.base.BaseRobot attribute)</a>
 
@@ -580,14 +704,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.sim.world.html#soar.sim.world.Ray">Ray (class in soar.sim.world)</a>
 </li>
-      <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.reafter">reafter() (in module soar.gui.plot_window)</a>
-</li>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.real_cmd">real_cmd() (soar.gui.soar_ui.SoarUI method)</a>
-</li>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.real_load">real_load() (soar.gui.soar_ui.SoarUI method)</a>
-</li>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.real_ready">real_ready() (soar.gui.soar_ui.SoarUI method)</a>
-</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.receive_packet">receive_packet() (soar.robot.arcos.ARCOSClient method)</a>
 </li>
       <li><a href="soar.sim.geometry.html#soar.sim.geometry.PointCollection.recenter">recenter() (soar.sim.geometry.PointCollection method)</a>
@@ -596,18 +712,22 @@
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.reload_finished">reload_finished() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.gui.canvas.html#soar.gui.canvas.SoarCanvas.remap_coords">remap_coords() (soar.gui.canvas.SoarCanvas method)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.report_callback_exception">report_callback_exception() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.reset">reset() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.ROTATE">ROTATE (in module soar.robot.arcos)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.rotate">rotate() (soar.sim.geometry.Point method)</a>
 
       <ul>
         <li><a href="soar.sim.geometry.html#soar.sim.geometry.PointCollection.rotate">(soar.sim.geometry.PointCollection method)</a>
+</li>
+        <li><a href="soar.sim.geometry.html#soar.sim.geometry.Pose.rotate">(soar.sim.geometry.Pose method)</a>
 </li>
       </ul></li>
       <li><a href="soar.controller.html#soar.controller.Controller.run">run() (soar.controller.Controller method)</a>
@@ -622,6 +742,8 @@
       </ul></li>
       <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.RV_CAP">RV_CAP (soar.robot.pioneer.PioneerRobot attribute)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.RVEL">RVEL (in module soar.robot.arcos)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -629,6 +751,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.save">save() (soar.gui.plot_window.PlotWindow method)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SAY">SAY (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.scale">scale() (soar.sim.geometry.Point method)</a>
 
@@ -648,11 +772,25 @@
         <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.set_robot_options">(soar.robot.pioneer.PioneerRobot method)</a>
 </li>
       </ul></li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SETA">SETA (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SETO">SETO (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SETRA">SETRA (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SETRV">SETRV (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SETV">SETV (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.show">show() (soar.gui.plot_window.PlotWindow method)</a>
+</li>
+      <li><a href="soar.controller.html#soar.controller.Controller.shutdown">shutdown() (soar.controller.Controller method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.SHUTDOWN_CONTROLLER">SHUTDOWN_CONTROLLER (in module soar.common)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.sim_cmd">sim_cmd() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
-      <li><a href="soar.controller.html#soar.controller.sim_completed">sim_completed() (in module soar.controller)</a>
+      <li><a href="soar.hooks.html#soar.hooks.sim_completed">sim_completed() (in module soar.hooks)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.sim_load">sim_load() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
@@ -665,6 +803,8 @@
 </li>
       </ul></li>
       <li><a href="soar.html#module-soar">soar (module)</a>
+</li>
+      <li><a href="command_line.html#module-soar.__main__">soar.__main__ (module)</a>
 </li>
       <li><a href="soar.client.html#module-soar.client">soar.client (module)</a>
 </li>
@@ -684,14 +824,16 @@
 </li>
       <li><a href="soar.gui.soar_ui.html#module-soar.gui.soar_ui">soar.gui.soar_ui (module)</a>
 </li>
+      <li><a href="soar.hooks.html#module-soar.hooks">soar.hooks (module)</a>
+</li>
       <li><a href="soar.robot.html#module-soar.robot">soar.robot (module)</a>
 </li>
       <li><a href="soar.robot.arcos.html#module-soar.robot.arcos">soar.robot.arcos (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.base.html#module-soar.robot.base">soar.robot.base (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.names.html#module-soar.robot.names">soar.robot.names (module)</a>
 </li>
       <li><a href="soar.robot.pioneer.html#module-soar.robot.pioneer">soar.robot.pioneer (module)</a>
@@ -714,7 +856,11 @@
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI">SoarUI (class in soar.gui.soar_ui)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SONAR">SONAR (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.SONAR_MAX">SONAR_MAX (soar.robot.pioneer.PioneerRobot attribute)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SONARCYCLE">SONARCYCLE (in module soar.robot.arcos)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.sonars">sonars (soar.robot.arcos.ARCOSClient attribute)</a>
 
@@ -722,11 +868,15 @@
         <li><a href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot.sonars">(soar.robot.pioneer.PioneerRobot attribute)</a>
 </li>
       </ul></li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SOUNDTOG">SOUNDTOG (in module soar.robot.arcos)</a>
+</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.standard">standard (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.standard_event">standard_event (soar.robot.arcos.ARCOSClient attribute)</a>
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.start">start() (soar.robot.arcos.ARCOSClient method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.START_CONTROLLER">START_CONTROLLER (in module soar.common)</a>
 </li>
       <li><a href="soar.controller.html#soar.controller.Controller.started">started (soar.controller.Controller attribute)</a>
 </li>
@@ -734,11 +884,21 @@
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.step_cmd">step_cmd() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
+      <li><a href="soar.common.html#soar.common.STEP_CONTROLLER">STEP_CONTROLLER (in module soar.common)</a>
+</li>
       <li><a href="soar.controller.html#soar.controller.Controller.step_count">step_count (soar.controller.Controller attribute)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.STEP_FINISHED">STEP_FINISHED (in module soar.common)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.step_finished">step_finished() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.STOP">STOP (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.controller.html#soar.controller.Controller.stop">stop() (soar.controller.Controller method)</a>
+</li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.stop_cmd">stop_cmd() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
+      <li><a href="soar.common.html#soar.common.STOP_CONTROLLER">STOP_CONTROLLER (in module soar.common)</a>
 </li>
       <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.stop_ready">stop_ready() (soar.gui.soar_ui.SoarUI method)</a>
 </li>
@@ -748,6 +908,12 @@
 </li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.sync">sync() (soar.robot.arcos.ARCOSClient method)</a>
 </li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SYNC0">SYNC0 (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.SYNC1">SYNC1 (in module soar.robot.arcos)</a>
+</li>
+      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.synchronous_future">synchronous_future() (soar.gui.soar_ui.SoarUI method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -756,11 +922,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="soar.robot.names.html#soar.robot.names.test_collisions">test_collisions() (in module soar.robot.names)</a>
 </li>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.tick">tick() (soar.gui.soar_ui.SoarUI method)</a>
-</li>
       <li><a href="soar.robot.arcos.html#soar.robot.arcos.Timeout">Timeout</a>
 </li>
       <li><a href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow.title">title() (soar.gui.plot_window.PlotWindow method)</a>
+</li>
+      <li><a href="soar.hooks.html#soar.hooks.tkinter_hook">tkinter_hook() (in module soar.hooks)</a>
 </li>
       <li><a href="soar.robot.base.html#soar.robot.base.BaseRobot.to_dict">to_dict() (soar.robot.base.BaseRobot method)</a>
 
@@ -793,12 +959,22 @@
   </ul></td>
 </tr></table>
 
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.VEL">VEL (in module soar.robot.arcos)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.VEL2">VEL2 (in module soar.robot.arcos)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.gui.soar_ui.html#soar.gui.soar_ui.SoarUI.wait_for">wait_for() (soar.gui.soar_ui.SoarUI method)</a>
-</li>
-      <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.wait_or_timeout">wait_or_timeout() (soar.robot.arcos.ARCOSClient method)</a>
+      <li><a href="soar.robot.arcos.html#soar.robot.arcos.ARCOSClient.wait_or_timeout">wait_or_timeout() (soar.robot.arcos.ARCOSClient static method)</a>
 </li>
       <li><a href="soar.sim.world.html#soar.sim.world.Wall">Wall (class in soar.sim.world)</a>
 </li>
@@ -826,11 +1002,21 @@
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.xy_tuple">xy_tuple() (soar.sim.geometry.Point method)</a>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.x">x (soar.sim.geometry.Point attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.xy_tuple">xy_tuple() (soar.sim.geometry.Point method)</a>
+</li>
       <li><a href="soar.sim.geometry.html#soar.sim.geometry.Pose.xyt_tuple">xyt_tuple() (soar.sim.geometry.Pose method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soar.sim.geometry.html#soar.sim.geometry.Point.y">y (soar.sim.geometry.Point attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -871,7 +1057,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev2',
+            VERSION:'1.0.0.dev8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

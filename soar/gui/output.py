@@ -1,14 +1,14 @@
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/gui/output.py
 """ Soar output classes.
 
 Tk widgets allowing the capture and display of text output in the GUI.
-
-TODO: Make output capturing more elegant.
 """
 from io import StringIO
 
 from tkinter import *
-
-from soar import __version__
 
 
 class SoarIO(StringIO):
@@ -20,31 +20,14 @@ class SoarIO(StringIO):
         self.write_func(s)
 
 
-class OutputRedirect:  # TODO: Class may no longer be necessary
-    def __init__(self, frame):
-        self.frame = frame
-
-    def __enter__(self):
-        self._stdout = sys.stdout
-        self._stderr = sys.stderr
-        sys.stdout = SoarIO(self.frame.output)
-        sys.stderr = SoarIO(self.frame.error)
-        return self
-
-    def __exit__(self):
-        sys.stdout.close()
-        sys.stderr.close()
-        sys.stdout = self._stdout
-        sys.stderr = self._stderr
-
-
 class OutputFrame(Frame):
     """ A read-only Tk output frame that can display normal and error output.
 
     Args:
         master: The parent widget or window.
+        initial_text (str, optional): The text to have initially in the output frame.
     """
-    def __init__(self, master):
+    def __init__(self, master, initial_text=''):
         Frame.__init__(self, master, bg='white')
         self.scroll = Scrollbar(self)
         self.scroll.pack(side=RIGHT, fill=Y)
@@ -55,7 +38,8 @@ class OutputFrame(Frame):
         self.text_field.bind("<1>", lambda event: self.text_field.focus_set())
         self.text_field.pack(expand=True, fill='both')
         self.scroll.config(command=self.text_field.yview)
-        self.output('Soar ' + __version__ + ' Snakes on a robot: Output will appear in this window\n\n')
+        if initial_text != '':
+            self.output(initial_text)
 
     def insert(self, text, *tags):
         """ Insert text at the end of the text field.

@@ -1,30 +1,24 @@
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/gui/soar_ui.py
 """ Soar Main GUI classes.
 
 Classes for building the main GUI, which allows the user to load brains & worlds, start simulations, etc.
 """
 import os
+import sys
 import traceback as tb
 from queue import Queue
 from threading import Thread
-from tkinter import *
+from threading import Event as ThreadEvent
+from tkinter import Frame, Button, Label, Entry, PhotoImage, Tk, RIGHT, DISABLED, NORMAL, Toplevel, END
 from tkinter import filedialog
 
-from soar import __version__
+from soar import __version__, blerb
 from soar.common import *
 from soar.gui.canvas import canvas_from_world
 from soar.gui.output import OutputFrame, SoarIO
-
-
-def attach_to_soar(w, linked=True):
-    """ Attach an existing window to the SoarUI.
-
-    This function is re-defined to refer to the `SoarUI`'s `attach_window` method whenever this function is imported
-    by a brain.
-
-    Args:
-        linked (bool): If `True`, the window will be destroyed whenever the simulator window is destroyed.
-    """
-    pass
 
 
 class ButtonFrame(Frame):
@@ -145,7 +139,7 @@ class SoarUI(Tk):
     """
     image_dir = os.path.dirname(__file__)
     world_dir = os.path.join(image_dir, '../worlds/')
-    brain_dir = os.path.join(image_dir, '../brains/')
+    brain_dir = os.path.expanduser('~')  # os.path.join(image_dir, '../brains/')
 
     def __init__(self, client_future, client_mainloop, parent=None, title='Soar ' + __version__):
         Tk.__init__(self, parent)
@@ -162,7 +156,7 @@ class SoarUI(Tk):
         self.brain_image = PhotoImage(file=os.path.join(self.image_dir, 'brain.gif'))
         self.world_image = PhotoImage(file=os.path.join(self.image_dir, 'world.gif'))
         self.sim_image = PhotoImage(file=os.path.join(self.image_dir, 'sim.gif'))
-        self.real_image = PhotoImage(file=os.path.join(self.image_dir, 'real.gif'))
+        self.connect_image = PhotoImage(file=os.path.join(self.image_dir, 'connect.gif'))
         self.close_image = PhotoImage(file=os.path.join(self.image_dir, 'close.gif'))
         self.play = ButtonFrame(self)
         self.step = ButtonFrame(self)
@@ -172,16 +166,16 @@ class SoarUI(Tk):
         self.loading_icon = LoadingIcon(self, os.path.join(self.image_dir, 'loading.gif'), 9)
         self.brain_but = ButtonFrame(self)
         self.world_but = ButtonFrame(self)
-        self.sim_but = ButtonFrame(self)
-        self.real = ButtonFrame(self)
+        self.sim = ButtonFrame(self)
+        self.connect = ButtonFrame(self)
         self.close_but = Button(self)
-        self.output = OutputFrame(self)
+        self.output = OutputFrame(self, initial_text=blerb + '\n\nOutput will appear in this window.\n\n')
         self.initialize()
         self.windows = []
         self.sim_canvas = None
         self.connected = False
-        self.button_list = [self.play, self.step, self.stop, self.reload, self.brain_but, self.world_but, self.sim_but,
-                            self.real, self.close_but]
+        self.button_list = [self.play, self.step, self.stop, self.reload, self.brain_but, self.world_but, self.sim,
+                            self.connect, self.close_but]
         self.button_state_frames = []
         self.protocol('WM_DELETE_WINDOW', self.on_close)
         self.file_opt = {
@@ -190,7 +184,7 @@ class SoarUI(Tk):
             'parent': parent,
             'title': "Choose file",
         }
-        self.draw_queue = Queue()
+        self.event_signals = []
 
     def initialize(self):
         """ Initialize the grid geometry. """
@@ -204,8 +198,8 @@ class SoarUI(Tk):
         self.loading_icon.grid(column=4, row=0, pady=10, ipady=2, sticky='NW')
         self.brain_but.grid(column=5, row=0, padx=5, pady=10, sticky='N')
         self.world_but.grid(column=6, row=0, padx=5, pady=10, sticky='N')
-        self.sim_but.grid(column=7, row=0, pady=10, sticky='NE')
-        self.real.grid(column=8, row=0, pady=10, sticky='NE')
+        self.sim.grid(column=7, row=0, pady=10, sticky='NE')
+        self.connect.grid(column=8, row=0, pady=10, sticky='NE')
         self.close_but.grid(column=5, row=1, pady=5, columnspan=2, sticky='N')
         self.output.grid(column=0, row=2, columnspan=9, sticky='NSEW')
         self.grid_rowconfigure(2, weight=1)
@@ -213,9 +207,15 @@ class SoarUI(Tk):
         self.grid_columnconfigure(7, weight=1)
 
     def report_callback_exception(self, exc, val, traceback):
-        """ Report callback exception to sys.stderr, as well as notifying the Soar client. """
+        """ Report callback exception to sys.stderr, as well as notifying the Soar client.
+
+        In addition, signal any events that may need to be flagged for `synchronous_future`.
+        """
+        for e in self.event_signals:
+            e.set()
+        self.event_signals = []
         Tk.report_callback_exception(self, exc, val, traceback)
-        self.client_future(GUI_ERROR)  # TODO: Tk errors may be more severe than GUIErrors?
+        self.client_future(GUI_ERROR)
 
     def reset(self, clear_output=True):
         """ Reset all of the button states to what they are at initialization, before any files are loaded.
@@ -229,8 +229,8 @@ class SoarUI(Tk):
         self.reload.config(image=self.reload_image, text='Reload', command=self.reload_cmd, state=DISABLED)
         self.brain_but.config(image=self.brain_image, text='Load Brain', command=self.brain_cmd, state=NORMAL)
         self.world_but.config(image=self.world_image, text='Load World', command=self.world_cmd, state=NORMAL)
-        self.sim_but.config(image=self.sim_image, text='Simulator', command=self.sim_cmd, state=DISABLED)
-        self.real.config(image=self.real_image, text='Real robot', command=self.real_cmd, state=DISABLED)
+        self.sim.config(image=self.sim_image, text='Simulator', command=self.sim_cmd, state=DISABLED)
+        self.connect.config(image=self.connect_image, text='Connect', command=self.connect_cmd, state=DISABLED)
         self.close_but.config(text='Close all windows', command=lambda: self.reload_cmd(False, True))
         if clear_output:
             self.output.clear()
@@ -246,7 +246,6 @@ class SoarUI(Tk):
         sys.stderr = SoarIO(self.output.error)
         t = Thread(target=self.client_mainloop, daemon=True)
         t.start()
-        self.after(0, self.tick)
         Tk.mainloop(self, n)
         sys.stdout.close()
         sys.stderr.close()
@@ -271,8 +270,12 @@ class SoarUI(Tk):
 
         Args:
             linked (bool): If `True`, the window will be destroyed whenever the simulator window is destroyed.
+
+        Returns:
+            The window that was attached.
         """
         self.windows.append((w, linked))
+        return w
 
     def close_windows(self, close_unlinked=False):
         """ Close windows, optionally unlinked ones, clear the draw queue, and set the simulator canvas to `None`.
@@ -280,9 +283,6 @@ class SoarUI(Tk):
         Args:
             close_unlinked (bool): If `True`, closes all windows. Otherwise, closes only the linked ones.
         """
-        while not self.draw_queue.empty():
-            _ = self.draw_queue.get()
-            self.draw_queue.task_done()
         for tup in reversed(self.windows):
             window, linked = tup
             if linked or close_unlinked:
@@ -293,62 +293,61 @@ class SoarUI(Tk):
                     pass
         self.sim_canvas = None
 
-    def future(self, msg, *args, **kwargs):
-        """ Schedules a future to be executed by the GUI's tick loop. """
-        self.draw_queue.put((msg, args, kwargs))
+    def future(self, func, *args, after_idle=False, **kwargs):
+        """ Executes a function (asynchronously) in the GUI event loop ASAP in the future. """
+        if after_idle:
+            return self.after_idle(lambda: func(*args, **kwargs))
+        else:
+            return self.after(0, lambda: func(*args, **kwargs))
 
-    def tick(self):
-        """ Called 100 times per second to update the canvas. """
-        while not self.draw_queue.empty():
-            name, args, kwargs = self.draw_queue.get()
-            if name == CLOSE_LINKED:  # Need to flush the queues and kill linked windows
-                self.close_windows()
-            elif name == CLOSE_ALL:
-                self.close_windows(close_unlinked=True)
-            elif name == MAKE_WORLD_CANVAS:  # Draw the canvas and call a callback, if requested
-                try:
-                    world = args[0]
-                    self.sim_canvas = canvas_from_world(world, toplevel=self.toplevel,
-                                                        close_cmd=lambda: self.reload_cmd(reload_controller=False))
-                    world.draw(self.sim_canvas)
-                    self.sim_ready()
-                except Exception:
-                    self.client_future(GUI_ERROR)
-                    tb.print_exc()
-                else:
-                    if 'callback' in kwargs and kwargs['callback'] is not None:
-                        self.client_future(NOP, callback=kwargs['callback'])
-            elif name == DRAW:
-                if self.sim_canvas is not None:  # Don't draw objects if there isn't a canvas
-                    try:
-                        args[0].delete(self.sim_canvas)
-                        args[0].draw(self.sim_canvas)
-                    except Exception:
-                        self.client_future(GUI_ERROR)
-                        tb.print_exc()
-            self.draw_queue.task_done()
-        self.after(10, self.tick)
+    def synchronous_future(self, func, *args, after_idle=False, **kwargs):
+        """ Executes a function in the GUI event loop, waiting either for its return, or for a Tk exception. """
+        e = ThreadEvent()
+        q = Queue(maxsize=1)
+        self.event_signals.append(e)
+        def func_with_event_set():
+            q.put(func(*args, **kwargs))
+            e.set()
+        self.future(func_with_event_set, after_idle=after_idle)
+        e.wait()
+        try:  # Try and remove the event signal
+            self.event_signals.remove(e)
+        except ValueError:  # The signal was already removed because of an exception
+            pass
+        if q.empty():  # The function didn't successfully return
+            return EXCEPTION
+        else:
+            return q.get()
+
+    def draw(self, obj):  # Draws an object on the simulator canvas
+        if self.sim_canvas is not None:
+            try:
+                obj.delete(self.sim_canvas)
+                obj.draw(self.sim_canvas)
+            except Exception:
+                self.client_future(GUI_ERROR)
+                tb.print_exc()
+
+    def make_world_canvas(self, world, callback=None):  # Draw the canvas and call a callback, if requested
+        try:
+            self.sim_canvas = canvas_from_world(world, toplevel=self.toplevel,
+                                                close_cmd=lambda: self.reload_cmd(reload_controller=False))
+            world.draw(self.sim_canvas)
+        except Exception:
+            self.client_future(GUI_ERROR)
+            tb.print_exc()
+        else:
+            if callback:
+                self.client_future(NOP, callback=callback)
 
     def on_close(self):
         """ Called when the main window is closed. """
         self.destroy()
 
-    def wait_for(self, condition, func):
-        """ Execute a function in the main Tk thread when some condition evaluates to true.
-
-        Args:
-            func: The function to eventually execute.
-            condition: The condition function. Should return a boolean.
-        """
-        if condition():
-            func()
-        else:
-            self.after(10, lambda: self.wait_for(condition, func))
-
     def play_cmd(self):
         """ Called when the play button is pushed. """
         self.loading()
-        self.client_future(START_CONTROLLER, callback=self.play_ready)
+        self.client_future(START_CONTROLLER, callback=lambda: self.future(self.play_ready))
 
     def play_ready(self):
         """ Called after the controller has started playing. """
@@ -363,7 +362,7 @@ class SoarUI(Tk):
     def pause_cmd(self):
         """ Called when the pause button is pushed. """
         self.loading()
-        self.client_future(PAUSE_CONTROLLER, callback=self.pause_ready)
+        self.client_future(PAUSE_CONTROLLER, callback=lambda: self.future(self.pause_ready))
 
     def pause_ready(self):
         """ Called when the controller has finished pausing. """
@@ -396,7 +395,7 @@ class SoarUI(Tk):
     def stop_cmd(self):
         """ Called when the stop button is pushed. """
         self.loading()
-        self.client_future(STOP_CONTROLLER, callback=self.stop_ready)
+        self.client_future(STOP_CONTROLLER, callback=lambda: self.future(self.stop_ready))
 
     def stop_ready(self):
         """ Called when the controller has stopped. """
@@ -420,15 +419,15 @@ class SoarUI(Tk):
         self.loading()
         self.client_future(SHUTDOWN_CONTROLLER)
         if close_unlinked:
-            self.future(CLOSE_ALL)
+            self.future(self.close_windows, close_unlinked=True)
         else:
-            self.future(CLOSE_LINKED)
+            self.future(self.close_windows)
         if self.brain_path:
             self.client_future(LOAD_BRAIN, self.brain_path, silent=silent)
         if self.world_path:
             self.client_future(LOAD_WORLD, self.world_path, silent=silent),
-        self.client_future(NOP, callback=lambda: self.reload_finished(reload_controller, sim_canvas, connected,
-                                                                      callback))
+        self.client_future(NOP, callback=lambda: self.future(self.reload_finished, reload_controller, sim_canvas,
+                                                             connected, callback))
 
     def reload_finished(self, reload_controller, sim_canvas, connected, callback):
         """ Called after the client has finished reloading.
@@ -446,9 +445,9 @@ class SoarUI(Tk):
         self.done_loading()
         if reload_controller:  # If previously we were simulating or connected, reload those
             if sim_canvas:
-                self.wait_for(self.draw_queue.empty, self.sim_load)
+                self.after_idle(self.sim_load)
             elif connected:
-                self.wait_for(self.draw_queue.empty, self.real_load)
+                self.after_idle(self.connect_load)
         if callback:
             callback()
 
@@ -463,15 +462,15 @@ class SoarUI(Tk):
             else:
                 self.brain_path = new_brain
                 self.loading()
-                self.client_future(LOAD_BRAIN, new_brain, callback=self.brain_ready)
+                self.client_future(LOAD_BRAIN, new_brain, callback=lambda: self.future(self.brain_ready))
 
     def brain_ready(self,):
         """ Configure buttons and paths when a brain is loaded. """
         self.done_loading()
         self.brain_dir = os.path.dirname(self.brain_path)
-        self.real.config(state=NORMAL)
+        self.connect.config(state=NORMAL)
         if self.world_path is not None:
-            self.sim_but.config(state=NORMAL)
+            self.sim.config(state=NORMAL)
 
     def world_cmd(self):
         """ Called when the world button is pushed. """
@@ -483,14 +482,14 @@ class SoarUI(Tk):
             else:
                 self.world_path = new_world
                 self.loading()
-                self.client_future(LOAD_WORLD, new_world, callback=self.world_ready)
+                self.client_future(LOAD_WORLD, new_world, callback=lambda: self.future(self.world_ready))
 
     def world_ready(self):
         """ Configure buttons and paths when a world is ready. """
         self.done_loading()
         self.world_dir = os.path.dirname(self.world_path)
         if self.brain_path is not None:
-            self.sim_but.config(state=NORMAL)
+            self.sim.config(state=NORMAL)
 
     def sim_cmd(self):
         """ Called when the simulator button is pushed. """
@@ -502,11 +501,10 @@ class SoarUI(Tk):
     def sim_load(self):
         """ Called when the simulator's reload has finished. """
         self.loading()
-        # Need to wait for the draw queue to be empty twice: Once before the simulator is made, again after while the
-        # world is being drawn.
-        self.wait_for(self.draw_queue.empty,
-                      lambda: self.client_future(MAKE_CONTROLLER, simulated=True,
-                                                 callback=self.wait_for(self.draw_queue.empty, self.sim_ready)))
+        # Need to wait for the queue to be empty twice: Once before the simulator is made, for windows to close, and
+        # again to wait for the world to be drawn.
+        self.after_idle(lambda: self.client_future(MAKE_CONTROLLER, simulated=True,
+                                                   callback=lambda: self.after_idle(self.sim_ready)))
 
     def sim_ready(self):
         """ Called when the simulator is ready. """
@@ -518,24 +516,24 @@ class SoarUI(Tk):
         self.reload.config(state=NORMAL)
         self.brain_but.config(state=NORMAL)
         self.world_but.config(state=NORMAL)
-        self.sim_but.config(state=NORMAL)
-        self.real.config(state=NORMAL)
+        self.sim.config(state=NORMAL)
+        self.connect.config(state=NORMAL)
         self.close_but.config(state=NORMAL)
 
-    def real_cmd(self):
-        """ Called when the real robot button is pushed. """
+    def connect_cmd(self):
+        """ Called when the connect to robot button is pushed. """
         if self.sim_canvas or self.connected:  # If a controller is already running, we need to reload
-            self.reload_cmd(reload_controller=False, callback=self.real_load)
+            self.reload_cmd(reload_controller=False, callback=self.connect_load)
         else:
-            self.real_load()
+            self.connect_load()
 
-    def real_load(self):
+    def connect_load(self):
         """ Called when the real robot's requested reload has finished. """
         self.loading()
-        self.wait_for(self.draw_queue.empty,
-                      lambda: self.client_future(MAKE_CONTROLLER, simulated=False, callback=self.real_ready))
+        self.after_idle(lambda: self.client_future(MAKE_CONTROLLER, simulated=False,
+                                                   callback=lambda: self.future(self.connect_ready)))
 
-    def real_ready(self):
+    def connect_ready(self):
         """ Called when the real robot is ready. """
         self.done_loading()
         self.connected = True
@@ -546,8 +544,8 @@ class SoarUI(Tk):
         self.reload.config(state=NORMAL)
         self.brain_but.config(state=NORMAL)
         self.world_but.config(state=NORMAL)
-        self.sim_but.config(state=NORMAL if self.world_path else DISABLED)
-        self.real.config(state=DISABLED)
+        self.sim.config(state=NORMAL if self.world_path else DISABLED)
+        self.connect.config(state=DISABLED)
         self.close_but.config(state=NORMAL)
 
     def gui_error(self):
@@ -557,7 +555,7 @@ class SoarUI(Tk):
         self.reload.config(state=NORMAL, command=lambda: self.reload_cmd(reload_controller=False))
         if self.sim_canvas:
             t = self.sim_canvas.master.master
-            t.protocol('WM_DELETE_WINDOW', lambda: self.future(CLOSE_LINKED))
+            t.protocol('WM_DELETE_WINDOW', lambda: self.future(self.close_windows))
 
     def controller_io_error(self):
         """ Called when an error occurs connecting to the real robot. """
@@ -585,8 +583,8 @@ class SoarUI(Tk):
         self.reload.config(state=DISABLED)
         self.brain_but.config(state=DISABLED)
         self.world_but.config(state=DISABLED)
-        self.sim_but.config(state=DISABLED)
-        self.real.config(state=DISABLED)
+        self.sim.config(state=DISABLED)
+        self.connect.config(state=DISABLED)
         self.close_but.config(state=DISABLED)
         if not self.loading_icon.visible:
             self.loading_icon.show()

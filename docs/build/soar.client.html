@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.client &mdash; Soar 1.0.0.dev2 documentation</title>
+  <title>soar.client &mdash; Soar 1.0.0.dev8 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/>
         <link rel="up" title="soar" href="soar.html"/>
         <link rel="next" title="soar.common" href="soar.common.html"/>
         <link rel="prev" title="soar" href="soar.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev2
+                1.0.0.dev8
               </div>
             
           
@@ -93,12 +93,18 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brain_docs.html">Brains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">Module Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">soar.client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.common.html">soar.common</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.errors.html">soar.errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.gui.html">soar.gui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soar.hooks.html">soar.hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_line.html">Command Line Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
 </ul>
@@ -175,23 +181,23 @@
 Projects desiring to invoke a Soar instance should import this module and call <a class="reference internal" href="#soar.client.main" title="soar.client.main"><code class="xref py py-func docutils literal"><span class="pre">soar.client.main()</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <p>This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client</span> <span class="k">import</span> <span class="n">main</span>
 <span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If invoking a headless instance, paths to brain and world files should be specified:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client</span> <span class="k">import</span> <span class="n">main</span>
 <span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">brain_path</span><span class="o">=</span><span class="s1">&#39;path/to/brain.py&#39;</span><span class="p">,</span> <span class="n">world_path</span><span class="o">=</span><span class="s1">&#39;path/to/world.py&#39;</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this case, the return value will be 1 if an exception occurred and 0 otherwise.</p>
 <p>Logging is handled via passing a path:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client</span> <span class="k">import</span> <span class="n">main</span>
 <span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">logfile</span><span class="o">=</span><span class="s1">&#39;path/to/logfile&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>or, using a file-like object:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client.main</span> <span class="k">import</span> <span class="n">main</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">soar.client</span> <span class="k">import</span> <span class="n">main</span>
 <span class="n">return_value</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">logfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;path/to/logfile&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -207,7 +213,7 @@ be purged.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> – The future to execute, defined in <a class="reference internal" href="soar.common.html#module-soar.common" title="soar.common"><code class="xref py py-mod docutils literal"><span class="pre">soar.common</span></code></a>. and contained in <code class="xref py py-obj docutils literal"><span class="pre">future_map</span></code>.</li>
+<li><strong>name</strong> – The future to execute, defined in <a class="reference internal" href="soar.common.html#module-soar.common" title="soar.common"><code class="xref py py-mod docutils literal"><span class="pre">soar.common</span></code></a>. and contained in <a class="reference internal" href="#soar.client.future_map" title="soar.client.future_map"><code class="xref py py-obj docutils literal"><span class="pre">future_map</span></code></a>.</li>
 <li><strong>*args</strong> – The variable length arguments to pass to the function.</li>
 <li><strong>**kwargs</strong> – The keyword arguments to pass to the function.</li>
 </ul>
@@ -215,6 +221,12 @@ be purged.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="data">
+<dt id="soar.client.future_map">
+<code class="descclassname">soar.client.</code><code class="descname">future_map</code><em class="property"> = {0: &lt;function make_gui&gt;, 1: &lt;function load_brain&gt;, 2: &lt;function load_world&gt;, 3: &lt;function make_controller&gt;, 4: &lt;function start_controller&gt;, 5: &lt;function pause_controller&gt;, 6: &lt;function step_controller&gt;, 7: &lt;function stop_controller&gt;, 8: &lt;function shutdown_controller&gt;, 9: &lt;function controller_complete&gt;, 11: &lt;function controller_io_error&gt;, 12: &lt;function controller_failure&gt;, 13: &lt;function logging_error&gt;, 14: &lt;function step_finished&gt;, 15: &lt;function gui_load_brain&gt;, 16: &lt;function gui_load_world&gt;, 17: &lt;function nop&gt;, 18: &lt;function draw&gt;, 19: &lt;function make_world_canvas&gt;, 20: &lt;function gui_error&gt;}</em><a class="headerlink" href="#soar.client.future_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mapping from future names to their actual functions.</p>
 </dd></dl>
 
 <dl class="function">
@@ -230,9 +242,9 @@ be purged.</p>
 <li><strong>world_path</strong> (<em>optional</em>) – The path to the initial world to load. Required if headless, otherwise not required.</li>
 <li><strong>headless</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, run Soar in headless mode, immediately running a simulation.</li>
 <li><strong>logfile</strong> (<em>optional</em>) – The path to the log file, or a file-like object to log data to.</li>
-<li><strong>step_duration</strong> (<em>float</em>) – The duration of a controller step, in seconds.</li>
-<li><strong>realtime</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the controller will never sleep to make a step last the proper length. Instead,</li>
-<li><strong>will run as fast as possible.</strong> (<em>it</em>) – </li>
+<li><strong>step_duration</strong> (<em>float</em>) – The duration of a controller step, in seconds. By default, 0.1 seconds.</li>
+<li><strong>realtime</strong> (<em>bool</em>) – If <code class="xref py py-obj docutils literal"><span class="pre">True</span></code>, the controller will never sleep to make a step last the proper length. Instead,
+it will run as fast as possible.</li>
 <li><strong>options</strong> (<em>dict</em>) – The keyword arguments to pass to the robot whenever it is loaded.</li>
 </ul>
 </td>
@@ -290,7 +302,7 @@ be purged.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev2',
+            VERSION:'1.0.0.dev8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

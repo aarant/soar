@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.canvas &mdash; Soar 1.0.0.dev2 documentation</title>
+  <title>soar.gui.canvas &mdash; Soar 1.0.0.dev8 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.gui.output" href="soar.gui.output.html"/>
         <link rel="prev" title="soar.gui" href="soar.gui.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev2
+                1.0.0.dev8
               </div>
             
           
@@ -93,7 +93,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brain_docs.html">Brains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">Module Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.common.html">soar.common</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
@@ -105,6 +109,8 @@
 <li class="toctree-l3"><a class="reference internal" href="soar.gui.soar_ui.html">soar.gui.soar_ui</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="soar.hooks.html">soar.hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_line.html">Command Line Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
 </ul>
@@ -181,19 +187,62 @@
 <p>Soar canvas classes and methods.</p>
 <p>Defines <a class="reference internal" href="#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-obj docutils literal"><span class="pre">SoarCanvas</span></code></a> and <a class="reference internal" href="#soar.gui.canvas.SoarCanvasFrame" title="soar.gui.canvas.SoarCanvasFrame"><code class="xref py py-obj docutils literal"><span class="pre">SoarCanvasFrame</span></code></a> classes, as well as a method of creating them from an instance of
 <a class="reference internal" href="soar.sim.world.html#soar.sim.world.World" title="soar.sim.world.World"><code class="xref py py-class docutils literal"><span class="pre">soar.sim.world.World</span></code></a>.</p>
-<p>TODO: Documentation</p>
 <dl class="class">
 <dt id="soar.gui.canvas.SoarCanvas">
 <em class="property">class </em><code class="descclassname">soar.gui.canvas.</code><code class="descname">SoarCanvas</code><span class="sig-paren">(</span><em>parent</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Canvas</span></code></p>
+<p>A metered, resizable Tkinter canvas. All drawing operations take metered arguments, where x values increase
+rightwards and y values increase upwards.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> – The parent window or widget in which the canvas is placed.</li>
+<li><strong>**options</strong> – Tk options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="soar.gui.canvas.SoarCanvas.create_arc">
+<code class="descname">create_arc</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_arc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.canvas.SoarCanvas.create_bitmap">
+<code class="descname">create_bitmap</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_bitmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.canvas.SoarCanvas.create_image">
+<code class="descname">create_image</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="soar.gui.canvas.SoarCanvas.create_line">
 <code class="descname">create_line</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_line" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="soar.gui.canvas.SoarCanvas.create_oval">
+<code class="descname">create_oval</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_oval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="soar.gui.canvas.SoarCanvas.create_polygon">
 <code class="descname">create_polygon</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_polygon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.canvas.SoarCanvas.create_rectangle">
+<code class="descname">create_rectangle</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_rectangle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="soar.gui.canvas.SoarCanvas.create_text">
+<code class="descname">create_text</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvas.create_text" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -212,6 +261,7 @@
 <dt id="soar.gui.canvas.SoarCanvasFrame">
 <em class="property">class </em><code class="descclassname">soar.gui.canvas.</code><code class="descname">SoarCanvasFrame</code><span class="sig-paren">(</span><em>parent</em>, <em>**options</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvasFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Frame</span></code></p>
+<p>A resizable frame that holds a <a class="reference internal" href="#soar.gui.canvas.SoarCanvas" title="soar.gui.canvas.SoarCanvas"><code class="xref py py-obj docutils literal"><span class="pre">SoarCanvas</span></code></a>.</p>
 <dl class="method">
 <dt id="soar.gui.canvas.SoarCanvasFrame.on_resize">
 <code class="descname">on_resize</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.canvas.SoarCanvasFrame.on_resize" title="Permalink to this definition">¶</a></dt>
@@ -290,7 +340,7 @@ the associated mouse events for that tag, making it draggable.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev2',
+            VERSION:'1.0.0.dev8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

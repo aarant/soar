@@ -1,8 +1,9 @@
-from soar.controller import sim_completed
-from soar.robot.pioneer import PioneerRobot
+from soar.robot.base import BaseRobot
 from soar.gui.plot_window import PlotWindow
+from soar.hooks import sim_completed
+from soar.sim.world import Polygon
 
-robot = PioneerRobot()
+robot = BaseRobot(polygon=Polygon([(-0.5, 0.5), (0.5, 0.5), (0.5, -0.5), (-0.5, -0.5)], tags='base'))
 
 
 #  This function is called when the brain is loaded
@@ -12,11 +13,13 @@ def on_load():
 
 #  This function is called when the start button is pushed
 def on_start():
+    print(robot.polygon.tags)
     pass
 
 
 #  This function is called every step_duration seconds. By default, it is called 10 times/second
 def on_step(step_duration):
+    robot.fv = 1.0
     pass
 
 

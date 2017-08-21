@@ -1,59 +1,14 @@
-""" Soar controller classes and functions for controlling robots, simulated or real.
-
-TODO: Log world information before the first step.
-"""
-import json
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/controller.py
+""" Controller classes and functions for controlling robots, simulated or real. """
 from io import StringIO
 from threading import Thread
 from time import sleep
 from timeit import default_timer as timer
 
-from soar.common import DRAW, CONTROLLER_COMPLETE, STEP_FINISHED, MAKE_WORLD_CANVAS
-from soar.errors import LoggingError
-
-
-def sim_completed(obj=None):
-    """ Called by the brain to signal that the simulation has completed.
-
-    This is set by the client when the brain file is loaded.
-
-    Args:
-        obj (optional): Optionally, an object to log to the logfile after the simulation has completed.
-    """
-    pass
-
-
-def elapsed_time():
-    """ Get the time that has elapsed since running the controller.
-
-    This is set by the controller when it loads the brain.
-
-    Returns:
-        float: The elapsed time in seconds, as defined in :attr:`soar.controller.Controller.elapsed`.
-    """
-    pass
-
-
-def log(obj, logfile, mode='a'):
-    """ Log a serialized JSON object to a path or file-like object, adding a newline after.
-
-    Args:
-        obj: The object to be serialized.
-        logfile: The path to the log file, or a file-like object that has a `write()` method.
-        mode: The mode in which the file is to be opened.
-    """
-    # Recast file errors as Soar errors
-    if hasattr(logfile, 'write'):
-        try:
-            logfile.write(json.dumps(obj) + '\n')
-        except Exception as e:
-            raise LoggingError(str(e))
-    else:
-        try:
-            with open(logfile, mode) as f:
-                f.write(json.dumps(obj) + '\n')
-        except (OSError, IOError) as e:
-            raise LoggingError(str(e))
+from soar.common import DRAW, CONTROLLER_COMPLETE, STEP_FINISHED, MAKE_WORLD_CANVAS, EXCEPTION
 
 
 class Controller:
@@ -72,7 +27,7 @@ class Controller:
 
     Args:
         client_future: The function to call to schedule a future for the client to execute.
-        gui (bool): If `True`, worlds must be drawn on each step.
+        gui: The currently :class:`soar.gui.soar_ui.SoarUI` instance, if any, or `None` if in headless mode.
         simulated (bool): If `True`, the controller will simulate the robot. Otherwise it will treat the robot as real.
         robot: An instance of :class:`soar.robot.base.BaseRobot` or a subclass.
         brain: The currently loaded brain module, supporting the `on_load()`, `on_start()`, `on_step()`, `on_stop()`,
@@ -105,37 +60,10 @@ class Controller:
         self._avg_offset = 0.0
         self._brain_log_contents = StringIO()
 
-    def step_timer(self, n=None):  # If n is unspecified, run forever until stopped.
-        # step_timer is typically wrapped by the client so that any exceptions that occur are made known.
-        self.running = True
-        while self.running and (n is None or n > 0):
-            start = timer()  # Time the actual step, with sleeping included
-            step_time = self.single_step()
-            if step_time < self.step_duration:  # Just add self.step_duration to the elapsed time
-                self.elapsed += self.step_duration
-                if self.realtime:  # If running in real time, sleep accordingly
-                    sleep(max(0, self.step_duration-step_time-self._avg_offset))
-            else:  # If the step took longer than it should have, add its length to self.elapsed and don't sleep
-                self.elapsed += step_time
-            if n:  # If running for a specific number of steps, decrement
-                n -= 1
-            if self.realtime:  # If running in real time, try and figure out by how much the sleep was too long or short
-                real_step_duration = timer() - start
-                offset = real_step_duration - self.step_duration
-                self._avg_offset = 0.75 * self._avg_offset + 0.25 * offset  # Exponentially weighted moving average
-        if self.running:  # If the timer finished naturally, without being stopped, notify the client
-            self.running = False
-            self.client_future(STEP_FINISHED)
-
-    def stop_thread(self):  # Stops the currently running step thread, if it exists
-        self.running = False
-        if self._step_thread:
-            self._step_thread.join()
-
-    def on_load(self):
+    def load(self):
         """ Called when the controller is loaded. """
-        # Set brain print function and robot mode
-        if self.log:  # If we are logging, make sure anything the brain prints is added to the log
+        # Set brain print function
+        if self.log:  # If we are logging, make sure anything the brain prints is added to the log later
             def brain_print(*args, **kwargs):
                 print('>>>', *args, **kwargs)
                 print(*args, file=self._brain_log_contents, **kwargs)
@@ -143,21 +71,23 @@ class Controller:
             def brain_print(*args, **kwargs):
                 print('>>>', *args, **kwargs)
         self.brain['print'] = brain_print
-        self.brain['elapsed_time'] = lambda: self.elapsed  # Give brain read-only access to the elapsed time
+
+        if 'elapsed' in self.brain:  # Give brain read-only access to the elapsed time
+            self.brain['elapsed'] = lambda: self.elapsed
+        if 'sim_completed' in self.brain:  # Give brain the ability to end the simulation
+            def sim_completed(obj=None):
+                self.client_future(CONTROLLER_COMPLETE, obj)
+                self.running = False
+            self.brain['sim_completed'] = sim_completed
+
         self.robot.simulated = self.simulated
         if self.simulated:  # If we are simulating, we have to initialize the world
             self.robot.move(self.world.initial_position)
             self.world.add(self.robot)
-            if self.gui:  # If a GUI exists, we tell the client to draw the world before we finish loading
-                self.client_future(MAKE_WORLD_CANVAS, self.world, callback=self.finish_load)
-            else:
-                self.finish_load()
-        else:
-            self.finish_load()
-
-    def finish_load(self):
-        """ Called to finish loading, after the canvas has been drawn, if necessary. """
-        # The robot is loaded first so that any setup required for the brain's operation is done beforehand.
+            if self.gui:  # If a GUI exists, we make it try to draw the world before finishing loading
+                if self.gui.synchronous_future(self.gui.make_world_canvas, self.world) == EXCEPTION:
+                    return EXCEPTION
+        # The robot is always loaded first, in case the brain depends on it
         self.robot.on_load()
         self.brain['on_load']()
 
@@ -182,48 +112,85 @@ class Controller:
                 self.elapsed += step_time
             self.client_future(STEP_FINISHED)
         else:  # Otherwise let the step timer run the steps
-            self._step_thread = Thread(target=lambda: self.step_timer(n=n), daemon=True)
+            self._step_thread = Thread(target=lambda: self.step_thread(n=n), daemon=True)
             self._step_thread.start()
 
+    def step_thread(self, n=None):  # If n is unspecified, run forever until stopped.
+        # step_thread is typically wrapped by the client so that any exceptions that occur are made known.
+        self.running = True
+        while self.running and (n is None or n > 0):
+            start = timer()  # Time the actual step, with sleeping included
+            step_time = self.single_step()
+            if step_time < self.step_duration:  # Just add self.step_duration to the elapsed time
+                self.elapsed += self.step_duration
+                if self.realtime:  # If running in real time, sleep accordingly
+                    sleep(max(0, self.step_duration-step_time-self._avg_offset))
+            else:  # If the step took longer than it should have, add its length to self.elapsed and don't sleep
+                self.elapsed += step_time
+            if n:  # If running for a specific number of steps, decrement
+                n -= 1
+            if self.realtime:  # If running in real time, try and figure out by how much the sleep was too long or short
+                real_step_duration = timer() - start
+                offset = real_step_duration - self.step_duration
+                self._avg_offset = 0.75 * self._avg_offset + 0.25 * offset  # Exponentially weighted moving average
+        if self.running:  # If the timer finished naturally, without being stopped, notify the client
+            self.running = False
+            self.client_future(STEP_FINISHED)
+
     def single_step(self):  # Undergoes a single step, returns the number of seconds the step took
+        if self.log:  # Log information before the step to the log file
+            self.log_step_info()
         start = timer()
         # First step the brain
         self.brain['on_step'](self.step_duration)
-        if self.world:  # If simulating, the world will handle the robot's step
-            self.world.on_step(self.step_duration)
+        # Measure how long the brain took. If it took longer, the robot and world should be stepped accordingly
+        brain_duration = timer()-start
+        if brain_duration > self.step_duration:
+            step_duration = brain_duration
+        else:
+            step_duration = self.step_duration
+        if self.simulated:  # If simulating, the world will handle the robot's step
+            self.world.on_step(step_duration)
             if self.gui:
                 self.client_future(DRAW, self.world)
         else:  # Otherwise step the robot on its own
-            self.robot.on_step(self.step_duration)
-        if self.log:  # Log information about the step to the log file
-            log_object = {'type': 'step', 'time': self.elapsed, 'step': self.step_count, 'robot': self.robot.to_dict()}
-            if self._brain_log_contents.getvalue() != '':
-                log_object.update({'brain_print': self._brain_log_contents.getvalue()})
-                self._brain_log_contents.truncate(0)
-                self._brain_log_contents.seek(0)
-            self.log(log_object)
+            self.robot.on_step(step_duration)
         self.step_count += 1
-        if self.step_count > 10000:  # So that no simulation runs forever TODO: Maybe this could be better?
-            self.client_future(CONTROLLER_COMPLETE)
         return timer()-start
 
-    def on_stop(self):
+    def log_step_info(self):
+        """ Log information about the current step. """
+        log_object = {'type': 'step', 'elapsed': self.elapsed, 'step': self.step_count, 'robot': self.robot.to_dict()}
+        if self._brain_log_contents.getvalue() != '':
+            log_object.update({'brain_print': self._brain_log_contents.getvalue()})
+            self._brain_log_contents.truncate(0)
+            self._brain_log_contents.seek(0)
+        self.log(log_object)
+
+    def pause(self):  # Stops the currently running step thread, if it exists
+        self.running = False
+        if self._step_thread:
+            self._step_thread.join()
+
+    def stop(self):
         """ Called when the controller is stopped. """
-        self.stop_thread()
+        self.pause()
         self.brain['on_stop']()
         self.robot.on_stop()
+        if self.log:  # Log position information after all steps have completed
+            self.log_step_info()
         self.started = False
         self.stopped = True
 
-    def on_shutdown(self):
+    def shutdown(self):
         """ Called when the controller is shut down. """
-        self.stop_thread()
+        self.pause()
         self.brain['on_shutdown']()
         self.robot.on_shutdown()
 
-    def on_failure(self):
+    def failure(self):
         """ Called when the controller fails. """
-        self.stop_thread()
+        self.pause()
         self.started = False
         self.stopped = True
         try:

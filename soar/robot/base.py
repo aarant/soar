@@ -1,42 +1,54 @@
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/robot/base.py
 """ Soar BaseRobot class, intended as a parent class for nontrivial/useful robots.
 
-All robots usable in Soar should either subclass from BaseRobot and re-implement its methods, or, if `fv` or `rv`,
-etc are not needed, subclass from :class:`soar.sim.world.WorldObject` and re-implement BaseRobot's methods.
+All robots usable in Soar should either subclass from BaseRobot or, if this is not possible, reproduce its behaviors.
 """
 from math import sin, cos
 
-from soar.errors import SoarError, SoarIOError
-from soar.sim.geometry import Pose
-from soar.sim.world import WorldObject
+from soar.errors import SoarIOError
+from soar.sim.geometry import Point, Pose
+from soar.sim.world import WorldObject, Polygon, Wall
 
 
 class BaseRobot(WorldObject):
     """ A base robot class, intended to be subclassed and overridden.
 
-    Any robot usable in SoaR should implement all of this class's methods, as well as any required additional behavior.
+    Any robot usable in SoaR should supplement or re-implement this class' methods with the desired behavior.
 
     Attributes:
-        type: (str): A human readable name for robots of this type.
+        type (str): A human readable name for robots of this type.
         world: The instance of :class:`soar.sim.world.World` (or a subclass) in which the robot resides, or `None`,
                if the robot is real.
         simulated (bool): Any BaseRobot subclass should consider the robot to be simulated if this is `True`, and real
                           otherwise. By default, it is `False`.
         pos: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
              In simulation, this is the actual position; on a real robot this may be determined through other means.
+        polygon: A :class:`soar.sim.world.Polygon` that defines the boundaries of the robot and is used for collision.
+        fv (float): The robot's current translational velocity, in arbitrary units. Positive values indicate movement
+            towards the front of the robot, and negative values indicate movement towards the back.
+        rv (float): The robot's current rotational velocity, in radians/second. Positive values indicate
+            counterclockwise rotation (when viewed from above), and negative values indicate clockwise rotation.
 
     Args:
+        polygon: A :class:`soar.sim.world.Polygon` that defines the boundaries of the robot and is used for collision.
         **options: Arbitrary keyword arguments. This may include Tkinter keywords passed to the `WorldObject`
-            constructor, or robot options also supported as arguments to `set_robot_options`.
+            constructor, or robot options supported as arguments to `set_robot_options`.
     """
 
-    def __init__(self, **options):
+    def __init__(self, polygon, **options):
         WorldObject.__init__(self, do_draw=True, do_step=True, **options)  # Robots are always drawn and stepped
         self.type = 'BaseRobot'
-        self.simulated = False
+        self.simulated = True
         self.world = None
         self.pos = Pose(0, 0, 0)
-        self.__fv = 0.0
-        self.__rv = 0.0
+        self.fv = 0.0
+        self.rv = 0.0
+        self.polygon = polygon
+        # The maximum radius, used for pushing the robot back before a collision
+        self._radius = sorted([polygon.center.distance(vertex) for vertex in polygon])[-1]
 
     def set_robot_options(self, **options):
         """ Set one or many keyworded, robot-specific options. Document these options here.
@@ -45,27 +57,6 @@ class BaseRobot(WorldObject):
             **options: `BaseRobot` does not support any robot options.
         """
         pass
-
-    @property
-    def fv(self):
-        """ `float` The robot's forward velocity.
-
-         The units of this value may be anything, and should be interpreted by a subclass as it wishes.
-         """
-        return self.__fv
-
-    @fv.setter
-    def fv(self, value):
-        self.__fv = value
-
-    @property
-    def rv(self):
-        """ `float` The robot's rotational velocity in radians/second. """
-        return self.__rv
-
-    @rv.setter
-    def rv(self, value):
-        self.__rv = value
 
     def to_dict(self):
         """ Return a dictionary representation of the robot, usable for serialization. """
@@ -79,7 +70,30 @@ class BaseRobot(WorldObject):
             pose: An :class:`soar.sim.geometry.Pose` or 3-tuple-like object to move the robot to.
         """
         x, y, t = pose
+        current_theta = self.pos[2]
         self.pos = Pose(x, y, t)
+        self.polygon.recenter(self.pos)
+        self.polygon.rotate(self.polygon.center, t - current_theta)
+
+    def collision(self, other, eps=1e-8):
+        """ Determine whether the robot collides with an object.
+
+        Supported objects include other robots, and subclasses of :class:`soar.sim.world.Polygon` and
+        :class:`soar.sim.world.Wall`.
+
+        Args:
+            other: A supported `WorldObject` subclass with which this object could potentially collide.
+            eps (float, optional): The epsilon within which to consider a collision to have occurred, different for
+                each subclass.
+
+        Returns:
+            list: A list of `(x, y)` tuples consisting of all the collision points with `other`, or `None`
+            if there weren't any.
+        """
+        if isinstance(other, BaseRobot):  # Dispatch to collisions between robot polygons
+            return self.polygon.collision(other.polygon, eps=eps)
+        elif isinstance(other, Polygon) or isinstance(other, Wall):
+            return self.polygon.collision(other, eps=eps)
 
     def draw(self, canvas):
         """ Draw the robot on a canvas.
@@ -87,7 +101,7 @@ class BaseRobot(WorldObject):
         Args:
             canvas: An instance of :class:`soar.gui.canvas.SoarCanvas`.
         """
-        raise SoarError('BaseRobot has no drawing method')
+        self.polygon.draw(canvas)
 
     def delete(self, canvas):
         """ Delete the robot from a canvas.
@@ -95,7 +109,7 @@ class BaseRobot(WorldObject):
         Args:
             canvas: An instance of :class:`soar.gui.canvas.SoarCanvas`.
         """
-        raise SoarError('BaseRobot has no canvas deletion method')
+        self.polygon.delete(canvas)
 
     def on_load(self):
         """ Called when the controller of the robot is loaded.
@@ -105,28 +119,58 @@ class BaseRobot(WorldObject):
         :class:`soar.errors.SoarIOError` should be raised to notify the client that the error was not due to other
         causes.
         """
-        raise SoarIOError('BaseRobot has no real interface to connect to')
+        if not self.simulated:
+            raise SoarIOError('BaseRobot has no real interface to connect to')
 
     def on_start(self):
         """ Called when the controller of the robot is started. 
         
-        This method is called exactly once per controller session--when the user first starts or steps the controller.
+        This method will always be called by the controller at most once per controller session, before the first step.
         """
+        pass
+
+    def on_pause(self):
+        """ Called when the controller is paused. """
         pass
 
     def on_step(self, step_duration):
         """ Called when the controller of the robot undergoes a single step of a specified duration.
 
-        For BaseRobot, this simply updates the robot's position in the world if it is simulated. Subclasses will
-        typically have more complex `on_step()` methods.
+        For BaseRobot, this tries to perform an integrated position update based on the forward and rotational
+        velocities. If the robot cannot move to the new position because there is an object in its way, it will be moved
+        to a safe space just before it would have collided.
+
+        Subclasses will typically have more complex `on_step()` methods, usually with behavior for stepping
+        non-simulated robots.
 
         Args:
             step_duration (float): The duration of the step, in seconds.
         """
-        if self.simulated:  # Updates the robot's pose in the world
-            theta = self.pos.xyt_tuple()[2]
-            d_x, d_y, d_t = cos(theta)*self.fv*step_duration, sin(theta)*self.fv*step_duration, self.rv*step_duration
-            self.pos = self.pos.transform(Pose(d_x, d_y, d_t))
+        if self.simulated:  # Do the simulated move update (with collision preemption)
+            # Try and make sure that the robot can actually move to its new location
+            # Integrate over the path, making the new position at the end of the arc
+            theta = self.pos[2]
+            d_t = self.rv*step_duration
+            new_theta = theta+d_t
+            if self.rv != 0:
+                d_x = self.fv*(sin(new_theta)-sin(theta))/self.rv
+                d_y = self.fv*(cos(theta)-cos(new_theta))/self.rv
+            else:
+                d_x, d_y = self.fv*cos(theta)*step_duration, self.fv*sin(theta)*step_duration
+            new_pos = self.pos.transform((d_x, d_y, d_t))
+            # Build a dummy wall between the old and new position and check if it collides with anything
+            w = Wall(self.pos.point(), new_pos.point(), dummy=True)
+            collisions = self.world.find_all_collisions(w, condition=lambda obj: obj is not self)
+            if collisions:  # If there were collisions, push the robot to a safe distance from the closest one
+                collisions.sort(key=lambda tup: self.pos.distance(tup[1]))
+                safe_point = Point(*collisions[0][1])
+                offset = Point(self._radius, 0.0).rotate((0, 0), new_pos[2])
+                safe_point = safe_point.sub(offset)
+                new_pos = Pose(safe_point.x, safe_point.y, new_pos[2])
+
+            self.pos = new_pos
+            self.polygon.recenter(new_pos)
+            self.polygon.rotate(self.polygon.center, d_t)
 
     def on_stop(self):
         """ Called when the controller of the robot is stopped. """

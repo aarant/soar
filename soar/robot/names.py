@@ -1,7 +1,8 @@
-""" Soar name generator, from serial numbers.
-
-TODO: Documentation?
-"""
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/robot/names.py
+""" Generate a neutral name from an arbitrary serial number string. """
 import random
 from math import sqrt, ceil
 
@@ -51,7 +52,7 @@ m = len(names)
 a = 74
 b = 99
 p = 149
-# while test_collisions() > 25 or not has_all() or name_from_sernum(str(2680)) != 'Ariel':
+# while test_collisions() > 25 or not has_all():
 #     p = 1
 #     while not is_prime(p):
 #         p = random.randint(m+1, 3*m)

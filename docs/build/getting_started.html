@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting Started &mdash; Soar 1.0.0.dev8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/>
+        <link rel="next" title="Brains" href="brain_docs.html"/>
+        <link rel="prev" title="Soar Documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Soar
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0.dev8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#from-pypi">From PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#from-releases">From Releases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#from-latest-source">From latest source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gui">GUI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-headless">Command Line/Headless</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#in-another-project">In another project</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="brain_docs.html">Brains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="soar.html">Module Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Soar</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Getting Started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This guide will outline how to install and use Soar. For greater detail see the documentation on
+<a class="reference internal" href="brain_docs.html"><span class="doc">brains</span></a> and <a class="reference internal" href="world_docs.html"><span class="doc">worlds</span></a>, or perhaps the <a class="reference internal" href="soar.html"><span class="doc">Module Documentation</span></a>.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Installing Soar is (hopefully) painless and primarily done 3 ways, ordered by decreasing ease:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Most Python installations will already have <code class="xref py py-obj docutils literal"><span class="pre">setuptools</span></code>, necessary to install Soar, but if not, see <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/">this documentation</a> to install it.</li>
+<li>Installing Soar will also install <a class="reference external" href="https://pythonhosted.org/pyserial/">pyserial</a> version 3.0 or later.</li>
+<li>Soar was developed exclusively with <a class="reference external" href="https://www.python.org/downloads/release/python-350/">Python 3.5</a> or later in mind. Your mileage may vary or be nonexistent if using an earlier version.</li>
+</ul>
+</div>
+<div class="section" id="from-pypi">
+<h3>From PyPI<a class="headerlink" href="#from-pypi" title="Permalink to this headline">¶</a></h3>
+<p>Soar can be installed from the <a class="reference external" href="https://pypi.python.org/pypi">Python Package Index (PyPI)</a> by running <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">soar</span></code>.</p>
+<p>This will install the latest stable (not development) release.</p>
+</div>
+<div class="section" id="from-releases">
+<h3>From Releases<a class="headerlink" href="#from-releases" title="Permalink to this headline">¶</a></h3>
+<p>An arbitrary stable (not development) Soar release can be installed from the <a class="reference external" href="https://github.com/arantonitis/soar/releases">github releases</a>, by downloading the
+<code class="xref py py-obj docutils literal"><span class="pre">zip</span></code> archive and running <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&lt;path-to-zip&gt;</span></code>.</p>
+</div>
+<div class="section" id="from-latest-source">
+<h3>From latest source<a class="headerlink" href="#from-latest-source" title="Permalink to this headline">¶</a></h3>
+<p>Clone or download the <a class="reference external" href="https://github.com/arantonitis/soar">git repo</a>, navigate to the directory, then run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span>
+<span class="n">cd</span> <span class="n">dist</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">Soar</span><span class="o">-&lt;</span><span class="n">version</span><span class="o">&gt;.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>There are two major ‘modes’ of operation that Soar offers: simulation of a robot (and possibly other objects), or connecting via a robot-defined
+interface. The latter is only usable when running from the GUI; when running headless or from another project, only simulation may be used.</p>
+<p>Soar’s functionality can be accessed through multiple interfaces, documented below.</p>
+<p>Also see the documentation for <a class="reference internal" href="brain_docs.html"><span class="doc">Brains</span></a> and <a class="reference internal" href="world_docs.html"><span class="doc">Worlds</span></a>.</p>
+<div class="section" id="gui">
+<h3>GUI<a class="headerlink" href="#gui" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center" id="id1">
+<img alt="_images/gui.png" src="_images/gui.png" />
+<p class="caption"><span class="caption-text">Soar v1.0.0dev3 in KDE</span></p>
+</div>
+<p>Soar can be started in GUI mode simply by running <code class="docutils literal"><span class="pre">soar</span></code> from the command line. The main interface is fully resizable.</p>
+<p>From the main interface, there are multiple panels to interact with:</p>
+<ol class="arabic simple">
+<li>The playback panel. When a robot controller has been loaded, either simulated or through some robot-defined interface, this is available
+and can be used to control playback. Pressing the <code class="docutils literal"><span class="pre">Play</span></code> button for the first time will start the controller and repeatedly step the robot.
+Pressing it while a simulation is running will <code class="docutils literal"><span class="pre">Pause</span></code> it. The <code class="docutils literal"><span class="pre">Step</span></code> button, and its associated entry, will step the controller that many
+times, although this functionality is only available for simulations. The <code class="docutils literal"><span class="pre">Stop</span></code> button stops the controller, and the <code class="docutils literal"><span class="pre">Reload</span></code> button reloads
+the currently loaded brain and world.</li>
+<li>The brain/world loading panel. These buttons are used to load Soar brains and worlds. The default directory for brains is the user’s home
+directory. The default directory for worlds is Soar’s own soar/worlds/ directory, installed with the project. In order to simulate a robot,
+both a brain and world must be loaded. If connecting through a robot-defined interface, only a brain must be loaded and any loaded world will be
+ignored.</li>
+<li>The simulation/connect panel. These buttons are used to prepare for simulation, or connecting to a robot-defined interface. If a controller has
+already been loaded, clicking either of these will kill it and reload the brain and/or world and prepare a controller of the desired type.</li>
+<li>The output panel. All controller-related output will appear here. Any text the brain prints to <code class="docutils literal"><span class="pre">stdout</span></code> (via <code class="xref py py-obj docutils literal"><span class="pre">print()</span></code>) will appear prefixed by
+<code class="xref py py-obj docutils literal"><span class="pre">'&gt;&gt;&gt;'</span></code>. If an exception occurs when running the controller, its full traceback will also be printed here. The panel is cleared whenever a reload
+occurs.</li>
+</ol>
+<div class="figure align-center" id="id2">
+<img alt="_images/sim.png" src="_images/sim.png" />
+<p class="caption"><span class="caption-text">Soar v1.0.0dev3 Simulation in KDE</span></p>
+</div>
+<p>The simulation window opens whenever a simulation controller is loaded. Soar widgets like <a class="reference internal" href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow" title="soar.gui.plot_window.PlotWindow"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.plot_window.PlotWindow</span></code></a> are linked to this
+window, and will be closed whenever it is closed. User-created windows may also be linked to it via use of the <a class="reference internal" href="soar.hooks.html#soar.hooks.tkinter_hook" title="soar.hooks.tkinter_hook"><code class="xref py py-func docutils literal"><span class="pre">soar.hooks.tkinter_hook()</span></code></a>.</p>
+<p>The simulation window opens with a default maximum dimension (width or height) of 500 pixels, but may be resized to any size that matches the aspect
+ratio of the corresponding world.</p>
+</div>
+<div class="section" id="command-line-headless">
+<h3>Command Line/Headless<a class="headerlink" href="#command-line-headless" title="Permalink to this headline">¶</a></h3>
+<p>See the <a class="reference internal" href="command_line.html"><span class="doc">Command Line Reference</span></a> and the documentation for <a class="reference internal" href="logging.html"><span class="doc">Logging</span></a>.</p>
+<p>When running in headless mode, both a brain and world file are required. The simulation will be immediately started, and may never complete if the
+brain does not raise an exception or call <a class="reference internal" href="soar.hooks.html#soar.hooks.sim_completed" title="soar.hooks.sim_completed"><code class="xref py py-func docutils literal"><span class="pre">soar.hooks.sim_completed()</span></code></a>. Typical usage might be to capture the <code class="docutils literal"><span class="pre">stdout</span></code> and <code class="docutils literal"><span class="pre">stderr</span></code> of the
+process, terminate it after a set period or time, or ensure that the brain will end the simulation at some point.</p>
+</div>
+<div class="section" id="in-another-project">
+<h3>In another project<a class="headerlink" href="#in-another-project" title="Permalink to this headline">¶</a></h3>
+<p>To use Soar from within another Python project, import <a class="reference internal" href="soar.client.html#soar.client.main" title="soar.client.main"><code class="xref py py-func docutils literal"><span class="pre">soar.client.main()</span></code></a> and pass arguments accordingly. Unless you desire to build Soar’s
+GUI interface when invoking this function, you will have to pass <code class="xref py py-obj docutils literal"><span class="pre">headless=True</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When using Soar’s entrypoint from another Python project, you have the advantage of being able to use file-like objects such as <code class="xref py py-obj docutils literal"><span class="pre">StringIO</span></code>
+as log outputs instead of actual files.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="brain_docs.html" class="btn btn-neutral float-right" title="Brains" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Soar Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Andrew Antonitis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0.dev8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

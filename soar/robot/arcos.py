@@ -1,9 +1,11 @@
-""" ARCOS (Advanced Robot Control and Operations Software) Client
+# Soar (Snakes on a Robot): A Python robotics framework.
+# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+#
+# soar/robot/arcos.py
+""" ARCOS (Advanced Robot Control and Operations Software) Client.
 
 Classes and functions for communicating with an ARCOS server running on an Adept MobileRobot platform
 (typically Pioneer 2 and 3).
-
-TODO: ARCOS Command ordering
 """
 from threading import Thread, Lock, Event
 from time import sleep
@@ -18,36 +20,47 @@ __version__ = '1.0'
 
 # ARCOS Client command codes
 
-SYNC0 = 0  # Synchronization packets, sent in sequence
-SYNC1 = 1
-SYNC2 = 2  # Robot specific information is sent back after SYNC2
-PULSE = 0  #: Reset server watchdog (typically sent every second so that the robot knows the client is alive.
+SYNC0 = 0  #: The initial synchronization packet.
+SYNC1 = 1  #: The second synchronization packet.
+SYNC2 = 2  # The final synchronization packet. Robot specific information is sent back after this packet.
+PULSE = 0  #: Reset server watchdog (typically sent every second so that the robot knows the client is alive).
 OPEN = 1  #: Start the ARCOS servers.
-CLOSE = 2  # Close servers and client connection
-POLLING = 3  # Change sonar polling sequence
-ENABLE = 4  # if argument is 1, enables the motors, if 0, disables them
-SETA = 5  # Set translation acceleration, if positive, or deceleration, if negative, in mm/sec^2
-SETV = 6  # Set maximum translation velocity in mm/sec
-SETO = 7  # Reset local position to 0,0,0 origin
-MOVE = 8  # Translate forward (+) or backward (-) mm distance at SETV speed
-ROTATE = 9  # Rotate counter- (+) or clockwise (-) degrees/sec at SETRV limited speed
-SETRV = 10  # Sets maximum rotation velocity in degrees/sec
-VEL = 11  # Translate at mm/sec forward (if positive) or backward (if negative), limited to velocity cap
-HEAD = 12  # Turn at SETRV speed to absolute heading; +-degrees (+ is counterclockwise)
-DHEAD = 13  # Turn at SETRV speed relative to current heading; (+) counter- or (-) clockwise degrees
-SAY = 15  # Play up to 20 duration, tone sound pairs through User Control panel piezo speaker
-JOYREQUEST = 17  # Request 1 or continuous stream (>1) or stop (0) joystick SIPS
-CONFIG = 18  # Request a configuration SIP
-ENCODER = 19  # Request one, a continuous stream (>1), or stop (0) encoder SIPS
-RVEL = 21  # Rotate (degrees/sec) counterclockwise (positive) or clockwise (negative)
-DCHEAD = 22  # Adjust heading relative to last setpoint; +- degrees (+ is counterclockwise)
-SETRA = 23  # Change rotation (+) acceleration or (-) deceleration in degrees/sec^2
-SONAR = 28  # 1=enable, 0=disable all the sonar; otherwise bits 1-3 specify an array from 1-4
-STOP = 29  # Stops the robot without disabling the motors
-DIGOUT = 30  # Set (1) or reset (0) User Output ports. Bits 8-15 is a byte mask that selects, if set the output ports
-VEL2 = 32  # Set independent wheel velocities; bits 0-7 for right wheel, bits 8-15 for left wheel in 20mm/sec increments
-IOREQUEST = 40  # Requires a single (1) or continuous stream (2), or stop (0) IO SIPS
-SOUNDTOG = 92
+CLOSE = 2  #: Close servers and client connection. Also stops the robot.
+POLLING = 3  #: Change sonar polling sequence. Argument is a string consisting of sonar numbers 1-32 (as single bytes).
+ENABLE = 4  #: Enable the motors, if argument is 1, or disable them if it is 0.
+SETA = 5  #: Set translation acceleration, if positive, or deceleration, if negative, in mm/sec^2.
+SETV = 6  #: Set maximum translational velocity in mm/sec. Note that the robot is still limited by the hardware cap.
+SETO = 7  #: Reset local odometry position to the origin `(0, 0, 0)`.
+MOVE = 8  #: Translate forward (+) or backward (-) mm absolute distance at `SETV` speed.
+ROTATE = 9  #: Rotate counter- (+) or clockwise (-) degrees/sec at `SETRV` limited speed.
+SETRV = 10  #: Set maximum rotation velocity in degrees/sec. Note that the robot is still limited by the hardware cap.
+VEL = 11  #: Translate at mm/sec forward (+) or backward (-), capped by `SETV`.
+HEAD = 12  #: Turn at `SETRV` speed to absolute heading; +-degrees (+ is counterclockwise).
+DHEAD = 13  #: Turn at `SETRV` speed relative to current heading; (+) counterclockwise or (-) clockwise degrees.
+SAY = 15
+""" Play up to 20 duration, tone sound pairs through User Control panel piezo speaker.
+The argument is a string consisting of duration, tone pair bytes. Duration is in 20 millisecond increments.
+A value of 0 means silence. The values 1-127 are the corresponding MIDI notes. The remaining values are frequencies
+computed as `tone - 127*32` equivalent frequencies from 1-4096, in 32Hz increments.
+"""
+CONFIG = 18  #: Request a configuration SIP.
+ENCODER = 19  #: Request a single (1), a continuous stream (>1), or stop (0) encoder SIPS.
+RVEL = 21  #: Rotate (degrees/sec) counterclockwise (+) or clockwise (-). Limited by `SETRV`.
+DCHEAD = 22  #: Adjust heading relative to last setpoint; +- degrees (+ is counterclockwise).
+SETRA = 23  #: Change rotation (+) acceleration or (-) deceleration in degrees/sec^2
+SONAR = 28  #: 1=enable, 0=disable all the sonar; otherwise bits 1-3 specify an array from 1-4 to enable/disable.
+STOP = 29  #: Stop the robot without disabling the motors.
+DIGOUT = 30  #: Set (1) or reset (0) User Output ports. Bits 8-15 is a byte mask that selects, if set the output ports
+""" Set (1) or reset (0) user output ports. High bits 8-15 is a byte mask that selects the ports to change;
+low bits 0-7 set (1) or reset (0) the selected port(s).
+"""
+VEL2 = 32  #: Set independent wheel velocities; bits 0-7 for right wheel, bits 8-15 for left in 20mm/sec increments.
+ADSEL = 35  #: Select the A/D port number for reporting ANPORT value in standard SIP.
+IOREQUEST = 40  #: Request a single (1), a continuous stream (>1), or stop (0) IO SIPS.
+BUMPSTALL = 44  #: Stall robot if no (0), only front (1), only rear (2), or either (3) bumpers make contact.
+SONARCYCLE = 48  #: Change the sonar cycle time, in milliseconds.
+E_STOP = 55  #: Emergency stop. Overrides acceleration, so is very abrupt.
+SOUNDTOG = 92  #: Mute (0) or enable (1) the user control piezo speaker.
 
 command_types = {
     PULSE: None,
@@ -57,7 +70,7 @@ command_types = {
     ENABLE: int,
     SETA: int,
     SETV: int,
-    SETO: int,
+    SETO: None,
     MOVE: int,
     ROTATE: int,
     SETRV: int,
@@ -65,7 +78,6 @@ command_types = {
     HEAD: int,
     DHEAD: int,
     SAY: str,
-    JOYREQUEST: int,
     CONFIG: None,
     ENCODER: int,
     RVEL: int,
@@ -75,9 +87,14 @@ command_types = {
     STOP: None,
     DIGOUT: int,
     VEL2: int,
+    ADSEL: int,
     IOREQUEST: int,
+    BUMPSTALL: int,
+    SONARCYCLE: int,
+    E_STOP: None,
     SOUNDTOG: int,
 }
+""" The argument type of every supported ARCOS command. """
 
 
 class ARCOSError(SoarError):
@@ -163,7 +180,7 @@ def decode_packet(packet):
         if data['TYPE'] in [0x32, 0x33]:  # Standard sip
             data['TYPE'] = 'STANDARD'
             __unpack_int_fields(data, packet, 4, 'XPOS', 'YPOS', 'THPOS', 'L VEL', 'R VEL')
-            data.update({'BATTERY': packet[14]})
+            data['BATTERY'] = packet[14]
             __unpack_int_fields(data, packet, 15, 'STALL AND BUMPERS', 'CONTROL', 'FLAGS')
             data.update({'COMPASS': packet[21], 'SONAR_COUNT': packet[22]})
             sonars = {}
@@ -174,6 +191,12 @@ def decode_packet(packet):
                 sonars.update({number: dist})
                 i += 3
             data.update({'SONARS': sonars})
+            i = __unpack_byte_fields(data, packet, i, 'GRIP_STATE', 'ANPORT', 'ANALOG', 'DIGIN', 'DIGOUT')
+            data.update({'BATTERYX10': __b_2_i(packet, i)})
+            i += 2
+            data['CHARGE_STATE'] = packet[i]
+            i += 1
+            data['ROTVEL'] = __b_2_i(packet, i)
         elif data['TYPE'] == 0x20:  # CONFIGpac
             data['TYPE'] = 'CONFIG'
             i = __unpack_str_fields(data, packet, 4, 'ROBOT_TYPE', 'SUBTYPE', 'SERNUM')
@@ -184,8 +207,10 @@ def decode_packet(packet):
             i = __unpack_byte_fields(data, packet, i, 'SIPCycle', 'HOSTBAUD', 'AUXBAUD')
             i = __unpack_int_fields(data, packet, i, 'GRIPPER', 'FRONT_SONAR')
             data.update({'REAR_SONAR': packet[i]})
-            i += 1
-            data.update({'LOWBATTERY': __b_2_i(packet, i)})
+            i = __unpack_int_fields(data, packet, i+1, 'LOWBATTERY', 'REVCOUNT', 'WATCHDOG')
+            data.update({'P2MPACS': packet[i]})
+            i = __unpack_int_fields(data, packet, i+1, 'STALLVAL', 'STALLCOUNT', 'JOYVEL', 'JORVEL', 'ROTVELMAX',
+                                    'TRANSVELMAX')
         elif data['TYPE'] == 0x90:  # ENCODERpac
             data['TYPE'] = 'ENCODER'
             data.update({'L_ENCODER': (__b_2_i(packet, 6) << 16) | __b_2_i(packet, 4),
@@ -214,7 +239,7 @@ class ARCOSClient:
 
     Attributes:
         standard (dict): The last standard Server Information Packet (SIP) received, or `None`, if one hasn't been
-        received yet.
+            received yet.
         config (dict): The last CONFIGpac SIP received, or `None`, if one hasn't been received yet.
         encoder (dict): The last ENCODERpac SIP received, or `None`, if one hasn't been received yet.
         io (dict): The last IOpac SIP received, or `None`, if one hasn't been received yet.
@@ -375,10 +400,10 @@ class ARCOSClient:
             except SerialException:  # Ignore errors that occur and assume the port is closed
                 pass
 
-    def sync(self, tries=6):
+    def sync(self, tries=4):
         """ Try to sync with an ARCOS server connected over an open serial port.
 
-         Returns if successful.
+        Returns the raw robot identifying information packet sent after `SYNC2` if successful.
 
         Args:
             tries (int, optional): The number of failures to tolerate before timing out.
@@ -387,11 +412,10 @@ class ARCOSClient:
             `Timeout`: If the number of tries is exhausted and syncing was not completed.
         """
         for sync in [SYNC0, SYNC1, SYNC2]:
-            echo = None
-            while sync != echo:
+            while True:
                 self.send_packet(sync)
                 try:
-                    received = self.receive_packet()
+                    echo = self.receive_packet()
                 except Timeout:
                     tries -= 1
                 except InvalidPacket:  # Try flushing the input/output buffers
@@ -399,10 +423,13 @@ class ARCOSClient:
                     self.ser.reset_output_buffer()
                     tries -= 1
                 else:
-                    echo = received[3]
+                    if sync == echo[3]:
+                        break
+                    else:
+                        tries -= 1
                 if tries < 0:
                     raise Timeout('An error occurred while syncing')
-        return
+        return echo
 
     def pulse(self):
         """ Continually send the PULSE command so that the robot knows the client is alive. """
@@ -460,11 +487,12 @@ class ARCOSClient:
                 self.send_command(SONAR, 1)
                 sleep(1.0)
             else:
-                break
+                return
         if self.standard['FLAGS'] & 0x2 != 0x2:  # If they still aren't enabled, raise an exception
             raise ARCOSError('Unable to enable the robot sonars.')
 
-    def wait_or_timeout(self, event, timeout=1.0, timeout_msg=''):
+    @staticmethod
+    def wait_or_timeout(event, timeout=1.0, timeout_msg=''):
         """ Wait for an event to occur, with an optional timeout and message.
 
         Args:

@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Brains &mdash; Soar 1.0.0.dev8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/>
+        <link rel="next" title="Worlds" href="world_docs.html"/>
+        <link rel="prev" title="Getting Started" href="getting_started.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Soar
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0.dev8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Brains</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#properties">Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hooks">Hooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="soar.html">Module Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Soar</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Brains</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/brain_docs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="brains">
+<h1>Brains<a class="headerlink" href="#brains" title="Permalink to this headline">¶</a></h1>
+<p>A Soar brain is a Python module used to control a robot. Brains can be used to control the movement of a simulated robot, connect to a real interface
+to control a real one, or multiplex between the two. Whenever a brain is loaded by Soar, the content of the module is compiled and executed in an
+isolated namespace, meaning that variable names will not conflict with those defined by Soar, except where documented below. All Python builtins are
+available to brains–they are normal Python modules with certain reserved words used by Soar.</p>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p>A brain file must have the following attributes to be usable in Soar:</p>
+<ul class="simple">
+<li><code class="xref py py-obj docutils literal"><span class="pre">robot</span></code>: This should be an instance of <a class="reference internal" href="soar.robot.base.html#soar.robot.base.BaseRobot" title="soar.robot.base.BaseRobot"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.base.BaseRobot</span></code></a>, an instance of a subclass (like <a class="reference internal" href="soar.robot.pioneer.html#soar.robot.pioneer.PioneerRobot" title="soar.robot.pioneer.PioneerRobot"><code class="xref py py-class docutils literal"><span class="pre">soar.robot.pioneer.PioneerRobot</span></code></a>,
+or some object that supports identical methods. <code class="xref py py-obj docutils literal"><span class="pre">robot</span></code> is what defines the interface, if any, to connect to something outside of Soar, as well as
+what can be done with that robot type–i.e movement, sensor readings, etc.</li>
+<li><code class="xref py py-obj docutils literal"><span class="pre">on_load()</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">on_start()</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">on_step(duration)</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">on_stop()</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">on_shutdown()</span></code> functions. While not strictly necessary (if any of these are not
+defined, they will be silently replaced by empty functions by Soar, they are the main ways in which the brain actually interacts with the controller.<ul>
+<li><code class="xref py py-obj docutils literal"><span class="pre">on_load()</span></code> is called exactly once, when the controller is loaded, and always after the robot’s corresponding <code class="xref py py-obj docutils literal"><span class="pre">on_load()</span></code> method.</li>
+<li><code class="xref py py-obj docutils literal"><span class="pre">on_start()</span></code> is also called exactly once, when the controller is started for the first time, just before the first actual step. The robot’s
+<code class="xref py py-obj docutils literal"><span class="pre">on_start()</span></code> method is always called just before the brain’s.</li>
+<li><code class="xref py py-obj docutils literal"><span class="pre">on_step(duration)</span></code> is called whenever the controller steps, <em>before</em> the robot’s <code class="xref py py-obj docutils literal"><span class="pre">on_step(duration)</span></code> method is called. <code class="xref py py-obj docutils literal"><span class="pre">duration</span></code> specifies how
+long the step lasts, which may not be constant from step to step. Note that if this function takes longer to execute than <code class="xref py py-obj docutils literal"><span class="pre">duration</span></code>, the
+<code class="xref py py-obj docutils literal"><span class="pre">duration</span></code> argument that the robot receives will be lengthened accordingly.</li>
+<li><code class="xref py py-obj docutils literal"><span class="pre">on_stop()</span></code> is called exactly once when the controller stops, <em>before</em> the robot’s <code class="xref py py-obj docutils literal"><span class="pre">on_stop()</span></code> method is called.</li>
+<li><code class="xref py py-obj docutils literal"><span class="pre">on_shutdown()</span></code> is called exactly once when the controller is shut down, <em>before</em> the robot’s <code class="xref py py-obj docutils literal"><span class="pre">on_shutdown()</span></code> method. Typically, this function
+performs any cleanup desired.</li>
+</ul>
+</li>
+</ul>
+<p>These names should be considered reserved by Soar when used in a brain module.</p>
+</div>
+<div class="section" id="hooks">
+<h2>Hooks<a class="headerlink" href="#hooks" title="Permalink to this headline">¶</a></h2>
+<p>Hooks are optional functions that brains can import to interact with Soar on a more flexible level than the controller provides. Hooks include everything
+defined in <a class="reference internal" href="soar.hooks.html#module-soar.hooks" title="soar.hooks"><code class="xref py py-mod docutils literal"><span class="pre">soar.hooks</span></code></a>, as well as GUI widgets like <a class="reference internal" href="soar.gui.plot_window.html#soar.gui.plot_window.PlotWindow" title="soar.gui.plot_window.PlotWindow"><code class="xref py py-class docutils literal"><span class="pre">soar.gui.plot_window.PlotWindow</span></code></a>.</p>
+<p>The names of hooks, as well as widget names like <code class="xref py py-obj docutils literal"><span class="pre">PlotWindow</span></code>, should be considered reserved names and not used otherwise, as the client detects their
+presence by name.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you import any hooks or widgets, attempting to use them in the main body of the brain module (that is, outside of the controller methods) will
+fail, because they have not yet been redefined until after the module has loaded. Use hooks or widgets only within methods called by the controller.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="world_docs.html" class="btn btn-neutral float-right" title="Worlds" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting_started.html" class="btn btn-neutral" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Andrew Antonitis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0.dev8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

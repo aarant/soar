@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.plot_window &mdash; Soar 1.0.0.dev2 documentation</title>
+  <title>soar.gui.plot_window &mdash; Soar 1.0.0.dev8 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.gui.soar_ui" href="soar.gui.soar_ui.html"/>
         <link rel="prev" title="soar.gui.output" href="soar.gui.output.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev2
+                1.0.0.dev8
               </div>
             
           
@@ -93,7 +93,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brain_docs.html">Brains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">Module Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.common.html">soar.common</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
@@ -105,6 +109,8 @@
 <li class="toctree-l3"><a class="reference internal" href="soar.gui.soar_ui.html">soar.gui.soar_ui</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="soar.hooks.html">soar.hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_line.html">Command Line Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
 </ul>
@@ -178,60 +184,79 @@
             
   <div class="section" id="module-soar.gui.plot_window">
 <span id="soar-gui-plot-window"></span><h1>soar.gui.plot_window<a class="headerlink" href="#module-soar.gui.plot_window" title="Permalink to this headline">¶</a></h1>
-<p>Soar plotting classes.</p>
 <p>Tkinter wrapper for plotting using <a class="reference external" href="http://matplotlib.org">matplotlib</a></p>
-<p>TODO: Determine whether reafter code is necessary, etc, add PlotWindow documentation.
-TODO: Make sure plots are actually saved when the simulation is completed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Unlike use of the <a class="reference internal" href="soar.hooks.html#soar.hooks.tkinter_hook" title="soar.hooks.tkinter_hook"><code class="xref py py-func docutils literal"><span class="pre">soar.hooks.tkinter_hook()</span></code></a>, use of this module will not force brain methods to run on the
+main thread alongside Soar’s GUI event loop.</p>
+<p><a class="reference internal" href="#soar.gui.plot_window.PlotWindow" title="soar.gui.plot_window.PlotWindow"><code class="xref py py-obj docutils literal"><span class="pre">PlotWindow</span></code></a> is wrapped by the client if it is imported by a Soar brain. This wrapper ensures that the proper mode
+(GUI or headless) is enforced, despite what the brain might pass to the constructor.</p>
+<p class="last">The client will also ensure that, if logging is occurring, any <a class="reference internal" href="#soar.gui.plot_window.PlotWindow" title="soar.gui.plot_window.PlotWindow"><code class="xref py py-obj docutils literal"><span class="pre">PlotWindow</span></code></a> objects will have their image data
+included in the log whenever the controller is shut down.</p>
+</div>
+<p>Based on code written by Adam Hartz, August 1st 2012.</p>
 <dl class="class">
 <dt id="soar.gui.plot_window.PlotWindow">
-<em class="property">class </em><code class="descclassname">soar.gui.plot_window.</code><code class="descname">PlotWindow</code><span class="sig-paren">(</span><em>title='Plotting Window'</em>, <em>visible=True</em>, <em>toplevel=&lt;class 'tkinter.Toplevel'&gt;</em>, <em>log=None</em>, <em>linked=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.gui.plot_window.</code><code class="descname">PlotWindow</code><span class="sig-paren">(</span><em>title='Plotting Window'</em>, <em>visible=True</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">matplotlib.figure.Figure</span></code></p>
-<p>Tk window containing a matplotlib plot.  In addition to the functions
-described below, also supports all functions contained in matplotlib’s
-<a class="reference external" href="http://matplotlib.sourceforge.net/api/axes_api.html">Axes</a> and <a class="reference external" href="http://matplotlib.sourceforge.net/api/figure_api.html">Figure</a> objects.</p>
+<p>Tk window containing a matplotlib plot. In addition to the functions described below, also supports all
+functions contained in matplotlib’s <a class="reference external" href="http://matplotlib.sourceforge.net/api/axes_api.html">Axes</a> and <a class="reference external" href="http://matplotlib.sourceforge.net/api/figure_api.html">Figure</a> objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>title</strong> (<em>str</em>) – The title to be used for the initial window.</li>
+<li><strong>visible</strong> (<em>bool</em>) – Whether to actually display a Tk window (set to <code class="xref py py-obj docutils literal"><span class="pre">False</span></code> to create and save plots without
+displaying a window).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.clear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clear the plot, keeping the Tk window active</p>
+<dd><p>Clear the plot, keeping the Tk window active.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.destroy">
 <code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.destroy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Destroy the Tk window.  Note that after calling this method (or
-manually closing the Tk window), this <a class="reference internal" href="#soar.gui.plot_window.PlotWindow" title="soar.gui.plot_window.PlotWindow"><code class="xref py py-class docutils literal"><span class="pre">PlotWindow</span></code></a> cannot be
+<dd><p>Destroy the Tk window.</p>
+<p>Note that after calling this method (or manually closing the Tk window), this <a class="reference internal" href="#soar.gui.plot_window.PlotWindow" title="soar.gui.plot_window.PlotWindow"><code class="xref py py-class docutils literal"><span class="pre">PlotWindow</span></code></a> cannot be
 used.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.legend">
 <code class="descname">legend</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.legend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a legend for the figure (requires plots to have been made with
-labels)</p>
+<dd><p>Create a legend for the figure (requires plots to have been made with labels)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="soar.gui.plot_window.PlotWindow.makeWindow">
-<code class="descname">makeWindow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.makeWindow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pack the plot and matplotlib toolbar into the containing Tk window
-(called by initializer; you will probably never need to use this).</p>
+<dt id="soar.gui.plot_window.PlotWindow.make_window">
+<code class="descname">make_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.make_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pack the plot and matplotlib toolbar into the containing Tk window.</p>
+<p>This method is called during initialization and it is unlikely you will need to call it elsewhere.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.plot">
 <code class="descname">plot</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.plot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Plot lines and/or markers to the Axes. See <a class="reference external" href="https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot">pyplot</a> for more information.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save this plot as an image.  File type determined by extension of filename passed in.
-See documentation for <a class="reference external" href="http://matplotlib.sourceforge.net/api/figure_api.html">savefig</a>.</p>
+<code class="descname">save</code><span class="sig-paren">(</span><em>fname</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save this plot as an image.  File type determined by extension of filename passed in.</p>
+<p>See documentation for <a class="reference external" href="http://matplotlib.sourceforge.net/api/figure_api.html">savefig</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fname</strong> – The name of the file to create.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fname</strong> – The file to create, which may be a path or a file-like object.</td>
 </tr>
 </tbody>
 </table>
@@ -240,14 +265,13 @@ See documentation for <a class="reference external" href="http://matplotlib.sour
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.show">
 <code class="descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the canvas image (automatically called for most functions)</p>
+<dd><p>Update the canvas image (automatically called for most functions).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="soar.gui.plot_window.PlotWindow.stay">
 <code class="descname">stay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.PlotWindow.stay" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the Tkinter window’s main loop (e.g., to keep the plot open at
-the end of the execution of a script)</p>
+<dd><p>Start the Tkinter window’s main loop (e.g., to keep the plot open at the end of the execution of a script)</p>
 </dd></dl>
 
 <dl class="method">
@@ -257,11 +281,6 @@ the end of the execution of a script)</p>
 </dd></dl>
 
 </dd></dl>
-
-<dl class="function">
-<dt id="soar.gui.plot_window.reafter">
-<code class="descclassname">soar.gui.plot_window.</code><code class="descname">reafter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.plot_window.reafter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 
@@ -309,7 +328,7 @@ the end of the execution of a script)</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev2',
+            VERSION:'1.0.0.dev8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

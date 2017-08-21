@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>soar.gui.output &mdash; Soar 1.0.0.dev2 documentation</title>
+  <title>soar.gui.output &mdash; Soar 1.0.0.dev8 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Soar 1.0.0.dev2 documentation" href="index.html"/>
+    <link rel="top" title="Soar 1.0.0.dev8 documentation" href="index.html"/>
         <link rel="up" title="soar.gui" href="soar.gui.html"/>
         <link rel="next" title="soar.gui.plot_window" href="soar.gui.plot_window.html"/>
         <link rel="prev" title="soar.gui.canvas" href="soar.gui.canvas.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0.dev2
+                1.0.0.dev8
               </div>
             
           
@@ -93,7 +93,11 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="soar.html">soar</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brain_docs.html">Brains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_docs.html">Worlds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="soar.html">Module Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="soar.client.html">soar.client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.common.html">soar.common</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.controller.html">soar.controller</a></li>
@@ -105,6 +109,8 @@
 <li class="toctree-l3"><a class="reference internal" href="soar.gui.soar_ui.html">soar.gui.soar_ui</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="soar.hooks.html">soar.hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_line.html">Command Line Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.robot.html">soar.robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="soar.sim.html">soar.sim</a></li>
 </ul>
@@ -180,17 +186,20 @@
 <span id="soar-gui-output"></span><h1>soar.gui.output<a class="headerlink" href="#module-soar.gui.output" title="Permalink to this headline">¶</a></h1>
 <p>Soar output classes.</p>
 <p>Tk widgets allowing the capture and display of text output in the GUI.</p>
-<p>TODO: Make output capturing more elegant.</p>
 <dl class="class">
 <dt id="soar.gui.output.OutputFrame">
-<em class="property">class </em><code class="descclassname">soar.gui.output.</code><code class="descname">OutputFrame</code><span class="sig-paren">(</span><em>master</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.output.OutputFrame" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">soar.gui.output.</code><code class="descname">OutputFrame</code><span class="sig-paren">(</span><em>master</em>, <em>initial_text=''</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.output.OutputFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tkinter.Frame</span></code></p>
 <p>A read-only Tk output frame that can display normal and error output.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>master</strong> – The parent widget or window.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>master</strong> – The parent widget or window.</li>
+<li><strong>initial_text</strong> (<em>str</em><em>, </em><em>optional</em>) – The text to have initially in the output frame.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -250,12 +259,6 @@ and the <code class="xref py py-obj docutils literal"><span class="pre">'error'<
 </dd></dl>
 
 <dl class="class">
-<dt id="soar.gui.output.OutputRedirect">
-<em class="property">class </em><code class="descclassname">soar.gui.output.</code><code class="descname">OutputRedirect</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.output.OutputRedirect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="class">
 <dt id="soar.gui.output.SoarIO">
 <em class="property">class </em><code class="descclassname">soar.gui.output.</code><code class="descname">SoarIO</code><span class="sig-paren">(</span><em>write_func</em><span class="sig-paren">)</span><a class="headerlink" href="#soar.gui.output.SoarIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">_io.StringIO</span></code></p>
@@ -312,7 +315,7 @@ and the <code class="xref py py-obj docutils literal"><span class="pre">'error'<
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0.dev2',
+            VERSION:'1.0.0.dev8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

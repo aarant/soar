@@ -1,5 +1,5 @@
 soar
-============
+====================
 
 .. automodule:: soar
     :members:
@@ -13,5 +13,7 @@ soar
     soar.controller
     soar.errors
     soar.gui
+    soar.hooks
+    command_line
     soar.robot
     soar.sim

@@ -1,88 +1,83 @@
-""" Soar plotting classes.
-
-Tkinter wrapper for plotting using matplotlib_
+"""  Tkinter wrapper for plotting using matplotlib_
 
 .. _matplotlib: http://matplotlib.org
 
-TODO: Determine whether reafter code is necessary, etc, add PlotWindow documentation.
-TODO: Make sure plots are actually saved when the simulation is completed.
+Note:
+    Unlike use of the :func:`soar.hooks.tkinter_hook`, use of this module will not force brain methods to run on the
+    main thread alongside Soar's GUI event loop.
+
+    `PlotWindow` is wrapped by the client if it is imported by a Soar brain. This wrapper ensures that the proper mode
+    (GUI or headless) is enforced, despite what the brain might pass to the constructor.
+
+    The client will also ensure that, if logging is occurring, any `PlotWindow` objects will have their image data
+    included in the log whenever the controller is shut down.
+
+Based on code written by Adam Hartz, August 1st 2012.
 """
-# hartz 01 august 2012
 from io import BytesIO
 
-#imports for tk backend
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg, FigureCanvasAgg
-import matplotlib.pyplot as _p
-import tkinter
+# Tk backends, used for plotting in various modes (GUI or headless)
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg, NavigationToolbar2TkAgg
+import matplotlib.pyplot as plt
+from tkinter import Toplevel, TOP, BOTH
 
-# make mainloop() interruptable by periodically waking it
-tcl =tkinter.Tcl()
-def reafter():
-        tcl.after(500,reafter)
-tcl.after(500,reafter)
 
-class PlotWindow(_p.Figure):
-    """
-    Tk window containing a matplotlib plot.  In addition to the functions
-    described below, also supports all functions contained in matplotlib's
-    Axes_ and Figure_ objects.
+class PlotWindow(plt.Figure):
+    """ Tk window containing a matplotlib plot. In addition to the functions described below, also supports all
+    functions contained in matplotlib's Axes_ and Figure_ objects.
 
     .. _Axes: http://matplotlib.sourceforge.net/api/axes_api.html
     .. _Figure: http://matplotlib.sourceforge.net/api/figure_api.html
+
+    Args:
+        title (str): The title to be used for the initial window.
+        visible (bool): Whether to actually display a Tk window (set to `False` to create and save plots without
+            displaying a window).
     """
-    def __init__(self, title="Plotting Window", visible=True, toplevel=tkinter.Toplevel, log=None, linked=True):
-        """
-        :param title: The title to be used for the window initially
-        :param visible: Whether to actually display a Tk window (set to
-                        ``False`` to create and save plots without a window
-                        popping up)
-        """
-        _p.Figure.__init__(self)
-        self.log = log
+    def __init__(self, title="Plotting Window", visible=True):
+        plt.Figure.__init__(self)
         self.add_subplot(111)
         self.visible = visible
-        if self.visible:
-            self.canvas = FigureCanvasTkAgg(self, toplevel(linked=linked))
+        self._destroyed = False
+        if self.visible:  # If visible, use Tk's frontend
+            self.canvas = FigureCanvasTkAgg(self, Toplevel())
             self.title(title)
-            self.makeWindow()
+            self.make_window()
             self.show()
         else:
             self.canvas = FigureCanvasAgg(self)
 
-    def makeWindow(self):
+    def make_window(self):
+        """ Pack the plot and matplotlib toolbar into the containing Tk window.
+
+        This method is called during initialization and it is unlikely you will need to call it elsewhere.
         """
-        Pack the plot and matplotlib toolbar into the containing Tk window
-        (called by initializer; you will probably never need to use this).
-        """
-        self.canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
-        self.toolbar = NavigationToolbar2TkAgg( self.canvas, self.canvas._master )
+        self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.canvas._master)
         self.toolbar.update()
-        self.canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+        self.canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
 
     def destroy(self):
-        """
-        Destroy the Tk window.  Note that after calling this method (or
-        manually closing the Tk window), this :py:class:`PlotWindow` cannot be
+        """ Destroy the Tk window.
+
+        Note that after calling this method (or manually closing the Tk window), this :py:class:`PlotWindow` cannot be
         used.
         """
-        try:
+        try:  # Try and destroy the window
             self.canvas._master.destroy()
         except:
-            pass # probably already destroyed...
+            pass  # It was probably already destroyed
+        self._destroyed = True
 
     def clear(self):
-        """
-        Clear the plot, keeping the Tk window active
-        """
+        """ Clear the plot, keeping the Tk window active. """
         self.clf()
         self.add_subplot(111)
         if self.visible:
             self.show()
 
     def show(self):
-        """
-        Update the canvas image (automatically called for most functions)
-        """
+        """ Update the canvas image (automatically called for most functions). """
         self.canvas.show()
 
     def __getattr__(self, name):
@@ -107,43 +102,37 @@ class PlotWindow(_p.Figure):
         else:
             raise AttributeError("PlotWindow object has no attribute %s" % name)
         
-    def title(self,title):
-        """
-        Change the title of the Tk window
-        """
+    def title(self, title):
+        """ Change the title of the Tk window """
         self.canvas._master.title(title)
         
     def legend(self, *args):
-        """
-        Create a legend for the figure (requires plots to have been made with
-        labels)
-        """
+        """ Create a legend for the figure (requires plots to have been made with labels) """
         handles, labels = self.axes[0].get_legend_handles_labels()
         self.axes[0].legend(handles, labels)
         if self.visible:
             self.show()
 
-    def save(self, fname):
-        """
-        Save this plot as an image.  File type determined by extension of filename passed in.  
+    def save(self, fname, **kwargs):
+        """ Save this plot as an image.  File type determined by extension of filename passed in.
+
         See documentation for savefig_.
 
-        :param fname: The name of the file to create.
-
         .. _savefig: http://matplotlib.sourceforge.net/api/figure_api.html
+
+        Args:
+            fname: The file to create, which may be a path or a file-like object.
         """
-        self.savefig(fname)
+        self.savefig(fname, **kwargs)
 
     def stay(self):
-        """
-        Start the Tkinter window's main loop (e.g., to keep the plot open at
-        the end of the execution of a script)
+        """ Start the Tkinter window's main loop (e.g., to keep the plot open at the end of the execution of a script)
         """
         self.canvas._master.mainloop()
 
     def plot(self, *args, **kwargs):
+        """ Plot lines and/or markers to the Axes. See pyplot_ for more information.
+
+        .. _pyplot: https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot
+        """
         self.__getattr__('plot')(*args, **kwargs)
-        if self.log:
-            file_obj = BytesIO()
-            self.savefig(file_obj, format='png')
-            self.log({'type': 'plot', 'data': file_obj.getvalue().hex()})
