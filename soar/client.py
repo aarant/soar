@@ -31,6 +31,7 @@ Examples:
         return_value = main(logfile=open('path/to/logfile', 'r+'))
     """
 import os
+import sys
 import atexit
 import json
 import traceback as tb
@@ -46,6 +47,7 @@ from soar.gui.soar_ui import SoarUI
 
 brain = None
 brain_path = None
+__module_paths = []
 __brain_modules = []
 world = None
 world_path = None
@@ -156,23 +158,35 @@ def future(name, *args, **kwargs):
 
 # Loads a module from a path and returns its namespace, as well as any modules it loaded, as a list
 def load_module(path, namespace=None):
+    global __module_paths
     if namespace is None:
         namespace = {}
     path = os.path.abspath(path)  # Load from absolute paths
+
     namespace['__name__'] = os.path.splitext(os.path.basename(path))[0]  # Base name of the module
-    cd = os.getcwd()  # Get the current directory so we can restore it later
+    module_dir = os.path.dirname(path)  # Module directory; this is added to sys.path for loading the modules
     before_load = sys.modules.copy()  # Make a copy of sys.modules to compare to later
     try:
-        os.chdir(os.path.dirname(path))  # Try to load the module in its own directory
+        __module_paths.append(module_dir)
+        sys.path.append(module_dir)
         code_object = compile(open(path, 'r').read(), path, 'exec')
         exec(code_object, namespace)  # Execute the module in an isolated namespace
     except Exception as e:  # Unload any loaded modules if, say, a syntax error occurred during load
         loaded = [modname for modname in sys.modules if modname not in before_load]  # List the modules that were loaded
         for modname in loaded:
-            del sys.modules[modname]
+            try:
+                del sys.modules[modname]
+            except KeyError:  # Assume that if there is a KeyError, the module is no longer loaded
+                pass
         raise e  # Re-raise the exception
     finally:
-        os.chdir(cd)  # Restore the current directory
+        # Remove any module paths from sys.path
+        for module_path in __module_paths:
+            try:
+                __module_paths.remove(module_path)
+                sys.path.remove(module_path)
+            except ValueError:  # If the path is not in sys.path, that's fine
+                pass
         loaded = [modname for modname in sys.modules if modname not in before_load]  # List the modules that were loaded
     return namespace, loaded
     # Below is the old way of importing modules, as actual module objects, not namespaces
