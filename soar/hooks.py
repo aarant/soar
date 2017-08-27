@@ -14,10 +14,12 @@ Treat all hook names as reserved words, and do not use them as arbitrary variabl
 def tkinter_hook(window, linked=True):
     """ Hook a Tkinter window created by the brain into Soar, so that the UI is aware of it.
 
-    Set by the client when the brain module is loaded.
+    This function is redefined by the client before a brain is ever loaded.
 
     Brains that import this hook can expect that their methods will always run in the main thread when running in GUI
     mode, as Tkinter is not thread-safe. Otherwise, this is not guaranteed.
+
+    If not running in GUI mode, importing and using this hook simply returns its argument unchanged and does nothing.
 
     Args:
         window: The Tkinter window to attach to Soar. This may also be some object that supports a `destroy()` method.
@@ -32,12 +34,12 @@ def tkinter_hook(window, linked=True):
 def is_gui():
     """ Return whether Soar is running in GUI mode.
 
-    Set by the client when the brain module is loaded.
+    Set by the client when it first loads.
 
     Returns:
         bool: `True` if running in GUI mode, `False` if headless.
     """
-    pass
+    return False
 
 
 def sim_completed(obj=None):
@@ -59,7 +61,7 @@ def elapsed():
     Returns:
         float: The elapsed time in seconds, as defined in :attr:`soar.controller.Controller.elapsed`.
     """
-    pass
+    return 0.0
 
 
 

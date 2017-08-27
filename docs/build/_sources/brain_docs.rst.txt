@@ -40,6 +40,8 @@ defined in :mod:`soar.hooks`, as well as GUI widgets like :class:`soar.gui.plot_
 The names of hooks, as well as widget names like `PlotWindow`, should be considered reserved names and not used otherwise, as the client detects their
 presence by name.
 
-.. warning::
-   If you import any hooks or widgets, attempting to use them in the main body of the brain module (that is, outside of the controller methods) will
-   fail, because they have not yet been redefined until after the module has loaded. Use hooks or widgets only within methods called by the controller.
+.. note::
+   The usage of hooks outside of the controller methods (`on_load()`, `on_start()`, etc) is allowed but discouraged. Users may create 
+   :class:`PlotWindow <soar.gui.plot_window.PlotWindow>` plots in the main body of the brain module, hook Tkinter widgets into the 
+   :func:`tkinter_hook <soar.hooks.tkinter_hook>`, etc, with no issues, but should be aware that hooks like :func:`sim_completed <soar.hooks.sim_completed>` and
+   :func:`elapsed <soar.hooks.elapsed>` may not function as expected outside of a controller (they do nothing and return `0.0`, respectively).

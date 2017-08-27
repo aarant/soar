@@ -4,7 +4,7 @@ with open('README.rst', 'r') as f:
     long_description = f.read()
 
 setup(name='Soar',
-      version='1.0.0.dev10',
+      version='1.0.0',
       description='An extensible Python framework for simulating and interacting with robots',
       long_description=long_description,
       author='Andrew Antonitis',

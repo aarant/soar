@@ -70,7 +70,7 @@ class PioneerRobot(BaseRobot):
         This contains the robot type, position, sonar data, and forward and rotational velocities.
         """
         d = BaseRobot.to_dict(self)
-        d.update({'sonars': self.sonars})
+        d.update({'sonars': self.sonars, 'collided': self._collided})
         return d
 
     def set_robot_options(self, **options):

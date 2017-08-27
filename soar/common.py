@@ -27,12 +27,13 @@ LOGGING_ERROR = 13  #: Signals a logging error. These are typically ignored enti
 STEP_FINISHED = 14  #: Signals that the step thread has finished.
 GUI_LOAD_BRAIN = 15  #: Forces loading a brain as if it were done through the GUI.
 GUI_LOAD_WORLD = 16  #: Forces loading a world as if it were done through the GUI.
-NOP = 17  #: Does nothing besides calling an optional callback
+SET_HOOKS = 17  #: Initializes the hooks
+NOP = 18  #: Does nothing besides calling an optional callback
 
 # Messages shared between the client and UI
-DRAW = 18  #: Draw an object on the GUI's canvas.
-MAKE_WORLD_CANVAS = 19  #: Tell the GUI to make the simulator canvas.
-GUI_ERROR = 20  #: Signals an exception occurring somewhere in Tkinter callback
+DRAW = 19  #: Draw an object on the GUI's canvas.
+MAKE_WORLD_CANVAS = 20  #: Tell the GUI to make the simulator canvas.
+GUI_ERROR = 21  #: Signals an exception occurring somewhere in Tkinter callback
 
 # Other constants
-EXCEPTION = 23  #: Returned by wrapped functions to signal that an exception occurred during their execution.
+EXCEPTION = 22  #: Returned by wrapped functions to signal that an exception occurred during their execution.

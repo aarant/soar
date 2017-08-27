@@ -42,6 +42,18 @@ To start using Soar, read the :doc:`getting_started` guide, or look at the docum
 .. _Tkinter: https://docs.python.org/3.5/library/tkinter.html
 .. _LGPLv3: https://www.gnu.org/licenses/lgpl-3.0.en.html
 
+Development
+===========
+Only stable releases of Soar will be published to PyPI_ or the releases_. Development versions will exist only in the GitHub repo itself, and will be marked ith a ``.dev<N>`` suffix.
+
+Typical versioning will look like the following: ``<MAJOR>.<MINOR>.<PATCH>``. Major releases break backward compatibility, minor releases add functionality but maintain backward compatibility,
+and patch releases address bugs or fix small things.
+
+If you have a specific feature you'd like to see in Soar, or a specific robot type you'd like bundled with the base software, or just want to contribute, consider opening a pull request.
+
+.. _PyPI: https://pypi.python.org/pypi/Soar/
+.. _releases: https://github.com/arantonitis/soar/releases
+
 Indices and tables
 ==================
 

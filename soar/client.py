@@ -42,8 +42,9 @@ from soar import __version__
 from soar.common import *
 from soar.errors import *
 from soar.controller import Controller
-from soar.gui.plot_window import PlotWindow
 from soar.gui.soar_ui import SoarUI
+from soar.gui.plot_window import PlotWindow
+from soar.hooks import *
 
 brain = None
 brain_path = None
@@ -195,40 +196,23 @@ def load_module(path, namespace=None):
     # spec.loader.exec_module(module)
 
 
-def set_brain_hooks():  # Set hooks for the brain
+def brain_setup():  # Setup a freshly loaded brain by wrapping the necessary methods
     global brain, gui, logfile, plots
     force_main_thread = False  # If this gets set to True, brain methods must run in the main thread
 
-    # If the brain uses Tkinter and we're running in GUI mode, set the Tkinter hook
+    # If the brain uses Tkinter and we're running in GUI mode, force brain methods to run in the main thread
     if 'tkinter_hook' in brain and gui:
         force_main_thread = True
-        brain['tkinter_hook'] = gui.attach_window
 
-    # Wrap PlotWindow, and keep track of any PlotWindow objects the brain creates
+    # Clear any plot objects that may have been listed by any previously loaded brain
     plots = []
-    if 'PlotWindow' in brain:
-        if gui:  # Window may be visible or not depending on the user's choice
-            def plot_window_wrap(title='Plotting Window', visible=True):
-                p = gui.attach_window(PlotWindow(title, visible=visible))  # We attach the window to Soar
-                plots.append(p)  # Add it to the plot list for later
-                return p
-        else:  # Window is invisible regardless of user input
-            def plot_window_wrap(title='Plotting Window', visible=True):
-                p = PlotWindow(title, visible=False)
-                plots.append(p)
-                return p
-        brain['PlotWindow'] = plot_window_wrap
-
-    # Give the brain access to the mode Soar is running in
-    if 'is_gui' in brain:
-        brain['is_gui'] = lambda: gui is not None
 
     # Wrap brain methods, running them in Tk's thread if necessary
     for func in ['on_load', 'on_start', 'on_step', 'on_stop', 'on_shutdown']:
         if func in brain and callable(brain[func]):
             if force_main_thread:  # We hack a bit to run methods on the Tk thread, even when called from any thread
                 brain[func] = tkinter_execute(return_exceptions(brain[func]))
-        else:  # Make undefined functions NOPs
+        else:  # Make undefined functions do nothing
             brain[func] = lambda *args, **kwargs: None
 
 
@@ -252,6 +236,31 @@ def nop(*args, callback=None, **kwargs):  # A NOP, typically used for callbacks
         callback()
 
 
+def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a brain is ever loaded
+    global gui, plots
+    hooks = sys.modules['soar.hooks']
+
+    # Give the brain access to the mode soar is running in
+    hooks.is_gui = lambda: gui is not None
+
+    # Wrap calls to PlotWindow appropriately
+    plots = []
+    if gui:
+        def plot_window_wrap(title='Plotting Window', visible=True):
+            p = gui.attach_window(PlotWindow(title, visible=visible))
+            plots.append(p)
+            return p
+    else:
+        def plot_window_wrap(title='Plotting Window', visible=True):
+            p = PlotWindow(title, visible=False)
+            plots.append(p)
+    sys.modules['soar.gui.plot_window'].PlotWindow = plot_window_wrap
+
+    # Set the Tkinter hook to attach windows to the GUI
+    if gui:
+        hooks.tkinter_hook = gui.attach_window
+
+
 def make_gui(*args, **kwargs):  # Creates the GUI and enters the main UI loop
     global gui
     gui = SoarUI(client_future=future, client_mainloop=mainloop)
@@ -271,7 +280,7 @@ def load_brain(path, *args, callback=None, silent=False, **kwargs):  # Loads a b
     robot = brain['robot']
     if options is not None:
         robot.set_robot_options(**options)  # Set the robot options
-    set_brain_hooks()
+    brain_setup()
     if not silent:
         print('LOAD BRAIN:', path)
     if callback:
@@ -469,7 +478,8 @@ future_map = {MAKE_GUI: make_gui,
               GUI_LOAD_WORLD: gui_load_world,
               NOP: nop,
               LOGGING_ERROR: logging_error,
-              GUI_ERROR: gui_error,}
+              GUI_ERROR: gui_error,
+              SET_HOOKS: set_hooks}
 """ A mapping from future names to their actual functions. """
 
 
@@ -515,6 +525,7 @@ def main(brain_path=None, world_path=None, headless=False, logfile=None, step_du
     globals()['realtime'] = realtime
     globals()['options'] = options
     if headless:
+        future(SET_HOOKS)
         if brain_path and world_path:
             future(LOAD_BRAIN, brain_path)
             future(LOAD_WORLD, world_path)
@@ -525,6 +536,7 @@ def main(brain_path=None, world_path=None, headless=False, logfile=None, step_du
         future(START_CONTROLLER)
     else:
         future(MAKE_GUI)
+        future(SET_HOOKS)
         if brain_path:
             future(GUI_LOAD_BRAIN, brain_path)
         if world_path:

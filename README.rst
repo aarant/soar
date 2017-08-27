@@ -75,3 +75,15 @@ Clone or download the `git repo`_, navigate to the directory, then run::
 .. _github releases: https://github.com/arantonitis/soar/releases
 .. _git repo: https://github.com/arantonitis/soar
 .. _Python 3.5: https://www.python.org/downloads/release/python-350/
+
+Development
+===========
+Only stable releases of Soar will be published to PyPI_ or the releases_. Development versions will exist only in the GitHub repo itself, and will be marked ith a ``.dev<N>`` suffix.
+
+Typical versioning will look like the following: ``<MAJOR>.<MINOR>.<PATCH>``. Major releases break backward compatibility, minor releases add functionality but maintain backward compatibility,
+and patch releases address bugs or fix small things.
+
+If you have a specific feature you'd like to see in Soar, or a specific robot type you'd like bundled with the base software, or just want to contribute, consider opening a pull request.
+
+.. _PyPI: https://pypi.python.org/pypi/Soar/
+.. _releases: https://github.com/arantonitis/soar/releases
