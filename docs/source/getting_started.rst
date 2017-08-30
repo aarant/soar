@@ -11,7 +11,7 @@ Installing Soar is (hopefully) painless and primarily done 3 ways, ordered by de
    
    * Most Python installations will already have `setuptools`, necessary to install Soar, but if not, see `this documentation`_ to install it.
 
-   * Installing Soar will also install pyserial_ version 3.0 or later.
+   * Installing Soar will also install pyserial_ version 3.0 or later, as well as matplotlib_ version 2.0 or later.
 
    * Soar was developed exclusively with `Python 3.5`_ or later in mind. Your mileage may vary or be nonexistent if using an earlier version.
 
@@ -36,6 +36,7 @@ Clone or download the `git repo`_, navigate to the directory, then run:
 
 .. _Python Package Index (PyPI): https://pypi.python.org/pypi
 .. _pyserial: https://pythonhosted.org/pyserial/
+.. _matplotlib: https://matplotlib.org/
 .. _this documentation: https://setuptools.readthedocs.io/en/latest/
 .. _github releases: https://github.com/arantonitis/soar/releases
 .. _git repo: https://github.com/arantonitis/soar
