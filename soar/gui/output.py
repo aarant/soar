@@ -6,6 +6,7 @@
 
 Tk widgets allowing the capture and display of text output in the GUI.
 """
+import webbrowser
 from io import StringIO
 
 from tkinter import *
@@ -18,6 +19,15 @@ class SoarIO(StringIO):
 
     def write(self, s):
         self.write_func(s)
+
+
+_link_id = 0
+
+
+def _new_link_id():
+    global _link_id
+    return 'link' + str(_link_id)
+    _link_id += 1
 
 
 class OutputFrame(Frame):
@@ -69,6 +79,19 @@ class OutputFrame(Frame):
              text (str): The text to insert.
         """
         self.insert(text, 'error')
+
+    def link(self, text):
+        """ Insert a clickable link at the end of the text field.
+
+        Args:
+            text (str): The link text to insert.
+        """
+        tag = _new_link_id()
+        self.text_field.tag_config(tag, foreground='blue', underline=1)
+        self.text_field.tag_bind(tag, '<Button-1>', lambda event: webbrowser.open_new(text))
+        self.text_field.tag_bind(tag, '<Enter>', lambda event: self.text_field.config(cursor='hand1'))
+        self.text_field.tag_bind(tag, '<Leave>', lambda event: self.text_field.config(cursor=''))
+        self.insert(text, tag)
 
     def clear(self):
         """ Clear the entire text field. """

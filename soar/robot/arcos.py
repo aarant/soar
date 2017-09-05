@@ -10,7 +10,7 @@ Classes and functions for communicating with an ARCOS server running on an Adept
 from threading import Thread, Lock, Event
 from time import sleep
 
-from serial import *
+from serial import Serial, SerialTimeoutException, SerialException
 from serial.tools.list_ports import comports
 
 from soar.errors import SoarError
@@ -276,12 +276,18 @@ class ARCOSClient:
 
         Args:
             *data: A tuple or iterable of bytes, whose values are assumed to be between 0 and 255, inclusive.
+
+        Raises:
+            `Timeout`: If the write timeout of the serial port was exceeded.
         """
         packet = [0xfa, 0xfb, len(data) + 2] + list(data)  # 0xfa, 0xfb are the packet header
         checksum = packet_checksum(packet)  # Calculate the checksum and append it
         packet.extend([checksum >> 8, checksum & 0xff])  # Big-endian two byte integer
         with self.serial_lock:
-            self.ser.write(bytearray(packet))
+            try:
+                self.ser.write(bytearray(packet))
+            except SerialTimeoutException as e:  # Recast serial timeout as an ARCOS timeout
+                raise Timeout(str(e)) from e
 
     def receive_packet(self):
         """ Read an entire ARCOS Packet from an open port, including header and checksum bytes.
@@ -326,6 +332,9 @@ class ARCOSClient:
         Args:
             code: The command code. Must be in :data:`soar.robot.arcos.command_types`.
             data (optional): The associated command argument, assumed to be of the correct type.
+
+        Raises:
+            `Timeout`: If the write timeout of the port was exceeded.
         """
         if command_types[code] is None:  # No argument
             self.send_packet(code)
@@ -413,10 +422,10 @@ class ARCOSClient:
         """
         for sync in [SYNC0, SYNC1, SYNC2]:
             while True:
-                self.send_packet(sync)
                 try:
+                    self.send_packet(sync)
                     echo = self.receive_packet()
-                except Timeout:
+                except Timeout:  # Timeouts just decrement the tries count
                     tries -= 1
                 except InvalidPacket:  # Try flushing the input/output buffers
                     self.ser.reset_input_buffer()
@@ -435,8 +444,12 @@ class ARCOSClient:
         """ Continually send the PULSE command so that the robot knows the client is alive. """
         self.pulse_running = True
         while self.pulse_running:
-            self.send_packet(PULSE)
-            sleep(1.0)  # Default Watchdog interval is 2 seconds, so PULSE every second just to be safe
+            try:
+                self.send_packet(PULSE)
+            except Timeout:  # Ignore pulse timeouts, the update coroutine will handle closing the port
+                pass
+            finally:
+                sleep(1.0)  # Default Watchdog interval is 2 seconds, so PULSE every second just to be safe
 
     def update(self):
         """ Continually receive and decode packets, storing them as attributes and triggering events. """

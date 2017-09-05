@@ -15,13 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # soar/__init__.py
-""" Soar (Snakes on a Robot) v1.0.2
+""" Soar (Snakes on a Robot) v1.0.3
 
 An extensible Python framework for both simulating and interacting with robots.
 
 Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
 """
-__version__ = '1.0.2'
-blerb = 'Soar (Snakes on a Robot) v' + __version__ + ': A Python robotics framework.\n\n' \
+__version__ = '1.0.3'
+blerb = 'Soar (Snakes on a Robot) v' + __version__ + ': A Python robotics framework.\n' \
+                                                     'https://github.com/arantonitis/soar\n\n' \
                                                      'Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.'
 

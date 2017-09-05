@@ -103,7 +103,10 @@ class PioneerRobot(BaseRobot):
     def fv(self, value):
         self._fv = clip(value, -self.FV_CAP, self.FV_CAP)
         if not self.simulated:  # For real robots, must send an ARCOS command
-            self.arcos.send_command(VEL, int(self._fv*1000))  # Convert m/s to mm/s
+            try:
+                self.arcos.send_command(VEL, int(self._fv*1000))  # Convert m/s to mm/s
+            except Timeout as e:  # Recast arcos errors as Soar errors
+                raise SoarIOError(str(e)) from e
 
     @property
     def rv(self):
@@ -121,7 +124,10 @@ class PioneerRobot(BaseRobot):
     def rv(self, value):
         self._rv = clip(value, -self.RV_CAP, self.RV_CAP)
         if not self.simulated:
-            self.arcos.send_command(RVEL, int(self._rv * 180 / pi))  # Convert radians/sec to degrees/sec
+            try:
+                self.arcos.send_command(RVEL, int(self._rv * 180 / pi))  # Convert radians/sec to degrees/sec
+            except Timeout as e:  # Recast arcos errors as Soar errors
+                raise SoarIOError(str(e)) from e
 
     @property
     def sonars(self):
@@ -156,7 +162,10 @@ class PioneerRobot(BaseRobot):
         if self.simulated:
             raise SoarIOError('Cannot set the analog output of a simulated robot (yet)')  # TODO: CMax integration
         else:  # Sent the analog-digital output required to read it later
-            self.arcos.send_command(DIGOUT, int(clip(v, 0, 10)*25.5) | 0xff00)
+            try:
+                self.arcos.send_command(DIGOUT, int(clip(v, 0, 10)*25.5) | 0xff00)
+            except Timeout as e:  # Recast arcos errors as Soar errors
+                raise SoarIOError(str(e)) from e
 
     def get_distance_right(self):
         """ Get the perpendicular distance to the right of the robot.
@@ -288,13 +297,19 @@ class PioneerRobot(BaseRobot):
         if not self.simulated:
             for _ in range(5):  # Try enabling motors a few times
                 if self.arcos.standard['FLAGS'] & 0x1 != 0x1:  # If the motors have not been enabled
-                    self.arcos.send_command(ENABLE, 1)  # Re-enable them
+                    try:
+                        self.arcos.send_command(ENABLE, 1)  # Re-enable them
+                    except Timeout as e:  # Recast arcos errors as Soar errors
+                        raise SoarIOError(str(e)) from e
                     sleep(1.0)
                 else:  # If they have been, we're all set
                     break
             if self.arcos.standard['FLAGS'] & 0x1 != 0x1:  # If they still aren't enabled, raise an error
                 raise SoarIOError('Unable to enable the robot\'s motors')
-            self.arcos.send_command(SETO)
+            try:
+                self.arcos.send_command(SETO)
+            except Timeout as e:  # Recast arcos errors as Soar errors
+                raise SoarIOError(str(e)) from e
 
     def on_step(self, duration):
         if self._ignore_brain_lag:
@@ -324,8 +339,11 @@ class PioneerRobot(BaseRobot):
 
     def on_stop(self):
         if not self.simulated:
-            self.arcos.send_command(STOP)  # Stop the robot from moving
-            self.arcos.send_command(ENABLE, 0)  # Disable the motors after we've stopped
+            try:
+                self.arcos.send_command(STOP)  # Stop the robot from moving
+                self.arcos.send_command(ENABLE, 0)  # Disable the motors after we've stopped
+            except Timeout as e:  # Recast arcos errors as Soar errors
+                raise SoarIOError(str(e)) from e
 
     def on_shutdown(self):
         if self.arcos:

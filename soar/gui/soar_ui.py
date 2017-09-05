@@ -12,7 +12,7 @@ import traceback as tb
 from queue import Queue
 from threading import Thread
 from threading import Event as ThreadEvent
-from tkinter import Frame, Button, Label, Entry, PhotoImage, Tk, RIGHT, DISABLED, NORMAL, Toplevel, END
+from tkinter import Frame, Button, Label, Entry, PhotoImage, Tk, RIGHT, DISABLED, NORMAL, Toplevel, END, TOP
 from tkinter import filedialog
 
 from soar import __version__, blerb
@@ -42,6 +42,7 @@ class ButtonFrame(Frame):
         self.config(image, text, command, state)
         self.button.grid(row=0, column=0)
         self.label.grid(row=1, column=0)
+        self.button.config(background='#383838')  # TODO: Might be a better way to make disabled/normal more clear
 
     def config(self, image=None, text=None, command=None, state=None):
         """ Sets the parameters of the button/label.
@@ -169,7 +170,14 @@ class SoarUI(Tk):
         self.sim = ButtonFrame(self)
         self.connect = ButtonFrame(self)
         self.close_but = Button(self)
-        self.output = OutputFrame(self, initial_text=blerb + '\n\nOutput will appear in this window.\n\n')
+        self.output = OutputFrame(self)
+        for i, l in enumerate(blerb.split('\n')):
+            if i != 1:
+                self.output.output(l + '\n')
+            else:
+                self.output.link(l)
+                self.output.output('\n')
+        self.output.output('\nOutput will appear in this window.\n\n')
         self.initialize()
         self.windows = []
         self.sim_canvas = None
@@ -231,7 +239,8 @@ class SoarUI(Tk):
         self.world_but.config(image=self.world_image, text='Load World', command=self.world_cmd, state=NORMAL)
         self.sim.config(image=self.sim_image, text='Simulator', command=self.sim_cmd, state=DISABLED)
         self.connect.config(image=self.connect_image, text='Connect', command=self.connect_cmd, state=DISABLED)
-        self.close_but.config(text='Close all windows', command=lambda: self.reload_cmd(False, True))
+        self.close_but.config(text='Close sim windows', command=lambda: self.reload_cmd(False, True),
+                              background='#383838')
         if clear_output:
             self.output.clear()
 

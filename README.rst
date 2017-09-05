@@ -79,9 +79,17 @@ Clone or download the `git repo`_, navigate to the directory, then run::
 
 Development
 ===========
-Only stable releases of Soar will be published to PyPI_ or the `github releases`_. Development versions will exist only in the GitHub repo itself, and will be marked ith a ``.dev<N>`` suffix.
+Only stable releases of Soar will be published to PyPI_ or the `github releases`_. Development versions will exist only in the GitHub repo itself, and will be marked with a ``.dev<N>`` suffix.
 
 Typical versioning will look like the following: ``<MAJOR>.<MINOR>.<PATCH>``. Major releases break backward compatibility, minor releases add functionality but maintain backward compatibility,
 and patch releases address bugs or fix small things.
 
 If you have a specific feature you'd like to see in Soar, or a specific robot type you'd like bundled with the base software, or just want to contribute, consider opening a pull request.
+
+Building Documentation
+======================
+Building a local copy of the docs will require Sphinx_.
+
+Navigate to the ``docs/`` directory and run ``sphinx-build -b html source/ <BUILD_DIR>``.
+
+.. _Sphinx: http://www.sphinx-doc.org/en/stable/
