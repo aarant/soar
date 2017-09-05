@@ -28,8 +28,8 @@ An arbitrary stable (not development) Soar release can be installed from the `gi
 
 From latest source
 --------------------
-Clone or download the `git repo`_, navigate to the directory, then run:
-::
+Clone or download the `git repo`_, navigate to the directory, then run::
+    
     python3 setup.py sdist
     cd dist
     pip install Soar-<version>.tar.gz

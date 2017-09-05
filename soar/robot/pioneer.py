@@ -283,7 +283,7 @@ class PioneerRobot(BaseRobot):
                 self.arcos.send_command(CONFIG)
                 self.arcos.wait_or_timeout(self.arcos.config_event, 1.0, 'Could not access robot configuration')
                 config = self.arcos.config
-                serial_num = config['SERNUM']
+                serial_num = config['NAME']
                 battery_volts = self.arcos.standard['BATTERY'] / 10.0
                 # Print the standard connection message and warn if the battery is low
                 print('Connected to ' + ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']])

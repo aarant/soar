@@ -3,20 +3,21 @@
 # Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/__main__.py
-""" Allows use of Soar from the command line by passing arguments to :func:`soar.client.main`.
-::
-    usage: soar [-h] [--headless] [--nosleep] [--logfile LOGFILE]
-                [-s step duration] [-b brain] [-w world] [--options OPTIONS]
+""" Allows use of Soar from the command line by passing arguments to :func:`soar.client.main`
+    ::
 
-    optional arguments:
-      -h, --help         show this help message and exit
-      --headless         Run in headless mode
-      --nosleep          Run quickly, without sleeping between steps
-      --logfile LOGFILE  Log file to write to
-      -s step duration   The duration of a controller step
-      -b brain           Path to the brain file
-      -w world           Path to the world file
-      --options OPTIONS  Options to pass to the robot, as a JSON deserializable dictionary
+        usage: soar [-h] [--headless] [--nosleep] [--logfile LOGFILE]
+                    [-s step duration] [-b brain] [-w world] [--options OPTIONS]
+
+        optional arguments:
+          -h, --help         show this help message and exit
+          --headless         Run in headless mode
+          --nosleep          Run quickly, without sleeping between steps
+          --logfile LOGFILE  Log file to write to
+          -s step duration   The duration of a controller step
+          -b brain           Path to the brain file
+          -w world           Path to the world file
+          --options OPTIONS  Options to pass to the robot, as a JSON deserializable dictionary
 """
 import sys
 import json

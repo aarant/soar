@@ -8,25 +8,25 @@ Classes and functions for interacting with Soar in general. This module serves a
 Projects desiring to invoke a Soar instance should import this module and call :func:`soar.client.main`.
 
 Examples:
-    This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0.
-    ::
+    This will invoke a GUI instance, which will terminate when the main window is closed, and always return 0::
+
         from soar.client import main
         return_value = main()
 
-    If invoking a headless instance, paths to brain and world files should be specified:
-    ::
+    If invoking a headless instance, paths to brain and world files should be specified::
+
         from soar.client import main
         return_value = main(brain_path='path/to/brain.py', world_path='path/to/world.py', headless=True)
 
     In this case, the return value will be 1 if an exception occurred and 0 otherwise.
 
-    Logging is handled via passing a path:
-    ::
+    Logging is handled via passing a path::
+
         from soar.client import main
         return_value = main(logfile='path/to/logfile')
 
-    or, using a file-like object:
-    ::
+    or, using a file-like object::
+
         from soar.client import main
         return_value = main(logfile=open('path/to/logfile', 'r+'))
     """
@@ -45,6 +45,8 @@ from soar.controller import Controller
 from soar.gui.soar_ui import SoarUI
 from soar.gui.plot_window import PlotWindow
 from soar.hooks import *
+from soar.sim.geometry import *
+from soar.sim.world import *
 
 brain = None
 brain_path = None

@@ -50,7 +50,7 @@ def has_all():  # Test whether a hash setting contains every name for the expect
 
 m = len(names)
 a = 74
-b = 99
+b = 98
 p = 149
 # while test_collisions() > 25 or not has_all():
 #     p = 1

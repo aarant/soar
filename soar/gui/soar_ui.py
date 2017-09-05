@@ -140,7 +140,7 @@ class SoarUI(Tk):
     """
     image_dir = os.path.dirname(__file__)
     world_dir = os.path.join(image_dir, '../worlds/')
-    brain_dir = os.path.expanduser('~')  # os.path.join(image_dir, '../brains/')
+    brain_dir = os.getcwd()  # os.path.join(image_dir, '../brains/')
 
     def __init__(self, client_future, client_mainloop, parent=None, title='Soar ' + __version__):
         Tk.__init__(self, parent)

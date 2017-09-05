@@ -124,8 +124,8 @@ class Wall(WorldObject, LineSegment):
             A list of `(x, y)` tuples consisting of the intersection(s), or `None` if the segments do not intersect.
         """
         if isinstance(other, LineSegment):
-            foo = LineSegment.intersection(self, other, eps)
-            return foo
+            intersects = LineSegment.intersection(self, other, eps)
+            return intersects
 
 
 class Ray(Wall):
