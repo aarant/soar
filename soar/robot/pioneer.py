@@ -9,6 +9,7 @@ See the `MobileRobots documentation`_ for more information.
 .. _MobileRobots documentation: http://www.mobilerobots.com/ResearchRobots/PioneerP3DX.aspx
 """
 from math import pi, sqrt, atan2
+from uuid import getnode
 
 from soar.errors import SoarIOError
 from soar.sim.geometry import Line, Pose, clip
@@ -283,7 +284,7 @@ class PioneerRobot(BaseRobot):
                 self.arcos.send_command(CONFIG)
                 self.arcos.wait_or_timeout(self.arcos.config_event, 1.0, 'Could not access robot configuration')
                 config = self.arcos.config
-                serial_num = config['NAME']
+                serial_num = str(getnode())
                 battery_volts = self.arcos.standard['BATTERY'] / 10.0
                 # Print the standard connection message and warn if the battery is low
                 print('Connected to ' + ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']])
