@@ -45,7 +45,7 @@ class PioneerRobot(BaseRobot):
                                                   (0.216, -0.009), (0.196, 0.079), (0.139, 0.150), (0.057, 0.190),
                                                   (-0.034, 0.190), (-0.051, 0.190), (-0.051, 0.150), (-0.153, 0.150),
                                                   (-0.223, 0.074), (-0.223, -0.103), (-0.153, -0.179), (-0.051, -0.179),
-                                                  (-0.051, -0.219)], None, fill='black', tags='pioneer'), tags='pioneer')
+                                                  (-0.051, -0.219)], None, fill='black', dummy=True))
         self.type = 'Pioneer3'
         self.sonar_poses = [Pose(0.08, 0.134, pi/2), Pose(0.122, 0.118, 5*pi/18),
                             Pose(0.156, 0.077, pi/6), Pose(0.174, 0.0266, pi/18),
@@ -141,7 +141,7 @@ class PioneerRobot(BaseRobot):
         if self.simulated:  # If simulating, grab the data from the latest calculated sonars
             if not self._sonars:  # If somehow this has been called before sonars are calculated, calculate them
                 self.calc_sonars()
-            return [s if s < self.SONAR_MAX else None for s in self._sonars]
+            return [round(s, 3) if s < self.SONAR_MAX else None for s in self._sonars]
         else:  # Otherwise grab the sonar data from the ARCOS Client
             return [s/1000.0 if s != 5000 else None for s in self.arcos.sonars[:8]]  # Convert mm to meters
 
@@ -239,19 +239,20 @@ class PioneerRobot(BaseRobot):
                 self._sonars[i] = distances[0]  # Sonar reading is the distance to the nearest collision
 
     def draw(self, canvas):  # Draw the robot
-        self.polygon.draw(canvas)
+        BaseRobot.draw(self, canvas)
         self.draw_sonars(canvas)
 
     def draw_sonars(self, canvas):  # Draw just the sonars
+        canvas.delete(self.tags + 'sonars')  # Deleting a nonexistent tag is safe, so always delete the sonar lines
         if not self._sonars:
             self.calc_sonars()
         for dist, pose in zip(self._sonars, self.sonar_poses):
             origin = pose.transform(self.pos).rotate(self.pos.point(), self.pos[2])
             fill = 'firebrick2' if dist > self.SONAR_MAX else 'gray'
-            sonar_ray = Ray(origin, dist, tag=self.tags+'sonars', fill=fill, width=1)
+            sonar_ray = Ray(origin, dist, tags=self.tags+'sonars', fill=fill, width=1)
             sonar_ray.draw(canvas)
 
-    def delete(self, canvas):
+    def delete(self, canvas):  # TODO: Deprecate this in 2.0
         canvas.delete(self.tags, self.tags + 'sonars')  # Delete both the robot and sonar tags
 
     def check_if_collided(self):  # Check if the robot has collided, and set its collision flag accordingly
@@ -368,7 +369,7 @@ class PioneerRobot(BaseRobot):
         self._move_data["y"] = event.y
         real_d_x = delta_x / self.world.canvas.pixels_per_meter
         real_d_y = -delta_y / self.world.canvas.pixels_per_meter
-        # Update the robot's real position, check for a collision, and redraw the sonars
+        # Update the robot's real position, check for a collision, and redraw/recalcuate the robot and sonars
         self.pos = self.pos.transform((real_d_x, real_d_y, 0))
         self.polygon.recenter(self.pos)
         if self.check_if_collided():
@@ -376,11 +377,7 @@ class PioneerRobot(BaseRobot):
         else:
             self.world.canvas.itemconfigure(self.tags, fill='black')
         self.calc_sonars()
-        items = self.world.canvas.find_withtag(self.tags)
-        for item in items:
-            self.world.canvas.move(item, delta_x, delta_y)
-        self.world.canvas.delete(self.tags + 'sonars')
-        self.draw_sonars(self.world.canvas)
+        self.draw(self.world.canvas)
 
     def on_press_right(self, event):
         self._turn_data['x'] = event.x
@@ -400,11 +397,6 @@ class PioneerRobot(BaseRobot):
         # Change the robot's position, rotate and redraw the polygon, and recalculate and redraw the sonars
         self.pos = self.pos.transform((0, 0, theta))
         self.polygon.rotate(self.polygon.center, theta)
-        coords = self.world.canvas.remap_coords([p for pair in self.polygon for p in pair])
         self.calc_sonars()
-        item = self.world.canvas.find_withtag(self.tags)[0]
-        # The base canvas coords method, that works with Tk coordinates, not metered ones
-        self.world.canvas.coords(item, coords)
-        self.world.canvas.delete(self.tags + 'sonars')
-        self.draw_sonars(self.world.canvas)
+        self.draw(self.world.canvas)
 

@@ -139,7 +139,7 @@ class SoarUI(Tk):
         title (str, optional): The main window title.
     """
     image_dir = os.path.dirname(__file__)
-    world_dir = os.path.join(image_dir, '../worlds/')
+    world_dir = os.path.abspath(os.path.join(image_dir, os.pardir, 'worlds'))
     brain_dir = os.getcwd()  # os.path.join(image_dir, '../brains/')
 
     def __init__(self, client_future, client_mainloop, parent=None, title='Soar ' + __version__):
@@ -331,7 +331,6 @@ class SoarUI(Tk):
     def draw(self, obj):  # Draws an object on the simulator canvas
         if self.sim_canvas is not None:
             try:
-                obj.delete(self.sim_canvas)
                 obj.draw(self.sim_canvas)
             except Exception:
                 self.client_future(GUI_ERROR)
@@ -491,14 +490,17 @@ class SoarUI(Tk):
             else:
                 self.world_path = new_world
                 self.loading()
-                self.client_future(LOAD_WORLD, new_world, callback=lambda: self.future(self.world_ready))
+                self.client_future(LOAD_WORLD, new_world, callback=lambda: self.future(self.world_ready, True))
 
-    def world_ready(self):
+    def world_ready(self, auto_sim_load=False):
         """ Configure buttons and paths when a world is ready. """
+        print(auto_sim_load)
         self.done_loading()
         self.world_dir = os.path.dirname(self.world_path)
         if self.brain_path is not None:
             self.sim.config(state=NORMAL)
+            if auto_sim_load:
+                self.sim_cmd()
 
     def sim_cmd(self):
         """ Called when the simulator button is pushed. """

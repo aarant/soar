@@ -46,9 +46,11 @@ class BaseRobot(WorldObject):
         self.pos = Pose(0, 0, 0)
         self.fv = 0.0
         self.rv = 0.0
-        self.polygon = polygon
+        # Re-instantiate the polygon with the robot's tags
+        del polygon.options['tags']
+        self.polygon = Polygon(polygon.points, polygon.center, tags=self.tags, **polygon.options)
         # The maximum radius, used for pushing the robot back before a collision
-        self._radius = sorted([polygon.center.distance(vertex) for vertex in polygon])[-1]
+        self._radius = sorted([self.polygon.center.distance(vertex) for vertex in self.polygon])[-1]
 
     def set_robot_options(self, **options):
         """ Set one or many keyworded, robot-specific options. Document these options here.
@@ -98,12 +100,21 @@ class BaseRobot(WorldObject):
     def draw(self, canvas):
         """ Draw the robot on a canvas.
 
+        Canvas items are preserved. If drawn more than once on the same canvas, the item will be moved and not redrawn.
+
         Args:
             canvas: An instance of :class:`soar.gui.canvas.SoarCanvas`.
         """
-        self.polygon.draw(canvas)
+        try:  # Try and find the drawn polygon on the canvas, in case it already exists
+            canvas_poly = canvas.find_withtag(self.tags)[0]
+        except IndexError:  # If no such item exists, draw it for the first time
+            self.polygon.draw(canvas)
+        else:
+            # Remap metered coordinates to pixel coordinates, and change the canvas polygon
+            coords = canvas.remap_coords([p for pair in self.polygon for p in pair])
+            canvas.coords(canvas_poly, coords)
 
-    def delete(self, canvas):
+    def delete(self, canvas):  # TODO: Deprecate this in 2.0
         """ Delete the robot from a canvas.
 
         Args:

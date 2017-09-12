@@ -25,9 +25,11 @@ class WorldObject:
         do_draw (bool): Sets the value of the `do_draw` attribute.
         do_step (bool): Sets the value of the `do_step` attribute.
         dummy (bool): Whether the object is a dummy--that is, not intended to be drawn or stepped, but used for
-        calculation.
-        **options: Tkinter options.
+            some intermediate calcuation (usually collision).
+        **options: Tkinter options. This may include 'tags', for drawing on a canvas, line thickness, etc.
     """
+    _unique_id = 0
+
     def __init__(self, do_draw, do_step, dummy=False, **options):
         self.do_draw = do_draw
         self.do_step = do_step
@@ -38,23 +40,25 @@ class WorldObject:
         elif 'tags' in options:
             self.tags = options['tags']
         else:  # If tags are not specified, make sure this object has a unique tag
-            self.tags = ''.join([random.choice(ascii_letters) for i in range(6)])
+            self.tags = self.__class__.__name__ + str(self.__class__._unique_id)
+            self.__class__._unique_id += 1
+        self.options['tags'] = self.tags
 
     def draw(self, canvas):
         """ Draw the object on a canvas.
 
         Args:
             canvas: A Tkinter Canvas or a subclass, typically a :class:`soar.gui.canvas.SoarCanvas`,
-            on which the object will be drawn.
+                on which the object will be drawn.
         """
         pass
 
-    def delete(self, canvas):
+    def delete(self, canvas):  # TODO: Deprecate this in 2.0
         """ Delete the object from a canvas.
 
         Args:
             canvas: A Tkinter Canvas or a subclass, typically a :class:`soar.gui.canvas.SoarCanvas`, from which the
-            object will be deleted.
+                object will be deleted.
         """
         if not self.dummy:
             canvas.delete(self.tags)
@@ -129,7 +133,7 @@ class Wall(WorldObject, LineSegment):
 
 
 class Ray(Wall):
-    """ A solid ray of a specified length, created from a pose.
+    """ A ray of a specified length, origin and direction.
 
     Args:
         pose: An `(x, y, theta)` tuple or :class:`soar.sim.geometry.Pose` as the origin of the ray.
@@ -273,7 +277,7 @@ class World:
             self.add(wall)
 
     def __getitem__(self, item):
-        """ Iterating over a world is the same as interating over the (sorted) object list. """
+        """ Iterating over a world is the same as iterating over the (sorted) object list. """
         return self.objects[item][0]
 
     def add(self, obj, layer=None):
@@ -308,7 +312,7 @@ class World:
             if obj.do_draw:
                 obj.draw(canvas)
 
-    def delete(self, canvas):
+    def delete(self, canvas):  # TODO: Deprecate this in 2.0
         """ Delete the world from a canvas, by deleting each object at a time.
 
         Args:
