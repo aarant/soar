@@ -163,7 +163,10 @@ def future(name, *args, **kwargs):
 def load_module(path, namespace=None):
     global __module_paths
     if namespace is None:
-        namespace = {}
+        def fake_input(*args):  # TODO: This is a temporary solution intended to prevent input() from blocking.
+            print('Intercepted call to blocking input() and passed an empty string.', file=sys.stderr)
+            return ''
+        namespace = {'input': fake_input}
     path = os.path.abspath(path)  # Load from absolute paths
 
     namespace['__name__'] = os.path.splitext(os.path.basename(path))[0]  # Base name of the module
@@ -244,6 +247,9 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
 
     # Give the brain access to the mode soar is running in
     hooks.is_gui = lambda: gui is not None
+
+    # First make sure all calls to PlotWindow use Toplevel() rather than Tk()
+    PlotWindow._tk_started = True
 
     # Wrap calls to PlotWindow appropriately
     plots = []

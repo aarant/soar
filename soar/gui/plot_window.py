@@ -21,7 +21,7 @@ if platform.system() == 'Darwin':  # TODO: Test this fix for Soar crashing on ma
     matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg, NavigationToolbar2TkAgg
 import matplotlib.pyplot as plt
-from tkinter import Toplevel, TOP, BOTH
+from tkinter import Tk, Toplevel, TOP, BOTH
 
 
 class PlotWindow(plt.Figure):
@@ -35,14 +35,19 @@ class PlotWindow(plt.Figure):
         title (str): The title to be used for the initial window.
         visible (bool): Whether to actually display a Tk window (set to `False` to create and save plots without
             displaying a window).
+        standalone (bool, optional): If `True`, plot windows will be kept open by keeping the Tk event loop alive.
     """
+    _tk_started = False  # If this is True, uses Toplevel to create the window, otherwise creates a main window
+
     def __init__(self, title="Plotting Window", visible=True):
         plt.Figure.__init__(self)
         self.add_subplot(111)
         self.visible = visible
         self._destroyed = False
         if self.visible:  # If visible, use Tk's frontend
-            self.canvas = FigureCanvasTkAgg(self, Toplevel())
+            # Use the correct method to create a window, then set the tk_started flag to True
+            self.canvas = FigureCanvasTkAgg(self, Toplevel() if self.__class__._tk_started else Tk())
+            self.__class__._tk_started = True
             self.title(title)
             self.make_window()
             self.show()

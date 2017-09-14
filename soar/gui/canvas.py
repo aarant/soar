@@ -56,20 +56,24 @@ def canvas_from_world(world, toplevel=Toplevel, close_cmd=None):
                 elif attr == 'on_release_left':
                     c.tag_bind(obj.tags, '<ButtonRelease-1>', obj.on_release_left)
                 elif attr == 'on_press_right':
-                    if SYSTEM == 'Darwin':  # Right-click bindings on Mac are different TODO: Check if this works
+                    if SYSTEM == 'Darwin':  # Right-click bindings on Mac are different
                         c.tag_bind(obj.tags, '<ButtonPress-2>', obj.on_press_right)
                     else:
                         c.tag_bind(obj.tags, '<ButtonPress-3>', obj.on_press_right)
+                    # Also bind to Ctrl-click for Mac, in case there isn't a right click for some reason?
+                    c.tag_bind(obj.tags, '<Control-ButtonPress-1>', obj.on_press_right)
                 elif attr == 'on_motion_right':
                     if SYSTEM == 'Darwin':
                         c.tag_bind(obj.tags, '<B2-Motion>', obj.on_motion_right)
                     else:
                         c.tag_bind(obj.tags, '<B3-Motion>', obj.on_motion_right)
+                        c.tag_bind(obj.tags, '<Control-B1-Motion>', obj.on_motion_right)
                 elif attr == 'on_release_right':
                     if SYSTEM == 'Darwin':
                         c.tag_bind(obj.tags, '<ButtonRelease-2>', obj.on_release_right)
                     else:
                         c.tag_bind(obj.tags, '<ButtonRelease-3>', obj.on_release_right)
+                    c.tag_bind(obj.tags, '<Control-ButtonRelease-1>', obj.on_release_right)
     return c
 
 

@@ -26,7 +26,7 @@ class PioneerRobot(BaseRobot):
     Attributes:
         type (str): Always `'Pioneer3'`; used to identify this robot type.
         simulated (bool): If `True`, the robot is being simulated. Otherwise it should be assumed to be real.
-        pos: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
+        pose: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
              In simulation, this is the actual position; on a real robot this is based on information from the encoders.
         world: An instance of :class:`soar.sim.world.World` or a subclass, or `None`, if the robot is real.
         FV_CAP (float): The maximum translational velocity at which the robot can move, in meters/second.
@@ -47,6 +47,7 @@ class PioneerRobot(BaseRobot):
                                                   (-0.223, 0.074), (-0.223, -0.103), (-0.153, -0.179), (-0.051, -0.179),
                                                   (-0.051, -0.219)], None, fill='black', dummy=True))
         self.type = 'Pioneer3'
+        # Sonar poses relative to the robot's center
         self.sonar_poses = [Pose(0.08, 0.134, pi/2), Pose(0.122, 0.118, 5*pi/18),
                             Pose(0.156, 0.077, pi/6), Pose(0.174, 0.0266, pi/18),
                             Pose(0.174, -0.0266, -pi/18), Pose(0.156, -0.077, -pi/6),
@@ -59,11 +60,11 @@ class PioneerRobot(BaseRobot):
         self._sonars = None  # Super secret calculated sonars (shh)
         self._move_data = {'x': 0, 'y': 0, 'item': None}  # Drag data for the canvas
         self._turn_data = {'x': 0, 'y': 0, 'item': None}  # Drag data for the canvas
-        self._serial_ports = None  # Serial ports to use when connecting with ARCOS
+        self._serial_ports = None  # Serial ports to use when connecting with ARCOS; any if None
         self._last_x, self._last_y = 0, 0  # For dealing with encoder rollover
         self._x_sum, self._y_sum = 0, 0  # For dealing with encoder rollover
         self._ignore_brain_lag = False  # For making the step duration fixed
-        self.set_robot_options(**options)
+        self.set_robot_options(**options)  # Sets any options passed in on construction
 
     def to_dict(self):
         """ Return a dictionary representation of the robot, usable for serialization.
@@ -226,7 +227,7 @@ class PioneerRobot(BaseRobot):
             # We take each sonar and build a ray longer than the world's max diagonal
             origin = self.sonar_poses[i]
             # Translate and turn by the robot's pose, then rotate about its center
-            origin = origin.transform(self.pos).rotate(self.pos.point(), self.pos[2])
+            origin = origin.transform(self.pose).rotate(self.pose.point(), self.pose[2])
             sonar_ray = Ray(origin, 1.5*max(self.world.dimensions), dummy=True)
 
             # Find all collisions with objects that aren't the robot itself
@@ -247,7 +248,7 @@ class PioneerRobot(BaseRobot):
         if not self._sonars:
             self.calc_sonars()
         for dist, pose in zip(self._sonars, self.sonar_poses):
-            origin = pose.transform(self.pos).rotate(self.pos.point(), self.pos[2])
+            origin = pose.transform(self.pose).rotate(self.pose.point(), self.pose[2])
             fill = 'firebrick2' if dist > self.SONAR_MAX else 'gray'
             sonar_ray = Ray(origin, dist, tags=self.tags+'sonars', fill=fill, width=1)
             sonar_ray.draw(canvas)
@@ -315,7 +316,7 @@ class PioneerRobot(BaseRobot):
 
     def on_step(self, duration):
         if self._ignore_brain_lag:
-            duration = 0.1  # Fix the step duration
+            duration = 0.1  # If ignoring brain lag, fix the step duration
         if self.simulated:  # Move, check for collisions, and update the internal sonars
             if not self._collided:  # The robot only moves if it hasn't collided
                 BaseRobot.on_step(self, duration)  # Do BaseRobot's simulated move and collision preemption
@@ -337,7 +338,7 @@ class PioneerRobot(BaseRobot):
             self._last_x, self._last_y = x, y
             self._x_sum += d_x
             self._y_sum += d_y
-            self.pos = Pose(self._x_sum/1000.0, self._y_sum/1000.0, t*0.001534)
+            self.pose = Pose(self._x_sum/1000.0, self._y_sum/1000.0, t*0.001534)
 
     def on_stop(self):
         if not self.simulated:
@@ -370,8 +371,8 @@ class PioneerRobot(BaseRobot):
         real_d_x = delta_x / self.world.canvas.pixels_per_meter
         real_d_y = -delta_y / self.world.canvas.pixels_per_meter
         # Update the robot's real position, check for a collision, and redraw/recalcuate the robot and sonars
-        self.pos = self.pos.transform((real_d_x, real_d_y, 0))
-        self.polygon.recenter(self.pos)
+        self.pose = self.pose.transform((real_d_x, real_d_y, 0))
+        self.polygon.recenter(self.pose)
         if self.check_if_collided():
             self.world.canvas.itemconfigure(self.tags, fill='red')
         else:
@@ -395,7 +396,7 @@ class PioneerRobot(BaseRobot):
         # Moving left or up rotates counterclockwise, right or down rotates clockwise
         theta = -delta_x*2*pi/150-delta_y*2*pi/150
         # Change the robot's position, rotate and redraw the polygon, and recalculate and redraw the sonars
-        self.pos = self.pos.transform((0, 0, theta))
+        self.pose = self.pose.transform((0, 0, theta))
         self.polygon.rotate(self.polygon.center, theta)
         self.calc_sonars()
         self.draw(self.world.canvas)

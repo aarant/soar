@@ -64,4 +64,12 @@ def elapsed():
     return 0.0
 
 
+def raw_print(*args, **kwargs):
+    """ Allows a brain to print without the `'>>>'` prepended.
+
+    All arguments and keyword arguments are passed to `print()`.
+    """
+    return print(*args, **kwargs)
+
+
 

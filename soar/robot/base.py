@@ -24,8 +24,8 @@ class BaseRobot(WorldObject):
                if the robot is real.
         simulated (bool): Any BaseRobot subclass should consider the robot to be simulated if this is `True`, and real
                           otherwise. By default, it is `False`.
-        pos: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
-             In simulation, this is the actual position; on a real robot this may be determined through other means.
+        pose: An instance of :class:`soar.sim.geometry.Pose` representing the robot's `(x, y, theta)` position.
+            In simulation, this is the actual position; on a real robot this may be determined through other means.
         polygon: A :class:`soar.sim.world.Polygon` that defines the boundaries of the robot and is used for collision.
         fv (float): The robot's current translational velocity, in arbitrary units. Positive values indicate movement
             towards the front of the robot, and negative values indicate movement towards the back.
@@ -43,7 +43,7 @@ class BaseRobot(WorldObject):
         self.type = 'BaseRobot'
         self.simulated = True
         self.world = None
-        self.pos = Pose(0, 0, 0)
+        self.pose = Pose(0, 0, 0)
         self.fv = 0.0
         self.rv = 0.0
         # Re-instantiate the polygon with the robot's tags
@@ -60,9 +60,17 @@ class BaseRobot(WorldObject):
         """
         pass
 
+    @property
+    def pos(self):  # TODO: This property exists only for backwards compatibility. Deprecate by 2.0.
+        return self.pose
+
+    @pos.setter
+    def pos(self, t):  # TODO: This property exists only for backwards compatibility. Deprecate by 2.0.
+        self.pose = t
+
     def to_dict(self):
         """ Return a dictionary representation of the robot, usable for serialization. """
-        return {'x_pos': self.pos[0], 'y_pos': self.pos[1], 't_pos': self.pos[2], 'fv': self.fv, 'rv': self.rv,
+        return {'x_pos': self.pose[0], 'y_pos': self.pose[1], 't_pos': self.pose[2], 'fv': self.fv, 'rv': self.rv,
                 'type': self.type}
 
     def move(self, pose):
@@ -72,9 +80,9 @@ class BaseRobot(WorldObject):
             pose: An :class:`soar.sim.geometry.Pose` or 3-tuple-like object to move the robot to.
         """
         x, y, t = pose
-        current_theta = self.pos[2]
-        self.pos = Pose(x, y, t)
-        self.polygon.recenter(self.pos)
+        current_theta = self.pose[2]
+        self.pose = Pose(x, y, t)
+        self.polygon.recenter(self.pose)
         self.polygon.rotate(self.polygon.center, t - current_theta)
 
     def collision(self, other, eps=1e-8):
@@ -160,7 +168,7 @@ class BaseRobot(WorldObject):
         if self.simulated:  # Do the simulated move update (with collision preemption)
             # Try and make sure that the robot can actually move to its new location
             # Integrate over the path, making the new position at the end of the arc
-            theta = self.pos[2]
+            theta = self.pose[2]
             d_t = self.rv*step_duration
             new_theta = theta+d_t
             if self.rv != 0:
@@ -168,18 +176,18 @@ class BaseRobot(WorldObject):
                 d_y = self.fv*(cos(theta)-cos(new_theta))/self.rv
             else:
                 d_x, d_y = self.fv*cos(theta)*step_duration, self.fv*sin(theta)*step_duration
-            new_pos = self.pos.transform((d_x, d_y, d_t))
+            new_pos = self.pose.transform((d_x, d_y, d_t))
             # Build a dummy wall between the old and new position and check if it collides with anything
-            w = Wall(self.pos.point(), new_pos.point(), dummy=True)
+            w = Wall(self.pose.point(), new_pos.point(), dummy=True)
             collisions = self.world.find_all_collisions(w, condition=lambda obj: obj is not self)
             if collisions:  # If there were collisions, push the robot to a safe distance from the closest one
-                collisions.sort(key=lambda tup: self.pos.distance(tup[1]))
+                collisions.sort(key=lambda tup: self.pose.distance(tup[1]))
                 safe_point = Point(*collisions[0][1])
                 offset = Point(self._radius, 0.0).rotate((0, 0), new_pos[2])
                 safe_point = safe_point.sub(offset)
                 new_pos = Pose(safe_point.x, safe_point.y, new_pos[2])
 
-            self.pos = new_pos
+            self.pose = new_pos
             self.polygon.recenter(new_pos)
             self.polygon.rotate(self.polygon.center, d_t)
 

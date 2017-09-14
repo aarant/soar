@@ -193,6 +193,7 @@ class SoarUI(Tk):
             'title': "Choose file",
         }
         self.event_signals = []
+        self.bind('<Control-c>', lambda event: client_future(CONTROLLER_FAILURE))
 
     def initialize(self):
         """ Initialize the grid geometry. """
@@ -494,7 +495,6 @@ class SoarUI(Tk):
 
     def world_ready(self, auto_sim_load=False):
         """ Configure buttons and paths when a world is ready. """
-        print(auto_sim_load)
         self.done_loading()
         self.world_dir = os.path.dirname(self.world_path)
         if self.brain_path is not None:
