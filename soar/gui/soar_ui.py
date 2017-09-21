@@ -181,6 +181,7 @@ class SoarUI(Tk):
         self.output.output('\nOutput will appear in this window.\n\n')
         update_msg = get_update_message()
         if update_msg != '':
+            print(update_msg)
             self.output.error(update_msg)
         self.initialize()
         self.windows = []
