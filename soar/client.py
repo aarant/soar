@@ -44,6 +44,7 @@ from soar.errors import *
 from soar.controller import Controller
 from soar.gui.soar_ui import SoarUI
 from soar.gui.plot_window import PlotWindow
+from soar.update import get_update_message
 from soar.hooks import *
 from soar.sim.geometry import *
 from soar.sim.world import *

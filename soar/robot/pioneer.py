@@ -194,7 +194,7 @@ class PioneerRobot(BaseRobot):
         Returns:
             float: The perpendicular distance to the left of the robot, assuming there is a linear surface.
         """
-        return self.get_distance_right_and_angle()[0]
+        return self.get_distance_left_and_angle()[0]
 
     def get_distance_left_and_angle(self):
         """ Get the perpendicular distance and angle to a surface on the left.

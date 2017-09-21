@@ -19,6 +19,7 @@ from soar import __version__, blerb
 from soar.common import *
 from soar.gui.canvas import canvas_from_world
 from soar.gui.output import OutputFrame, SoarIO
+from soar.update import get_update_message
 
 
 class ButtonFrame(Frame):
@@ -178,6 +179,9 @@ class SoarUI(Tk):
                 self.output.link(l)
                 self.output.output('\n')
         self.output.output('\nOutput will appear in this window.\n\n')
+        update_msg = get_update_message()
+        if update_msg != '':
+            self.output.error(update_msg)
         self.initialize()
         self.windows = []
         self.sim_canvas = None
