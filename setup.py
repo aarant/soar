@@ -1,10 +1,12 @@
 from setuptools import setup
 
+from soar import __version__
+
 with open('README.rst', 'r') as f:
     long_description = f.read()
 
 setup(name='Soar',
-      version='1.3.1',
+      version=__version__,
       description='An extensible Python framework for simulating and interacting with robots',
       long_description=long_description,
       author='Andrew Antonitis',
@@ -16,7 +18,5 @@ setup(name='Soar',
       install_requires=['pyserial>=3.0', 'matplotlib>=2.0'],
       python_requires='>=3',
       license='LGPLv3',
-      classifiers=[
-          'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
-          ]
+      classifiers=['License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)'],
       )

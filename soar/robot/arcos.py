@@ -500,6 +500,7 @@ class ARCOSClient:
                 self.send_command(SONAR, 1)
                 sleep(1.0)
             else:
+                sleep(1.0)
                 return
         if self.standard['FLAGS'] & 0x2 != 0x2:  # If they still aren't enabled, raise an exception
             raise ARCOSError('Unable to enable the robot sonars.')

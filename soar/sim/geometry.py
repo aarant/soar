@@ -82,13 +82,8 @@ class Point:
     def __str__(self):
         return '(' + str(self.x) + ', ' + str(self.y) + ')'
 
-    def __getitem__(self, key):  # This is so we can cheat and use xy tuples as 'other' inputs
-        if key == 0:
-            return self.x
-        elif key == 1:
-            return self.y
-        else:
-            raise IndexError('tuple index out of range')
+    def __getitem__(self, val):  # This is so we can cheat and use xy tuples as 'other' inputs
+        return self.xy_tuple()[val]
 
     def xy_tuple(self):
         """ Returns: An `(x, y)` tuple representing the point. """
@@ -222,15 +217,8 @@ class Pose(Point):
     def __str__(self):
         return '(' + str(self.x) + ', ' + str(self.y) + ', ' + str(self.t) + ')'
 
-    def __getitem__(self, key):  # This is so we can cheat and use xyt tuples as 'other' inputs
-        if key == 0:
-            return self.x
-        elif key == 1:
-            return self.y
-        elif key == 2:
-            return self.t
-        else:
-            raise IndexError('tuple index out of range')
+    def __getitem__(self, val):  # This is so we can cheat and use xyt tuples as 'other' inputs
+        return self.xyt_tuple()[val]
 
     def xyt_tuple(self):
         """ Returns: An `(x, y, t)` tuple representing the pose. """
