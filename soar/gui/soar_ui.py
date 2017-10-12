@@ -193,7 +193,7 @@ class SoarUI(Tk):
         self.protocol('WM_DELETE_WINDOW', self.on_close)
         self.file_opt = {
             'defaultextension': '.py',
-            'filetypes': [('all files', '.*'), ('python files', ' .py')],
+            'filetypes': [('all files', '*'), ('python files', ' .py')],
             'parent': parent,
             'title': "Choose file",
         }

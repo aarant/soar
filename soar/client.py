@@ -37,6 +37,7 @@ import json
 import traceback as tb
 from io import BytesIO
 from queue import Queue
+from threading import current_thread, main_thread
 
 from soar import __version__
 from soar.common import *
@@ -207,7 +208,7 @@ def brain_setup():  # Setup a freshly loaded brain by wrapping the necessary met
     force_main_thread = False  # If this gets set to True, brain methods must run in the main thread
 
     # If the brain uses Tkinter and we're running in GUI mode, force brain methods to run in the main thread
-    if 'tkinter_hook' in brain and gui:
+    if gui and 'tkinter_hook' in brain:
         force_main_thread = True
 
     # Clear any plot objects that may have been listed by any previously loaded brain
@@ -252,18 +253,31 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
     # First make sure all calls to PlotWindow use Toplevel() rather than Tk()
     PlotWindow._tk_started = True
 
-    # Wrap calls to PlotWindow appropriately
+    # Wrap PlotWindow, ensuring it plays nicely with Soar and Tk
+    # This includes keeping track of open plots, attaching the window to the UI, and wrapping class methods
     plots = []
-    if gui:
-        def plot_window_wrap(title='Plotting Window', visible=True):
-            p = gui.attach_window(PlotWindow(title, visible=visible))
-            plots.append(p)
-            return p
-    else:
-        def plot_window_wrap(title='Plotting Window', visible=True):
-            p = PlotWindow(title, visible=False)
-            plots.append(p)
-    sys.modules['soar.gui.plot_window'].PlotWindow = plot_window_wrap
+    class WrappedPlotWindow(PlotWindow):
+        if gui:
+            def __init__(self, title='Plotting Window', visible=True):
+                # Wrap the class init so that it runs in the Tk mainloop
+                tkinter_execute(return_exceptions(PlotWindow.__init__))(self, title, visible=visible)
+                # Attach the window to the UI, and add it to the list of plots
+                gui.attach_window(self)
+                plots.append(self)
+
+            def __getattribute__(self, name):
+                attr = PlotWindow.__getattribute__(self, name)  # Call base class method to avoid infinite recursion
+                # Wrap class methods so that they run in the Tk mainloop, if not already running in it
+                if callable(attr) and current_thread() != main_thread():
+                    return tkinter_execute(return_exceptions(attr))
+                else:
+                    return attr
+        else:
+            def __init__(self, title='Plotting Window', visible=True):
+                # Ensure the window is not visible, and add the plot to the global list
+                PlotWindow.__init__(self, title, visible=False)
+                plots.append(self)
+    sys.modules['soar.gui.plot_window'].PlotWindow = WrappedPlotWindow
 
     # Set the Tkinter hook to attach windows to the GUI
     if gui:
