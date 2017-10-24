@@ -29,7 +29,7 @@ class Mock(MagicMock):
             return MagicMock()
 
 MOCK_MODULES = ['serial', 'serial.tools.list_ports', 'matplotlib', 'matplotlib.backends.backend_tkagg',
-                'matplotlib.pyplot', 'argparse', 'urllib', 're']
+                'matplotlib.pyplot', 'argparse', 'urllib']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
 
