@@ -93,6 +93,7 @@ def tkinter_execute(func):  # Run functions on Tk's main thread, synchronously
         return_val = gui.synchronous_future(func, *args, after_idle=True, **kwargs)
         if isinstance(return_val, Exception):  # If the function returned an exception, raise it
             raise return_val
+        return return_val
     return tk_wrap
 
 
@@ -266,12 +267,15 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
                 plots.append(self)
 
             def __getattribute__(self, name):
-                attr = PlotWindow.__getattribute__(self, name)  # Call base class method to avoid infinite recursion
-                # Wrap class methods so that they run in the Tk mainloop, if not already running in it
-                if callable(attr) and current_thread() != main_thread():
-                    return tkinter_execute(return_exceptions(attr))
-                else:
+                if current_thread() != main_thread():  # If not on the main thread
+                    # Force accessing the attribute to run on the main thread
+                    attr = tkinter_execute(return_exceptions(PlotWindow.__getattribute__))(self, name)
+                    # If the attribute is callable, wrap it so that it runs on the main thread
+                    if callable(attr):
+                        return tkinter_execute(return_exceptions(attr))
                     return attr
+                else:
+                    return PlotWindow.__getattribute__(self, name)
         else:
             def __init__(self, title='Plotting Window', visible=True):
                 # Ensure the window is not visible, and add the plot to the global list

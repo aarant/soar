@@ -6,8 +6,11 @@ Note:
     Unlike use of the :func:`soar.hooks.tkinter_hook`, use of this module will not force brain methods to run on the
     main thread alongside Soar's GUI event loop.
 
-    `PlotWindow` is wrapped by the client if it is imported by a Soar brain. This wrapper ensures that the proper mode
-    (GUI or headless) is enforced, despite what the brain might pass to the constructor.
+    However, methods of `PlotWindow` *will* run on the main thread, regardless of what thread the other brain methods
+    run in.
+
+    `PlotWindow` is wrapped by the client to ensure that the proper mode (GUI or headless) is enforced regardless
+    of the arguments passed to the constructor by the brain methods.
 
     The client will also ensure that, if logging is occurring, any `PlotWindow` objects will have their image data
     included in the log whenever the controller is shut down.

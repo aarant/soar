@@ -39,9 +39,10 @@ HEAD = 12  #: Turn at `SETRV` speed to absolute heading; +-degrees (+ is counter
 DHEAD = 13  #: Turn at `SETRV` speed relative to current heading; (+) counterclockwise or (-) clockwise degrees.
 SAY = 15
 """ Play up to 20 duration, tone sound pairs through User Control panel piezo speaker.
-The argument is a string consisting of duration, tone pair bytes. Duration is in 20 millisecond increments.
-A value of 0 means silence. The values 1-127 are the corresponding MIDI notes. The remaining values are frequencies
-computed as `tone - 127*32` equivalent frequencies from 1-4096, in 32Hz increments.
+The argument is a string whose first byte must be the number of (duration, tone) pairs to play, followed by each (duration, tone) pair.
+Duration is in 20 millisecond increments.
+A value of 0 means silence. The values 1-127 are the corresponding MIDI notes, with 60 being middle C. The remaining values are frequencies
+computed as `(tone - 127)*32`, ranging from 1-4096 in 32Hz increments.
 """
 CONFIG = 18  #: Request a configuration SIP.
 ENCODER = 19  #: Request a single (1), a continuous stream (>1), or stop (0) encoder SIPS.
@@ -332,6 +333,7 @@ class ARCOSClient:
         Args:
             code: The command code. Must be in :data:`soar.robot.arcos.command_types`.
             data (optional): The associated command argument, assumed to be of the correct type.
+                For commands that take a string argument, a `bytes` object may also be used.
 
         Raises:
             `Timeout`: If the write timeout of the port was exceeded.
@@ -347,7 +349,7 @@ class ARCOSClient:
             b = [data & 0xff, (data >> 8) & 0xff]
             self.send_packet(code, arg_type, *b)
         else:  # command_types[code] == str
-            b = [ord(c) for c in data]  # Convert the string to bytes and add a null terminator
+            b = list(bytes(data))
             b.append(0)
             arg_type = 0x2b
             self.send_packet(code, arg_type, *b)
