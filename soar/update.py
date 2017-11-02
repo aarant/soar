@@ -36,6 +36,8 @@ def get_update_message():
         if need_update:
             if pypi_version[3] != inf:
                 pypi_version[3] = 'dev' + str(pypi_version[3])
+            else:
+                pypi_version = pypi_version[:-1]  # Slice off the irrelevant infinite dev version
             version_string = '.'.join([str(x) for x in pypi_version])
             return 'A newer version of Soar is available: v' + version_string + '\nPlease update your installation.'
         else:

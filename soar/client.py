@@ -261,7 +261,10 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
         if gui:
             def __init__(self, title='Plotting Window', visible=True):
                 # Wrap the class init so that it runs in the Tk mainloop
-                tkinter_execute(return_exceptions(PlotWindow.__init__))(self, title, visible=visible)
+                if current_thread() != main_thread():  # If not on the main thread, force it
+                    tkinter_execute(return_exceptions(PlotWindow.__init__))(self, title, visible=visible)
+                else:  # If we're already on the main thread, do a normal init
+                    PlotWindow.__init__(self, title, visible=visible)
                 # Attach the window to the UI, and add it to the list of plots
                 gui.attach_window(self)
                 plots.append(self)
