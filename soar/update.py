@@ -33,6 +33,9 @@ def get_update_message():
             if pypi_inc > current_inc:  # If any PyPI version increment is greater, we need to update
                 need_update = True
                 break
+            elif pypi_inc < current_inc:  # If any current version increment is greater, we do not need to update
+                need_update = False
+                break
         if need_update:
             if pypi_version[3] != inf:
                 pypi_version[3] = 'dev' + str(pypi_version[3])
