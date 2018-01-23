@@ -4,7 +4,6 @@
 # soar/sim/world.py
 """ Soar World and WorldObject classes/subclasses, for simulating and drawing worlds. """
 import random
-from string import ascii_letters
 from math import sin, cos, pi
 
 from soar.sim.geometry import Point, LineSegment, PointCollection
@@ -30,7 +29,7 @@ class WorldObject:
     """
     _unique_id = 0
 
-    def __init__(self, do_draw, do_step, dummy=False, **options):
+    def __init__(self, do_draw, do_step, dummy=False, **options):  # TODO: Replace do_draw, do_step with static, dummy, etc in 2.0
         self.do_draw = do_draw
         self.do_step = do_step
         self.dummy = dummy

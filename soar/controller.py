@@ -63,13 +63,14 @@ class Controller:
     def load(self):
         """ Called when the controller is loaded. """
         # Set brain print function
-        if self.log:  # If we are logging, make sure anything the brain prints is added to the log later
-            def brain_print(*args, **kwargs):
+        def brain_print(*args, **kwargs):
+            raw = kwargs.pop('raw', False)
+            if raw:  # Print without the three carets '>>>'
+                print(*args, **kwargs)
+            else:
                 print('>>>', *args, **kwargs)
+            if self.log:  # If logging, ensure anything printed is logged
                 print(*args, file=self._brain_log_contents, **kwargs)
-        else:
-            def brain_print(*args, **kwargs):
-                print('>>>', *args, **kwargs)
         self.brain['print'] = brain_print
 
         if 'elapsed' in self.brain:  # Give brain read-only access to the elapsed time
@@ -89,7 +90,26 @@ class Controller:
                     return EXCEPTION
         # The robot is always loaded first, in case the brain depends on it
         self.robot.on_load()
+        # TODO: Figure out how to force a brain crash
+        # t = Thread(target=self.force_brain_crash, daemon=True)
+        # t.start()
         self.brain['on_load']()
+
+    # def force_brain_crash(self):
+    #     sleep(5.0)
+    #     class Dummy:
+    #         def __getattribute__(*args, **kwargs):
+    #             raise Exception
+    #         def __call__(*args, **kwargs):
+    #             raise Exception
+    #     dummy_obj = Dummy()
+    #     for key in self.brain.keys():
+    #         if key == '__builtins__':
+    #             for b_key in self.brain[key].keys():
+    #                 self.brain[key][b_key] = dummy_obj
+    #         else:
+    #             self.brain[key] = dummy_obj
+    #     print('Attempted to force brain crash', file=sys.stderr)
 
     def run(self, n=None):
         """ Runs the controller, starting it if necessary, for one or many steps, or without stopping.

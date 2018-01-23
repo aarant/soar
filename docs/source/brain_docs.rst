@@ -32,6 +32,11 @@ A brain file must have the following attributes to be usable in Soar:
     
 These names should be considered reserved by Soar when used in a brain module.
 
+.. note::
+
+   Typically, using `print()` within a Soar brain will cause the ouput to be prepended by three carets `'>>>'`. To prevent this, pass the argument
+   `raw=True` to the `print` function.
+
 Hooks
 =====
 Hooks are optional functions that brains can import to interact with Soar on a more flexible level than the controller provides. Hooks include everything

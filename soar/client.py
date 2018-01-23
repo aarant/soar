@@ -39,6 +39,7 @@ from io import BytesIO
 from queue import Queue
 from threading import current_thread, main_thread
 
+import soar.hooks
 from soar import __version__
 from soar.common import *
 from soar.errors import *
@@ -46,9 +47,10 @@ from soar.controller import Controller
 from soar.gui.soar_ui import SoarUI
 from soar.gui.plot_window import PlotWindow
 from soar.update import get_update_message
-from soar.hooks import *
 from soar.sim.geometry import *
 from soar.sim.world import *
+
+MAIN_THREAD = main_thread()  # Defines the main thread for later comparisons
 
 brain = None
 brain_path = None
@@ -75,29 +77,27 @@ def empty_queue():  # Empty the queue
         queue.task_done()
 
 
-def return_exceptions(func):  # Wrap a function so that it returns any exception it raises
-    def return_wrap(*args, **kwargs):
-        try:
-            return_val = func(*args, **kwargs)
-        except Exception as e:
-            return e
-        else:
-            return return_val
-    return return_wrap
-
-
-def tkinter_execute(func):  # Run functions on Tk's main thread, synchronously
-    global gui
-
+def tkinter_execute(func, after_idle=False):  # Run functions on Tk's main thread, synchronously
     def tk_wrap(*args, **kwargs):
-        return_val = gui.synchronous_future(func, *args, after_idle=True, **kwargs)
-        if isinstance(return_val, Exception):  # If the function returned an exception, raise it
-            raise return_val
-        return return_val
+        global gui, MAIN_THREAD
+        if current_thread() != MAIN_THREAD:  # Only force Tk to call the function if not already on the main thread
+            def return_exceptions(*args, **kwargs):  # Force a function to return any exception it raises
+                try:
+                    return_val = func(*args, **kwargs)
+                except Exception as e:
+                    return e
+                else:
+                    return return_val
+            return_val = gui.synchronous_future(return_exceptions, *args, after_idle=after_idle, **kwargs)
+            if isinstance(return_val, Exception):  # If the function returned an exception, raise it
+                raise return_val
+            return return_val
+        else:  # If already on the main thread, just call the function
+            return func(*args, **kwargs)
     return tk_wrap
 
 
-def catch_exceptions(func):  # Catch exceptions that occur and notify the client
+def catch_exceptions(func):  # Catch exceptions that occur and notify the client, via futures
     def catch_wrap(*args, **kwargs):
         try:
             return_val = func(*args, **kwargs)
@@ -166,10 +166,10 @@ def future(name, *args, **kwargs):
 def load_module(path, namespace=None):
     global __module_paths
     if namespace is None:
-        def fake_input(*args):  # TODO: This is a temporary solution intended to prevent input() from blocking.
-            print('Intercepted call to blocking input() and passed an empty string.', file=sys.stderr)
-            return ''
-        namespace = {'input': fake_input}
+        # Input is replaced with a non-blocking dummy function.
+        # The builtins are copied to the new namespace.
+        namespace = {'input': lambda *args, **kwargs: print('Intercepted call to blocking input().',
+                                                            file=sys.stderr), '__builtins__': __builtins__.copy()}
     path = os.path.abspath(path)  # Load from absolute paths
 
     namespace['__name__'] = os.path.splitext(os.path.basename(path))[0]  # Base name of the module
@@ -219,7 +219,7 @@ def brain_setup():  # Setup a freshly loaded brain by wrapping the necessary met
     for func in ['on_load', 'on_start', 'on_step', 'on_stop', 'on_shutdown']:
         if func in brain and callable(brain[func]):
             if force_main_thread:  # We hack a bit to run methods on the Tk thread, even when called from any thread
-                brain[func] = tkinter_execute(return_exceptions(brain[func]))
+                brain[func] = tkinter_execute(brain[func])
         else:  # Make undefined functions do nothing
             brain[func] = lambda *args, **kwargs: None
 
@@ -245,8 +245,8 @@ def nop(*args, callback=None, **kwargs):  # A NOP, typically used for callbacks
 
 
 def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a brain is ever loaded
-    global gui, plots
-    hooks = sys.modules['soar.hooks']
+    global gui, plots, MAIN_THREAD
+    hooks = soar.hooks
 
     # Give the brain access to the mode soar is running in
     hooks.is_gui = lambda: gui is not None
@@ -261,8 +261,8 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
         if gui:
             def __init__(self, title='Plotting Window', visible=True):
                 # Wrap the class init so that it runs in the Tk mainloop
-                if current_thread() != main_thread():  # If not on the main thread, force it
-                    tkinter_execute(return_exceptions(PlotWindow.__init__))(self, title, visible=visible)
+                if current_thread() != MAIN_THREAD:  # If not on the main thread, force it
+                    tkinter_execute(PlotWindow.__init__)(self, title, visible=visible)
                 else:  # If we're already on the main thread, do a normal init
                     PlotWindow.__init__(self, title, visible=visible)
                 # Attach the window to the UI, and add it to the list of plots
@@ -270,12 +270,12 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
                 plots.append(self)
 
             def __getattribute__(self, name):
-                if current_thread() != main_thread():  # If not on the main thread
+                if current_thread() != MAIN_THREAD:  # If not on the main thread
                     # Force accessing the attribute to run on the main thread
-                    attr = tkinter_execute(return_exceptions(PlotWindow.__getattribute__))(self, name)
+                    attr = tkinter_execute(PlotWindow.__getattribute__)(self, name)
                     # If the attribute is callable, wrap it so that it runs on the main thread
                     if callable(attr):
-                        return tkinter_execute(return_exceptions(attr))
+                        return tkinter_execute(attr)
                     return attr
                 else:
                     return PlotWindow.__getattribute__(self, name)
@@ -289,6 +289,16 @@ def set_hooks(*args, **kwargs):  # Set the hooks that must be defined before a b
     # Set the Tkinter hook to attach windows to the GUI
     if gui:
         hooks.tkinter_hook = gui.attach_window
+
+    # Set the Tkinter wrap to execute widget callables on the Tk mainloop
+    if gui:
+        def tk_wrap(widget, linked=True):
+            methods = [func for func in dir(widget) if callable(getattr(widget, func)) and not func.startswith('__')]
+            for func_name in methods:
+                func = getattr(widget, func_name)
+                setattr(widget, func_name, tkinter_execute(func, after_idle=False))
+            return hooks.tkinter_hook(widget, linked)
+        hooks.tkinter_wrap = tk_wrap
 
 
 def make_gui(*args, **kwargs):  # Creates the GUI and enters the main UI loop
