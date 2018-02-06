@@ -495,15 +495,20 @@ class ARCOSClient:
         Thread(target=self.pulse, daemon=True).start()
         Thread(target=self.update, daemon=True).start()
         self.wait_or_timeout(self.standard_event, 5.0, 'Failed to receive SIPs from the robot')
-        for i in range(5):  # Try multiple times to enable the sonars
-            if self.standard['FLAGS'] & 0x2 != 0x2:
-                self.send_command(SONAR, 1)
-                sleep(1.0)
-            else:
-                sleep(1.0)
-                return
-        if self.standard['FLAGS'] & 0x2 != 0x2:  # If they still aren't enabled, raise an exception
+        # Try multiple times to enable the sonars
+        for i in range(5):  
+            self.send_command(SONAR, 1)
+            sleep(1.0)
+            if self.standard['FLAGS'] & 0x2 == 0x2:
+                break
+        # If they still aren't enabled, raise an exception
+        if self.standard['FLAGS'] & 0x2 != 0x2:
             raise ARCOSError('Unable to enable the robot sonars.')
+        # Wait for up to 5 seconds for the sonars to return something other than 5000 mm
+        for i in range(10):
+            if any([dist != 5000 for dist in self.sonars]):
+                break
+            sleep(0.5)
 
     @staticmethod
     def wait_or_timeout(event, timeout=1.0, timeout_msg=''):

@@ -64,6 +64,7 @@ class PioneerRobot(BaseRobot):
         self._last_x, self._last_y = 0, 0  # For dealing with encoder rollover
         self._x_sum, self._y_sum = 0, 0  # For dealing with encoder rollover
         self._ignore_brain_lag = False  # For making the step duration fixed
+        self._raw_sonars = False  # Whether to cast out-of-range sonars to None
         self.set_robot_options(**options)  # Sets any options passed in on construction
 
     def to_dict(self):
@@ -83,11 +84,15 @@ class PioneerRobot(BaseRobot):
             serial_ports (list, optional): Sets the serial ports to try connecting to with the ARCOS client.
             ignore_brain_lag (bool): If `True`, a step will always be assumed to be 0.1 seconds long. Otherwise,
                 whatever duration the controller tells the robot to step is how long a step lasts.
+            raw_sonars (bool): If `True`, sonar values will not be recast to `None` when no distance was returned.
+                `5.0` will be returned instead.
         """
         if 'serial_ports' in options:
             self._serial_ports = options['serial_ports']
         if 'ignore_brain_lag' in options:
             self._ignore_brain_lag = options['ignore_brain_lag']
+        if 'raw_sonars' in options:
+            self._raw_sonars = options['raw_sonars']
 
     @property
     def fv(self):
@@ -137,14 +142,18 @@ class PioneerRobot(BaseRobot):
 
         The array contains the latest distance sensed by each sonar, in order, clockwise from the robot's far left to
         its far right. Readings are given in meters and are accurate to the millimeter. If no distance was sensed by a
-        sonar, its entry in the array will be `None`.
+        sonar, its entry in the array will be `None`, unless the robot option `raw_sonars` has been set to `True`, in 
+        which case its entry will be `5.0`.
         """
         if self.simulated:  # If simulating, grab the data from the latest calculated sonars
             if not self._sonars:  # If somehow this has been called before sonars are calculated, calculate them
                 self.calc_sonars()
             return [round(s, 3) if s < self.SONAR_MAX else None for s in self._sonars]
         else:  # Otherwise grab the sonar data from the ARCOS Client
-            return [s/1000.0 if s != 5000 else None for s in self.arcos.sonars[:8]]  # Convert mm to meters
+            if self._raw_sonars:  # Don't recast out-of-range values to None
+                return [s/1000.0 for s in self.arcos.sonars[:8]]
+            else:
+                return [s/1000.0 if s != 5000 else None for s in self.arcos.sonars[:8]]  # Convert mm to meters
 
     @property
     def analogs(self):
@@ -273,7 +282,7 @@ class PioneerRobot(BaseRobot):
     def on_load(self):
         if self.simulated:
             self.arcos = None
-            print('Connected to Pioneer p3dx-sh MIT_0042 \'Denny\' (12.0V) [Simulated]')  # Hi Denny Freeman!
+            print('Connected to Pioneer p3dx-sh MIT_0042 \'Denny\' (12.0 V) [Simulated]')  # Hi Denny Freeman!
         else:
             try:
                 self.arcos = ARCOSClient()
@@ -290,7 +299,7 @@ class PioneerRobot(BaseRobot):
                 battery_volts = self.arcos.standard['BATTERY'] / 10.0
                 # Print the standard connection message and warn if the battery is low
                 print('Connected to ' + ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']])
-                      + ' \'' + name_from_sernum(serial_num) + '\' (' + str(battery_volts) + ')')
+                      + ' \'' + name_from_sernum(serial_num) + '\' (' + str(battery_volts) + ' V)')
                 if battery_volts < self.arcos.config['LOWBATTERY']/10.0:
                     printerr('WARNING: The robot\'s battery is low. Consider recharging or finding a new one.')
             except ARCOSError as e:  # If anything goes wrong, raise a SoarIOError

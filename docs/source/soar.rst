@@ -17,3 +17,4 @@ soar
     command_line
     soar.robot
     soar.sim
+    soar.update
