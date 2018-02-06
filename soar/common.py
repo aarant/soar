@@ -2,6 +2,7 @@
 # Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/common.py
+# TODO: Move these into __init__?
 """ Soar common constants.
 
 Contains named constants for sending messages to the client and determining the type of a controller.

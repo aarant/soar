@@ -7,6 +7,13 @@ import random
 from math import sqrt, ceil
 
 
+names = ['Ariel', 'Bailey', 'Casey', 'Dallas', 'Eli', 'Frankie', 'Gabriel', 'Harley', 'Jayden', 'Kai', 'Lee', 'Mickey',
+         'Neo', 'Ocean', 'Parris', 'Quinn', 'Reagan', 'Shiloh', 'Taylor', 'Udo', 'Val', 'Winter', 'Xue', 'Yoshi',
+         'Zephyr', 'Narin', 'Ollie', 'Dakota', 'Marlie', 'Brooke', 'Shannon', 'Nour', 'Reese', 'Storm', 'Sydney',
+         'Omari', 'Ola', 'Ryley', 'Esmai', 'Leslie', 'Finley', 'Hildred', 'Lynn', 'Shelby', 'Sequoia', 'Tashi',
+         'Dominique', 'Garnet', 'Gray', 'Cameron']
+
+
 def is_prime(n):
     if n < 4:
         return False if n == 1 else True
@@ -14,12 +21,6 @@ def is_prime(n):
         if n % i == 0:
             return False
     return True
-
-names = ['Ariel', 'Bailey', 'Casey', 'Dallas', 'Eli', 'Frankie', 'Gabriel', 'Harley', 'Jayden', 'Kai', 'Lee', 'Mickey',
-         'Neo', 'Ocean', 'Parris', 'Quinn', 'Reagan', 'Shiloh', 'Taylor', 'Udo', 'Val', 'Winter', 'Xue', 'Yoshi',
-         'Zephyr', 'Narin', 'Ollie', 'Dakota', 'Marlie', 'Brooke', 'Shannon', 'Nour', 'Reese', 'Storm', 'Sydney',
-         'Omari', 'Ola', 'Ryley', 'Esmai', 'Leslie', 'Finley', 'Hildred', 'Lynn', 'Shelby', 'Sequoia', 'Tashi',
-         'Dominique', 'Garnet', 'Gray', 'Cameron']
 
 
 def name_from_sernum(sernum):

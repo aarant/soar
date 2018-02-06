@@ -31,7 +31,7 @@ def tkinter_hook(widget, linked=True):  # TODO: Deprecate or merge with tkinter_
     return widget
 
 
-def tkinter_wrap(widget, linked=True):
+def tkinter_wrap(widget, linked=True):  # TODO: Move code here in 2.0
     """ Make Soar's UI aware of a Tk widget, and wrap its callables so that they run on the main thread.
 
     This function is redefined by the client before a brain is ever loaded.

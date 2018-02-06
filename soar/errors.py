@@ -3,6 +3,7 @@
 #
 # soar/errors.py
 """ Soar error classes. """
+# TODO: In 2.0, move these into __init__
 import sys
 
 

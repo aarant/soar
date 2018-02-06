@@ -2,17 +2,27 @@
 # Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/update.py
+""" Function to check for updates on PyPI, and return a message for the user. """
 import re
-from math import inf
 from urllib import request
 
 from soar import __version__
 
 
+PYPI_URL = 'https://pypi.python.org/pypi/Soar'  # This may change in the future
+INF = float('inf')  # Use older infinity so as not to require Python 3.5
+
+
 def get_update_message():
+    """ Fetch the HTML of Soar's PyPI page, check for a newer version, and return a notification string.
+
+    Returns:
+        str: An empty string if no update is available, a notification message if one is, and an error
+    message if something went wrong.
+    """
     # Try and determine if a newer version of Soar is available, and notify the user
     try:
-        r = request.urlopen('https://pypi.python.org/pypi/Soar', data=None)
+        r = request.urlopen(PYPI_URL, data=None)
         assert(r.getcode() == 200)
         body = str(r.read(), encoding='utf-8')
         start = body.find('Soar')
@@ -22,7 +32,7 @@ def get_update_message():
 
         def version_parse(x):  # Parse version increment strings into integers
             if x is None:
-                return inf  # Non-development releases have an effective development release value of infinity
+                return INF  # Non-development releases have an effective development release value of infinity
             else:
                 return int(x)
 
@@ -37,7 +47,7 @@ def get_update_message():
                 need_update = False
                 break
         if need_update:
-            if pypi_version[3] != inf:
+            if pypi_version[3] != INF:
                 pypi_version[3] = 'dev' + str(pypi_version[3])
             else:
                 pypi_version = pypi_version[:-1]  # Slice off the irrelevant infinite dev version
@@ -45,5 +55,5 @@ def get_update_message():
             return 'A newer version of Soar is available: v' + version_string + '\nPlease update your installation.'
         else:
             return ''
-    except Exception:  # If anything at all goes wrong, silently fail
-        return ''
+    except Exception:  # If anything at all goes wrong, notify the user
+        return 'Unable to check for updates.'

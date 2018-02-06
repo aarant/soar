@@ -316,6 +316,7 @@ class SoarUI(Tk):
             return self.after(0, lambda: func(*args, **kwargs))
 
     def synchronous_future(self, func, *args, after_idle=False, **kwargs):
+        # TODO: This breaks if called from the main thread, fix that?
         """ Executes a function in the GUI event loop, waiting either for its return, or for a Tk exception. """
         e = ThreadEvent()
         q = Queue(maxsize=1)

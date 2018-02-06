@@ -17,11 +17,11 @@ Note:
 
 Based on code written by Adam Hartz, August 1st 2012.
 """
-# Tk backends, used for plotting in various modes (GUI or headless)
 import matplotlib
 import platform
 if platform.system() == 'Darwin':  # Fix for Soar crashing on macOS
     matplotlib.use('TkAgg')
+# Tk backends, used for plotting in various modes (GUI or headless)
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg, NavigationToolbar2TkAgg
 import matplotlib.pyplot as plt
 from tkinter import Tk, Toplevel, TOP, BOTH

@@ -366,7 +366,7 @@ class ARCOSClient:
         Raises:
             `ARCOSError`: If unable to connect to any available ports.
         """
-        if forced_ports is not None:
+        if forced_ports:
             ports = forced_ports
         else:
             ports = [port_info.device for port_info in comports()]  # Try every available port until we find a robot
@@ -397,7 +397,7 @@ class ARCOSClient:
                     self.start()
                     return
         # If we have tried every available port without success, raise an exception
-        raise ARCOSError('Unable to sync with an ARCOS server--is the robot connected and its port accessible?')
+        raise ARCOSError('Unable to sync with an ARCOS server. Is the robot connected and its port accessible?')
 
     def disconnect(self):
         """ Stop the ARCOS server and close the connection if running. """
@@ -492,10 +492,8 @@ class ARCOSClient:
     def start(self):
         """ Open the ARCOS servers, enable the sonars, and start the pulse & update coroutines. """
         self.send_packet(OPEN)
-        pulse = Thread(target=self.pulse, daemon=True)
-        pulse.start()
-        update = Thread(target=self.update, daemon=True)
-        update.start()
+        Thread(target=self.pulse, daemon=True).start()
+        Thread(target=self.update, daemon=True).start()
         self.wait_or_timeout(self.standard_event, 5.0, 'Failed to receive SIPs from the robot')
         for i in range(5):  # Try multiple times to enable the sonars
             if self.standard['FLAGS'] & 0x2 != 0x2:
