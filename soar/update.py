@@ -18,7 +18,7 @@ def get_update_message():
 
     Returns:
         str: An empty string if no update is available, a notification message if one is, and an error
-    message if something went wrong.
+        message if something went wrong.
     """
     # Try and determine if a newer version of Soar is available, and notify the user
     try:
