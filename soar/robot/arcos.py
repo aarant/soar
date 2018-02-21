@@ -13,10 +13,10 @@ from time import sleep
 from serial import Serial, SerialTimeoutException, SerialException
 from serial.tools.list_ports import comports
 
-from soar.errors import SoarError
+from soar.errors import SoarIOError
 from soar.client import printerr
 
-__version__ = '1.0'
+__version__ = '1.1'
 
 # ARCOS Client command codes
 
@@ -98,7 +98,7 @@ command_types = {
 """ The argument type of every supported ARCOS command. """
 
 
-class ARCOSError(SoarError):
+class ARCOSError(SoarIOError):
     """ Umbrella class for ARCOS-related exceptions. """
 
 
@@ -280,6 +280,7 @@ class ARCOSClient:
 
         Raises:
             `Timeout`: If the write timeout of the serial port was exceeded.
+            `ARCOSError`: If something went wrong writing to the serial port.
         """
         packet = [0xfa, 0xfb, len(data) + 2] + list(data)  # 0xfa, 0xfb are the packet header
         checksum = packet_checksum(packet)  # Calculate the checksum and append it
@@ -288,7 +289,9 @@ class ARCOSClient:
             try:
                 self.ser.write(bytearray(packet))
             except SerialTimeoutException as e:  # Recast serial timeout as an ARCOS timeout
-                raise Timeout(str(e)) from e
+                raise Timeout(str(e)) from None
+            except Exception as e:
+                raise ARCOSError(str(e)) from None
 
     def receive_packet(self):
         """ Read an entire ARCOS Packet from an open port, including header and checksum bytes.
@@ -299,12 +302,15 @@ class ARCOSClient:
         Raises:
             `Timeout`: If at any point a timeout occurs and fewer bytes than expected are read.
             `InvalidPacket`: If the packet header, checksum, or packet length are invalid.
+            `ARCOSError`: If something went wrong reading from the serial port.
         """
         def read():
             try:
                 b = ord(self.ser.read())
             except TypeError:  # A timeout has occurred, as 0 bytes were read
                 raise Timeout
+            except Exception as e:
+                raise ARCOSError(str(e)) from None
             else:
                 return b
         with self.serial_lock:
@@ -327,16 +333,19 @@ class ARCOSClient:
             raise InvalidPacket('Received checksum ' + str(received_crc) + ', expected checksum ' + str(crc))
         return data
 
-    def send_command(self, code, data=None):
+    def send_command(self, code, data=None, append_null=True):
         """ Send a command and data to the ARCOS server.
 
         Args:
             code: The command code. Must be in :data:`soar.robot.arcos.command_types`.
             data (optional): The associated command argument, assumed to be of the correct type.
                 For commands that take a string argument, a `bytes` object may also be used.
+            append_null (optional): If `True`, append a null byte to any `str` or `bytes` object passed as a
+                command argument.
 
         Raises:
             `Timeout`: If the write timeout of the port was exceeded.
+            `ARCOSError`: If an error occurred writing to the serial port.
         """
         if command_types[code] is None:  # No argument
             self.send_packet(code)
@@ -350,7 +359,8 @@ class ARCOSClient:
             self.send_packet(code, arg_type, *b)
         else:  # command_types[code] == str
             b = list(bytes(data))
-            b.append(0)
+            if append_null:
+                b.append(0)
             arg_type = 0x2b
             self.send_packet(code, arg_type, *b)
             
@@ -409,6 +419,7 @@ class ARCOSClient:
                 self.send_packet(CLOSE)
                 self.ser.close()
             except SerialException:  # Ignore errors that occur and assume the port is closed
+                # TODO: Does this need to be wider?
                 pass
 
     def sync(self, tries=4):

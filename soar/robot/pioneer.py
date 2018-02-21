@@ -8,6 +8,9 @@ See the `MobileRobots documentation`_ for more information.
 
 .. _MobileRobots documentation: http://www.mobilerobots.com/ResearchRobots/PioneerP3DX.aspx
 """
+import re
+from time import sleep
+from threading import Thread
 from math import pi, sqrt, atan2
 from uuid import getnode
 
@@ -17,6 +20,38 @@ from soar.sim.world import Polygon, Ray
 from soar.robot.base import BaseRobot
 from soar.robot.names import name_from_sernum
 from soar.robot.arcos import *
+
+
+def gen_tone_pairs(note_string, bpm=120):
+    """ Given a string of musical notes separated by spaces and a tempo, generate a corresponding list of
+    (duration, tone) pairs corresponding to each note.
+
+    Args:
+        note_string (str): A space-delimited list of notes. Notes should all be in the form `n/m(name)[#|b][octave]`. 
+            Ex: `'1/4C'` produces a quarter note middle C. `'1/8A#7'` produces an eighth note A# in the 7th MIDI octave.
+            `'1/4-'` produces a quarter rest. All of the MIDI notes in the range 1-127 can be played.
+        bpm (int): The beats per minute or tempo to use to calculate durations.
+
+    Returns:
+        A list of (duration, tone) tuples where duration is in seconds, and tone
+        is the corresponding MIDI number. Musical rest has a tone of 0.
+    """
+    notes = re.findall('([0-9]+)\/([0-9]+)([A-G]|-)(b|#)?(10|[0-9])?', note_string)
+    tone_pairs = []
+    note_offsets = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
+    alt_offsets = {'#': 1, 'b': -1, '': 0}
+    for num, denom, name, alt, octave in notes:
+        print(num, denom, name, alt, octave)
+        num, denom = int(num), int(denom)
+        octave = int(octave) if octave != '' else 5
+        dur = (num/denom)/bpm*60
+        if name == '-':  # Musical rest
+            tone = 0
+        else:
+            tone = octave*12+note_offsets[name]+alt_offsets[alt]
+        tone_pairs.append((dur, tone))
+    print(tone_pairs)
+    return tone_pairs
 
 
 class PioneerRobot(BaseRobot):
@@ -34,6 +69,8 @@ class PioneerRobot(BaseRobot):
         SONAR_MAX (float): The maximum distance that the sonars can sense, in meters.
         arcos: An instance of :class:`soar.robot.arcos.ARCOSClient` if the robot is real and has been loaded, otherwise
                `None`.
+        serial_device (str): The device name of the serial port the robot is connected to, if it is real and has been
+            been loaded, otherwise `None`.
 
     Args:
         **options: See `set_robot_options`.
@@ -54,6 +91,7 @@ class PioneerRobot(BaseRobot):
                             Pose(0.122, -0.118, -5*pi/18), Pose(0.08, -0.134, -pi/2)]
         self.SONAR_MAX = 1.5  # meters
         self.arcos = None  # The ARCOS client, if connected
+        self.serial_device = None  # The serial device, if connected
         self._fv = 0.0  # Internal forward velocity storage
         self._rv = 0.0  # Internal rotational velocity storage
         self._collided = False  # Private flag to check if the robot has collided
@@ -282,7 +320,8 @@ class PioneerRobot(BaseRobot):
     def on_load(self):
         if self.simulated:
             self.arcos = None
-            print('Connected to Pioneer p3dx-sh MIT_0042 \'Denny\' (12.0 V) [Simulated]')  # Hi Denny Freeman!
+            print('Connected to Pioneer p3dx-sh MIT_0042 (12.0 Volts) [Simulated]')
+            print('Your robot\'s name is \'Denny\'')  # Hi Denny Freeman!
         else:
             try:
                 self.arcos = ARCOSClient()
@@ -297,9 +336,12 @@ class PioneerRobot(BaseRobot):
                 config = self.arcos.config
                 serial_num = str(getnode())
                 battery_volts = self.arcos.standard['BATTERY'] / 10.0
+                # Set the serial device for viewing
+                self.serial_device = self.arcos.ser.name
                 # Print the standard connection message and warn if the battery is low
-                print('Connected to ' + ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']])
-                      + ' \'' + name_from_sernum(serial_num) + '\' (' + str(battery_volts) + ' V)')
+                print('Connected to', ' '.join([config[field] for field in ['ROBOT_TYPE', 'SUBTYPE', 'NAME']]), 'on',
+                      self.serial_device, '(%s Volts)' % battery_volts)
+                print('Your robot\'s name is \'%s\'' % name_from_sernum(serial_num))
                 if battery_volts < self.arcos.config['LOWBATTERY']/10.0:
                     printerr('WARNING: The robot\'s battery is low. Consider recharging or finding a new one.')
             except ARCOSError as e:  # If anything goes wrong, raise a SoarIOError
@@ -409,4 +451,51 @@ class PioneerRobot(BaseRobot):
         self.polygon.rotate(self.polygon.center, theta)
         self.calc_sonars()
         self.draw(self.world.canvas)
+
+    def play_notes(self, note_string, bpm=120, sync=False, _force_new_thread=True):
+        """ Play a string of musical notes through the robot's piezoelectric speaker.
+
+        Args:
+            note_string (str): A space-delimited list of notes. Notes should all be in the form `n/m(name)[#|b][octave]`. 
+                Ex: `'1/4C'` produces a quarter note middle C. `'1/8A#7'` produces an eighth note A# in the 7th MIDI octave.
+                `'1/4-'` produces a quarter rest. All of the MIDI notes in the range 1-127 can be played.
+            bpm (int): The beats per minute or tempo at which to play the notes.
+            sync (bool): By default `False`, this determines whether notes are sent one by one, with synchronization
+                performed by the function itself, or all at once.
+            force_new_thread (bool): By default `True`, this determines whether to force the execution of this function
+                to occur on a new thread.
+        """
+        if _force_new_thread:  # Force this function to run on a new thread
+            Thread(target=lambda: self.play_notes(note_string, bpm, sync, False), daemon=True).start()
+            return
+        tone_pairs = gen_tone_pairs(note_string, bpm)
+        b, total_duration = [], 0
+        for dur, tone in tone_pairs:
+            print(int(dur/0.02), min(127, tone))
+            total_duration += dur
+            b.extend([min(255, int(dur/0.02)), min(127, tone)])
+            if len(b) == 19*2:  # If the buffer contains 19 notes
+                b = [40] + b + [0, 0]  # Prepend the length byte and append the null terminator
+                self.arcos.send_command(SAY, bytes(b), append_null=False)
+                sleep(total_duration)
+                b, total_duration = [], 0
+        if b:  # If there are any more unsent notes
+            b = [len(b)+2] + b + [0, 0] # Prepend the length byte and append the null terminator
+            self.arcos.send_command(SAY, bytes(b), append_null=False)
+            sleep(total_duration)
+
+    def play_song(self, song_name):
+        """ Play one of a number of songs through the robot's piezoelectric speaker.
+
+        Args:
+            song_name (str): The song to play. Must be one of `'reveille'`, `'daisy'`, or `'fanfare'`.
+        """
+        bpm, notes = {'reveille': (60, '1/8G. 1/8C6 1/16E6 1/16C6 1/8G 1/8E6.  1/8C6 1/16E6 1/16C6 1/8G 1/8E6. 1/8C6 1/16E6 1/16C6 1/8G 1/8C6. 1/4E6 1/8C6 1/8G. 1/8C6 1/16E6 1/16C6 1/8G 1/8E6. 1/8C6 1/16E6 1/16C6 1/8G 1/8E6. 1/8C6 1/16E6 1/16C6 1/8G 1/8G. 3/8C6 1/8E6. 1/8E6 1/8E6 1/8E6 1/8E6. 1/4G6 1/8E6 1/8C6. 1/8E6 1/8C6 1/8E6 1/8C6. 1/4E6 1/8C6 1/8E6. 1/8E6 1/8E6 1/8E6 1/8E6. 1/4G6 1/8E6 1/8C6. 1/8E6 1/8C6 1/8G 1/8G. 1/2C6.'),
+                      'daisy': (60, '1/8F#6 1/8G6. 3/4A6. 3/4F#6. 3/4D6. 3/4A. 1/4B 1/4C#6 1/4D6. 1/2B 1/4D6. 1/1A 1/4D6. 3/4E6. 3/4A6. 3/4F#6. 3/4D6.'
+                                '1/4B 1/4C#6 1/4D6. 1/2E6 1/4F#6. 1/1E6 1/4E6 1/4F#6. 1/4G6 1/4F#6 1/4E6. 1/2A6 1/4F#6. 1/4E6 3/4D6 1/4D6 1/4E6. 1/2F#6 1/4D6. 1/2B 1/4D6.'
+                                '1/4B 3/4A 1/4C#6. 1/2D6 1/4F#6. 1/2E6 1/4A. 1/2D6 1/4F#6. 1/4E6 1/4F#6 1/4G6. 1/4A6 1/4F#6 1/4D6. 1/2E6 1/4F#6. 5/4D6.'),
+                      'fanfare': (32, '1/24G 1/24C6 1/24E6. 1/16G6 1/16- 1/32G6 1/32- 1/32G6 1/32- 1/16G6 1/16-. 1/8E6 1/16E6 1/16E6 1/8E6. 1/8C6 1/8E6 1/8C6. 1/1G.')}[song_name]
+        self.arcos.send_command(SOUNDTOG, 1)  # Enable the speaker
+        sleep(1.0)
+        self.play_notes(notes, bpm)
 
