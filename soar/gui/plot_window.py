@@ -88,7 +88,10 @@ class PlotWindow(plt.Figure):
 
     def show(self):
         """ Update the canvas image (automatically called for most functions). """
-        self.canvas.show()
+        try:
+            self.canvas.draw()
+        except Exception:
+            self.canvas.show()
 
     def __getattr__(self, name):
         show = True
