@@ -1,5 +1,5 @@
 # Soar (Snakes on a Robot): A Python robotics framework.
-# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+# Copyright (C) 2019 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/robot/pioneer.py
 """ A PioneerRobot class, for representing a real or simulated Pioneer 3 robot.
@@ -55,6 +55,12 @@ def gen_tone_pairs(note_string, bpm=120):
 
 
 class PioneerRobot(BaseRobot):
+    type = 'Pioneer3'
+    # Sonar poses relative to the robot's center
+    sonar_poses = [Pose(0.08, 0.134, pi/2), Pose(0.122, 0.118, 5*pi/18), Pose(0.156, 0.077, pi/6),
+                   Pose(0.174, 0.0266, pi/18), Pose(0.174, -0.0266, -pi/18), Pose(0.156, -0.077, -pi/6),
+                   Pose(0.122, -0.118, -5*pi/18), Pose(0.08, -0.134, -pi/2)]
+    SONAR_MAX = 1.5  # meters
     """ An abstract, universal Pioneer 3 robot. Instances of this class can be fully simulated, or used to communicate
     with an actual Pioneer3 robot over a serial port.
 
@@ -83,13 +89,6 @@ class PioneerRobot(BaseRobot):
                                                   (-0.034, 0.190), (-0.051, 0.190), (-0.051, 0.150), (-0.153, 0.150),
                                                   (-0.223, 0.074), (-0.223, -0.103), (-0.153, -0.179), (-0.051, -0.179),
                                                   (-0.051, -0.219)], None, fill='black', dummy=True))
-        self.type = 'Pioneer3'
-        # Sonar poses relative to the robot's center
-        self.sonar_poses = [Pose(0.08, 0.134, pi/2), Pose(0.122, 0.118, 5*pi/18),
-                            Pose(0.156, 0.077, pi/6), Pose(0.174, 0.0266, pi/18),
-                            Pose(0.174, -0.0266, -pi/18), Pose(0.156, -0.077, -pi/6),
-                            Pose(0.122, -0.118, -5*pi/18), Pose(0.08, -0.134, -pi/2)]
-        self.SONAR_MAX = 1.5  # meters
         self.arcos = None  # The ARCOS client, if connected
         self.serial_device = None  # The serial device, if connected
         self._fv = 0.0  # Internal forward velocity storage

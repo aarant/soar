@@ -1,5 +1,5 @@
 # Soar (Snakes on a Robot): A Python robotics framework.
-# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+# Copyright (C) 2019 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/robot/base.py
 """ Soar BaseRobot class, intended as a parent class for nontrivial/useful robots.
@@ -14,6 +14,7 @@ from soar.sim.world import WorldObject, Polygon, Wall
 
 
 class BaseRobot(WorldObject):
+    type = 'BaseRobot'
     """ A base robot class, intended to be subclassed and overridden.
 
     Any robot usable in SoaR should supplement or re-implement this class' methods with the desired behavior.
@@ -40,7 +41,6 @@ class BaseRobot(WorldObject):
 
     def __init__(self, polygon, **options):
         WorldObject.__init__(self, do_draw=True, do_step=True, **options)  # Robots are always drawn and stepped
-        self.type = 'BaseRobot'
         self.simulated = True
         self.world = None
         self.pose = Pose(0, 0, 0)

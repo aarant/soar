@@ -22,7 +22,7 @@ import platform
 if platform.system() == 'Darwin':  # Fix for Soar crashing on macOS
     matplotlib.use('TkAgg')
 # Tk backends, used for plotting in various modes (GUI or headless)
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 from tkinter import Tk, Toplevel, TOP, BOTH
 
@@ -63,7 +63,7 @@ class PlotWindow(plt.Figure):
         This method is called during initialization and it is unlikely you will need to call it elsewhere.
         """
         self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
-        self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.canvas._master)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self.canvas._master)
         self.toolbar.update()
         self.canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
 

@@ -1,5 +1,5 @@
 # Soar (Snakes on a Robot): A Python robotics framework.
-# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+# Copyright (C) 2019 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/update.py
 """ Function to check for updates on PyPI, and return a message for the user. """

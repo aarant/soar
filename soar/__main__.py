@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Soar (Snakes on a Robot): A Python robotics framework.
-# Copyright (C) 2017 Andrew Antonitis. Licensed under the LGPLv3.
+# Copyright (C) 2019 Andrew Antonitis. Licensed under the LGPLv3.
 #
 # soar/__main__.py
 """ Allows use of Soar from the command line by passing arguments to :func:`soar.client.main`
